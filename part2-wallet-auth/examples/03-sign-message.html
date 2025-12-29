@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 3: Ký và Verify Message</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 700px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .section {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        label {
+            display: block;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        textarea, input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            margin-bottom: 15px;
+        }
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+            font-family: 'Courier New', monospace;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-right: 10px;
+        }
+        button:hover { transform: translateY(-2px); }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .result {
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            word-break: break-all;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .result.hidden { display: none; }
+        .status {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .status.success {
+            background: #e8f5e9;
+            color: #388e3c;
+            border-left: 4px solid #388e3c;
+        }
+        .status.error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #1976d2;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .info-box h4 {
+            color: #1976d2;
+            margin-bottom: 8px;
+        }
+        .info-box p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #e91e63;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔏 Ký và Verify Message</h1>
+        <p class="subtitle">Bài 3: Học cách ký message và verify signature</p>
+
+        <div id="statusDiv"></div>
+
+        <div class="info-box">
+            <h4>💡 Message Signing là gì?</h4>
+            <p>
+                Message signing cho phép bạn chứng minh quyền sở hữu một địa chỉ ví
+                mà không cần gửi transaction (không tốn gas). Use cases: Authentication,
+                Proof of ownership, Off-chain voting.
+            </p>
+        </div>
+
+        <!-- Sign Section -->
+        <div class="section">
+            <h3>✍️ Bước 1: Ký Message</h3>
+            
+            <label>Message muốn ký:</label>
+            <textarea id="messageInput" placeholder="Nhập message...">Hello from Kaopiz! 
+Timestamp: ${new Date().toISOString()}</textarea>
+
+            <button onclick="signMessage()">🔏 Ký Message</button>
+            
+            <div id="signResult" class="result hidden"></div>
+        </div>
+
+        <!-- Verify Section -->
+        <div class="section">
+            <h3>✅ Bước 2: Verify Signature</h3>
+            
+            <label>Original Message:</label>
+            <textarea id="verifyMessage" placeholder="Message gốc..."></textarea>
+
+            <label>Signature:</label>
+            <input type="text" id="signatureInput" placeholder="0x...">
+
+            <label>Expected Address (optional):</label>
+            <input type="text" id="expectedAddress" placeholder="0x...">
+
+            <button onclick="verifySignature()">✅ Verify Signature</button>
+            
+            <div id="verifyResult" class="result hidden"></div>
+        </div>
+
+        <!-- Use Cases -->
+        <div class="info-box">
+            <h4>🎯 Use Cases thực tế:</h4>
+            <p>
+                <strong>1. Authentication:</strong> Sign-In With Ethereum (SIWE)<br>
+                <strong>2. Proof of Ownership:</strong> Chứng minh bạn sở hữu địa chỉ<br>
+                <strong>3. Off-chain Voting:</strong> Vote không tốn gas<br>
+                <strong>4. Message Verification:</strong> Xác thực message từ user
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+    <script>
+        let signer, userAddress;
+
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('statusDiv');
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        function showResult(elementId, content) {
+            const el = document.getElementById(elementId);
+            el.textContent = content;
+            el.classList.remove('hidden');
+        }
+
+        // Initialize
+        window.addEventListener('load', async () => {
+            if (typeof window.ethereum === 'undefined') {
+                showStatus('❌ MetaMask chưa được cài đặt!', 'error');
+                return;
+            }
+
+            try {
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                signer = provider.getSigner();
+                userAddress = await signer.getAddress();
+                
+                showStatus(`✅ Đã kết nối: ${userAddress}`, 'success');
+                document.getElementById('expectedAddress').value = userAddress;
+            } catch (error) {
+                showStatus('❌ Lỗi kết nối: ' + error.message, 'error');
+            }
+        });
+
+        async function signMessage() {
+            try {
+                const message = document.getElementById('messageInput').value;
+                
+                if (!message) {
+                    showStatus('❌ Vui lòng nhập message!', 'error');
+                    return;
+                }
+
+                console.log('📝 Message:', message);
+                showResult('signResult', '⏳ Đang chờ user ký trên MetaMask...');
+
+                // Sign message
+                const signature = await signer.signMessage(message);
+                console.log('✅ Signature:', signature);
+
+                // Auto-fill verify section
+                document.getElementById('verifyMessage').value = message;
+                document.getElementById('signatureInput').value = signature;
+
+                showResult('signResult', 
+                    `✅ Ký thành công!\n\n` +
+                    `Message:\n${message}\n\n` +
+                    `Signature:\n${signature}\n\n` +
+                    `Signer Address:\n${userAddress}\n\n` +
+                    `💡 Signature này có thể verify off-chain\n` +
+                    `💡 Không tốn gas (không phải transaction)\n` +
+                    `💡 Scroll xuống để verify!`
+                );
+
+                showStatus('✅ Đã ký message thành công!', 'success');
+            } catch (error) {
+                if (error.code === 4001) {
+                    showResult('signResult', '❌ User từ chối ký message');
+                    showStatus('❌ User từ chối ký message', 'error');
+                } else {
+                    showResult('signResult', '❌ Lỗi: ' + error.message);
+                    showStatus('❌ Lỗi: ' + error.message, 'error');
+                }
+            }
+        }
+
+        async function verifySignature() {
+            try {
+                const message = document.getElementById('verifyMessage').value;
+                const signature = document.getElementById('signatureInput').value;
+                const expectedAddress = document.getElementById('expectedAddress').value;
+
+                if (!message || !signature) {
+                    showStatus('❌ Vui lòng điền đầy đủ thông tin!', 'error');
+                    return;
+                }
+
+                console.log('🔍 Verifying...');
+                console.log('Message:', message);
+                console.log('Signature:', signature);
+
+                // Recover address from signature
+                const recoveredAddress = ethers.utils.verifyMessage(message, signature);
+                console.log('✅ Recovered Address:', recoveredAddress);
+
+                let result = `✅ Signature hợp lệ!\n\n` +
+                    `Original Message:\n${message}\n\n` +
+                    `Signature:\n${signature}\n\n` +
+                    `Recovered Address:\n${recoveredAddress}\n\n`;
+
+                // Check if matches expected address
+                if (expectedAddress) {
+                    const matches = recoveredAddress.toLowerCase() === expectedAddress.toLowerCase();
+                    result += `Expected Address:\n${expectedAddress}\n\n`;
+                    result += `Match: ${matches ? '✅ YES' : '❌ NO'}\n\n`;
+                    
+                    if (matches) {
+                        result += `🎉 Signature được ký bởi địa chỉ mong đợi!`;
+                        showStatus('✅ Verify thành công! Signature hợp lệ.', 'success');
+                    } else {
+                        result += `⚠️ Signature KHÔNG được ký bởi địa chỉ mong đợi!`;
+                        showStatus('⚠️ Signature hợp lệ nhưng không khớp địa chỉ!', 'error');
+                    }
+                } else {
+                    showStatus('✅ Signature hợp lệ!', 'success');
+                }
+
+                showResult('verifyResult', result);
+
+            } catch (error) {
+                console.error('❌ Verify failed:', error);
+                showResult('verifyResult', 
+                    `❌ Verify thất bại!\n\n` +
+                    `Lỗi: ${error.message}\n\n` +
+                    `Có thể:\n` +
+                    `- Signature không đúng định dạng\n` +
+                    `- Message đã bị thay đổi\n` +
+                    `- Signature không khớp với message`
+                );
+                showStatus('❌ Verify thất bại: ' + error.message, 'error');
+            }
+        }
+
+        // Auto-fill timestamp in message
+        window.addEventListener('load', () => {
+            const messageInput = document.getElementById('messageInput');
+            messageInput.value = `Hello from Kaopiz!\nTimestamp: ${new Date().toISOString()}`;
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 5: SIWE Simple</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 700px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .status.info {
+            background: #e3f2fd;
+            color: #1976d2;
+            border-left: 4px solid #1976d2;
+        }
+
+        .status.success {
+            background: #e8f5e9;
+            color: #388e3c;
+            border-left: 4px solid #388e3c;
+        }
+
+        .status.error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 15px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .message-box {
+            background: #f5f5f5;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .message-box.show {
+            display: block;
+        }
+
+        .message-box h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .message-content {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .session-info {
+            background: #e8f5e9;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .session-info.show {
+            display: block;
+        }
+
+        .session-info h3 {
+            color: #388e3c;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #c8e6c9;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #666;
+            font-weight: 600;
+        }
+
+        .info-value {
+            color: #333;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        .steps {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .steps h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .steps ol {
+            margin-left: 20px;
+        }
+
+        .steps li {
+            color: #666;
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #e91e63;
+        }
+
+        .flow-diagram {
+            background: #fff3e0;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .flow-diagram h3 {
+            color: #f57c00;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .flow-number {
+            background: #ff9800;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .flow-text {
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Sign-In With Ethereum (SIWE)</h1>
+        <p class="subtitle">Bài 5: Xác thực người dùng với SIWE (EIP-4361)</p>
+
+        <div id="status" class="status info">
+            Nhấn nút bên dưới để bắt đầu quá trình Sign-In
+        </div>
+
+        <button id="connectBtn" onclick="connectAndSignIn()">
+            🦊 Connect & Sign-In
+        </button>
+
+        <button id="logoutBtn" onclick="logout()" style="display: none; background: #f44336;">
+            👋 Logout
+        </button>
+
+        <div id="messageBox" class="message-box">
+            <h3>📝 SIWE Message</h3>
+            <div class="message-content" id="messageContent"></div>
+        </div>
+
+        <div id="sessionInfo" class="session-info">
+            <h3>✅ Đã đăng nhập thành công!</h3>
+            <div class="info-row">
+                <span class="info-label">📍 Địa chỉ:</span>
+                <span class="info-value" id="sessionAddress">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">🌐 Chain ID:</span>
+                <span class="info-value" id="sessionChainId">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">🔑 Nonce:</span>
+                <span class="info-value" id="sessionNonce">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">⏰ Issued At:</span>
+                <span class="info-value" id="sessionIssuedAt">-</span>
+            </div>
+        </div>
+
+        <div class="flow-diagram">
+            <h3>🔄 SIWE Flow</h3>
+            <div class="flow-step">
+                <div class="flow-number">1</div>
+                <div class="flow-text">Generate random nonce</div>
+            </div>
+            <div class="flow-step">
+                <div class="flow-number">2</div>
+                <div class="flow-text">Create SIWE message theo format EIP-4361</div>
+            </div>
+            <div class="flow-step">
+                <div class="flow-number">3</div>
+                <div class="flow-text">User ký message bằng private key</div>
+            </div>
+            <div class="flow-step">
+                <div class="flow-number">4</div>
+                <div class="flow-text">Verify signature (recover address)</div>
+            </div>
+            <div class="flow-step">
+                <div class="flow-number">5</div>
+                <div class="flow-text">Create session (trong production: issue JWT)</div>
+            </div>
+        </div>
+
+        <div class="steps">
+            <h3>📚 Những gì bạn sẽ học:</h3>
+            <ol>
+                <li>SIWE message format theo <code>EIP-4361</code></li>
+                <li>Generate nonce để prevent replay attacks</li>
+                <li>Sign message với MetaMask</li>
+                <li>Verify signature và recover address</li>
+                <li>Tạo session sau khi verify thành công</li>
+                <li>Use cases: Authentication không cần password</li>
+            </ol>
+        </div>
+    </div>
+
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+    <script>
+        const statusDiv = document.getElementById('status');
+        const connectBtn = document.getElementById('connectBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const messageBox = document.getElementById('messageBox');
+        const messageContent = document.getElementById('messageContent');
+        const sessionInfo = document.getElementById('sessionInfo');
+
+        let currentSession = null;
+
+        function showStatus(message, type = 'info') {
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+        }
+
+        // Generate random nonce
+        function generateNonce() {
+            return Math.floor(Math.random() * 1000000000).toString();
+        }
+
+        // Create SIWE message theo EIP-4361
+        function createSiweMessage(address, chainId, nonce) {
+            const domain = window.location.host;
+            const origin = window.location.origin;
+            const issuedAt = new Date().toISOString();
+
+            const message = `${domain} wants you to sign in with your Ethereum account:
+${address}
+
+I accept the Terms of Service: ${origin}/tos
+
+URI: ${origin}
+Version: 1
+Chain ID: ${chainId}
+Nonce: ${nonce}
+Issued At: ${issuedAt}`;
+
+            return { message, issuedAt };
+        }
+
+        async function connectAndSignIn() {
+            if (typeof window.ethereum === 'undefined') {
+                showStatus('❌ MetaMask chưa được cài đặt!', 'error');
+                return;
+            }
+
+            try {
+                connectBtn.disabled = true;
+                connectBtn.textContent = 'Đang xử lý...';
+                showStatus('⏳ Đang kết nối MetaMask...', 'info');
+
+                // Step 1: Connect wallet
+                console.log('📝 Step 1: Connecting wallet...');
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_requestAccounts' 
+                });
+                const address = accounts[0];
+                console.log('✅ Connected:', address);
+
+                // Get chain ID
+                const chainIdHex = await window.ethereum.request({ 
+                    method: 'eth_chainId' 
+                });
+                const chainId = parseInt(chainIdHex, 16);
+                console.log('🌐 Chain ID:', chainId);
+
+                // Step 2: Generate nonce
+                console.log('📝 Step 2: Generating nonce...');
+                const nonce = generateNonce();
+                console.log('🔑 Nonce:', nonce);
+                showStatus('⏳ Đang tạo SIWE message...', 'info');
+
+                // Step 3: Create SIWE message
+                console.log('📝 Step 3: Creating SIWE message...');
+                const { message, issuedAt } = createSiweMessage(address, chainId, nonce);
+                console.log('📄 Message created');
+                
+                // Display message
+                messageContent.textContent = message;
+                messageBox.classList.add('show');
+
+                // Step 4: Sign message
+                console.log('📝 Step 4: Requesting signature...');
+                showStatus('⏳ Vui lòng ký message trên MetaMask...', 'info');
+                
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const signer = provider.getSigner();
+                const signature = await signer.signMessage(message);
+                
+                console.log('✅ Signature:', signature.substring(0, 20) + '...');
+
+                // Step 5: Verify signature
+                console.log('📝 Step 5: Verifying signature...');
+                showStatus('⏳ Đang verify signature...', 'info');
+                
+                const recoveredAddress = ethers.utils.verifyMessage(message, signature);
+                console.log('🔍 Recovered address:', recoveredAddress);
+
+                if (recoveredAddress.toLowerCase() !== address.toLowerCase()) {
+                    throw new Error('Signature verification failed!');
+                }
+
+                console.log('✅ Signature verified!');
+
+                // Step 6: Create session
+                console.log('📝 Step 6: Creating session...');
+                currentSession = {
+                    address,
+                    chainId,
+                    nonce,
+                    issuedAt,
+                    signature
+                };
+
+                // Save to localStorage (trong production sẽ là JWT token)
+                localStorage.setItem('siwe_session', JSON.stringify(currentSession));
+
+                // Display session info
+                document.getElementById('sessionAddress').textContent = address;
+                document.getElementById('sessionChainId').textContent = chainId;
+                document.getElementById('sessionNonce').textContent = nonce;
+                document.getElementById('sessionIssuedAt').textContent = issuedAt;
+                
+                sessionInfo.classList.add('show');
+                connectBtn.style.display = 'none';
+                logoutBtn.style.display = 'block';
+
+                showStatus('✅ Sign-In thành công! Session đã được tạo.', 'success');
+                console.log('🎉 Sign-In completed!');
+
+            } catch (error) {
+                console.error('❌ Error:', error);
+
+                if (error.code === 4001) {
+                    showStatus('❌ Bạn đã từ chối ký message', 'error');
+                } else {
+                    showStatus(`❌ Lỗi: ${error.message}`, 'error');
+                }
+
+                connectBtn.disabled = false;
+                connectBtn.textContent = '🦊 Connect & Sign-In';
+                messageBox.classList.remove('show');
+            }
+        }
+
+        function logout() {
+            console.log('👋 Logging out...');
+            
+            currentSession = null;
+            localStorage.removeItem('siwe_session');
+            
+            sessionInfo.classList.remove('show');
+            messageBox.classList.remove('show');
+            connectBtn.style.display = 'block';
+            logoutBtn.style.display = 'none';
+            connectBtn.disabled = false;
+            connectBtn.textContent = '🦊 Connect & Sign-In';
+            
+            showStatus('👋 Đã logout thành công', 'info');
+            console.log('✅ Logged out');
+        }
+
+        // Check if already signed in
+        window.addEventListener('load', () => {
+            const savedSession = localStorage.getItem('siwe_session');
+            
+            if (savedSession) {
+                try {
+                    currentSession = JSON.parse(savedSession);
+                    console.log('✅ Found saved session:', currentSession.address);
+                    
+                    // Display session info
+                    document.getElementById('sessionAddress').textContent = currentSession.address;
+                    document.getElementById('sessionChainId').textContent = currentSession.chainId;
+                    document.getElementById('sessionNonce').textContent = currentSession.nonce;
+                    document.getElementById('sessionIssuedAt').textContent = currentSession.issuedAt;
+                    
+                    sessionInfo.classList.add('show');
+                    connectBtn.style.display = 'none';
+                    logoutBtn.style.display = 'block';
+                    
+                    showStatus('✅ Đã đăng nhập trước đó', 'success');
+                } catch (error) {
+                    console.error('❌ Invalid session:', error);
+                    localStorage.removeItem('siwe_session');
+                }
+            }
+        });
+
+        // Listen to account changes
+        if (typeof window.ethereum !== 'undefined') {
+            window.ethereum.on('accountsChanged', (accounts) => {
+                if (accounts.length === 0 || (currentSession && accounts[0].toLowerCase() !== currentSession.address.toLowerCase())) {
+                    console.log('👤 Account changed, logging out...');
+                    logout();
+                }
+            });
+
+            window.ethereum.on('chainChanged', () => {
+                console.log('🌐 Chain changed, logging out...');
+                logout();
+            });
+        }
+    </script>
+</body>
+</html>
+

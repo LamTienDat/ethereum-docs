@@ -1,0 +1,26 @@
+{
+  "name": "part3-events-examples",
+  "version": "1.0.0",
+  "description": "Phần 3: Xử lý sự kiện (Events) - Examples",
+  "type": "module",
+  "scripts": {
+    "01": "node 01-query-past-events.js",
+    "02": "node 02-filter-by-address.js",
+    "03": "node 03-transaction-history.js",
+    "04": "node 04-realtime-listener.js",
+    "05": "node 05-filter-listener.js",
+    "06": "node 06-custom-events.js"
+  },
+  "keywords": [
+    "ethereum",
+    "events",
+    "ethers.js",
+    "blockchain"
+  ],
+  "author": "Kaopiz Team",
+  "license": "MIT",
+  "dependencies": {
+    "ethers": "^6.9.0"
+  }
+}
+

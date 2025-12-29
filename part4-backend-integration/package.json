@@ -1,0 +1,30 @@
+{
+  "name": "part4-backend-integration",
+  "version": "1.0.0",
+  "description": "Ví dụ tích hợp Backend với Ethereum - Wallet, RPC Provider, và Transaction Management",
+  "main": "index.js",
+  "scripts": {
+    "generate": "node scripts/generate-wallet.js",
+    "wallet": "node examples/01-wallet-basic.js",
+    "send-eth": "node examples/02-send-eth.js",
+    "send-token": "node examples/03-send-token.js",
+    "wallet-manager": "node examples/04-wallet-manager.js",
+    "rpc-provider": "node examples/05-rpc-provider.js",
+    "retry-logic": "node examples/06-retry-logic.js",
+    "monitor": "node examples/07-monitor-balance.js"
+  },
+  "keywords": [
+    "ethereum",
+    "backend",
+    "wallet",
+    "rpc",
+    "ethers.js"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "ethers": "^6.13.0"
+  }
+}
+

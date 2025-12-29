@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 1: Kết nối MetaMask</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .status.info {
+            background: #e3f2fd;
+            color: #1976d2;
+            border-left: 4px solid #1976d2;
+        }
+
+        .status.success {
+            background: #e8f5e9;
+            color: #388e3c;
+            border-left: 4px solid #388e3c;
+        }
+
+        .status.error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .wallet-info {
+            background: #f5f5f5;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .wallet-info.show {
+            display: block;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #666;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .info-value {
+            color: #333;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            word-break: break-all;
+            text-align: right;
+            max-width: 60%;
+        }
+
+        .steps {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .steps h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .steps ol {
+            margin-left: 20px;
+        }
+
+        .steps li {
+            color: #666;
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .metamask-logo {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #e91e63;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" 
+             alt="MetaMask" class="metamask-logo">
+        
+        <h1>🦊 Kết nối MetaMask</h1>
+        <p class="subtitle">Bài 1: Học cách kết nối ví MetaMask với website</p>
+
+        <div id="status" class="status info">
+            Nhấn nút bên dưới để kết nối ví MetaMask của bạn
+        </div>
+
+        <button id="connectBtn" onclick="connectWallet()">
+            Kết nối MetaMask
+        </button>
+
+        <div id="walletInfo" class="wallet-info">
+            <div class="info-row">
+                <span class="info-label">📍 Địa chỉ:</span>
+                <span class="info-value" id="address">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">💰 Số dư:</span>
+                <span class="info-value" id="balance">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">🌐 Network:</span>
+                <span class="info-value" id="network">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">🔗 Chain ID:</span>
+                <span class="info-value" id="chainId">-</span>
+            </div>
+        </div>
+
+        <div class="steps">
+            <h3>📚 Những gì bạn sẽ học:</h3>
+            <ol>
+                <li>Kiểm tra MetaMask đã được cài đặt chưa</li>
+                <li>Kết nối ví với <code>eth_requestAccounts</code></li>
+                <li>Lấy địa chỉ ví và số dư</li>
+                <li>Xử lý lỗi khi user từ chối kết nối</li>
+                <li>Hiển thị thông tin wallet</li>
+            </ol>
+        </div>
+    </div>
+
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+    <script>
+        const statusDiv = document.getElementById('status');
+        const connectBtn = document.getElementById('connectBtn');
+        const walletInfo = document.getElementById('walletInfo');
+
+        // Hàm hiển thị status
+        function showStatus(message, type = 'info') {
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+        }
+
+        // Hàm format địa chỉ
+        function formatAddress(address) {
+            return `${address.substring(0, 6)}...${address.substring(38)}`;
+        }
+
+        // Hàm lấy tên network
+        function getNetworkName(chainId) {
+            const networks = {
+                1: 'Ethereum Mainnet',
+                11155111: 'Sepolia Testnet',
+                5: 'Goerli Testnet',
+                137: 'Polygon Mainnet',
+                80001: 'Mumbai Testnet',
+                56: 'BSC Mainnet',
+                97: 'BSC Testnet'
+            };
+            return networks[chainId] || `Unknown (${chainId})`;
+        }
+
+        // Hàm kết nối wallet
+        async function connectWallet() {
+            console.log('🔄 Bắt đầu kết nối wallet...');
+
+            // Bước 1: Kiểm tra MetaMask đã cài chưa
+            if (typeof window.ethereum === 'undefined') {
+                showStatus('❌ MetaMask chưa được cài đặt! Vui lòng cài đặt MetaMask extension.', 'error');
+                console.error('MetaMask not installed');
+                
+                // Mở trang download MetaMask
+                setTimeout(() => {
+                    if (confirm('Bạn có muốn cài đặt MetaMask không?')) {
+                        window.open('https://metamask.io/download/', '_blank');
+                    }
+                }, 1000);
+                return;
+            }
+
+            console.log('✅ MetaMask đã được cài đặt');
+
+            try {
+                // Disable button khi đang connect
+                connectBtn.disabled = true;
+                connectBtn.textContent = 'Đang kết nối...';
+                showStatus('⏳ Đang chờ bạn approve trên MetaMask...', 'info');
+
+                // Bước 2: Request accounts
+                console.log('📝 Gọi eth_requestAccounts...');
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_requestAccounts' 
+                });
+
+                console.log('✅ Kết nối thành công!');
+                console.log('Accounts:', accounts);
+
+                // Lấy địa chỉ đầu tiên
+                const address = accounts[0];
+                console.log('Địa chỉ:', address);
+
+                // Bước 3: Tạo provider
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                console.log('Provider created:', provider);
+
+                // Bước 4: Lấy số dư
+                console.log('💰 Đang lấy số dư...');
+                const balance = await provider.getBalance(address);
+                const balanceInEth = ethers.utils.formatEther(balance);
+                console.log('Số dư:', balanceInEth, 'ETH');
+
+                // Bước 5: Lấy network info
+                console.log('🌐 Đang lấy thông tin network...');
+                const network = await provider.getNetwork();
+                console.log('Network:', network);
+
+                // Hiển thị thông tin
+                document.getElementById('address').textContent = formatAddress(address);
+                document.getElementById('balance').textContent = `${parseFloat(balanceInEth).toFixed(4)} ETH`;
+                document.getElementById('network').textContent = getNetworkName(network.chainId);
+                document.getElementById('chainId').textContent = network.chainId;
+
+                walletInfo.classList.add('show');
+                showStatus('✅ Kết nối thành công!', 'success');
+                connectBtn.textContent = 'Đã kết nối';
+
+                console.log('🎉 Hoàn tất!');
+
+            } catch (error) {
+                console.error('❌ Lỗi:', error);
+
+                // Xử lý các loại lỗi khác nhau
+                if (error.code === 4001) {
+                    // User từ chối kết nối
+                    showStatus('❌ Bạn đã từ chối kết nối. Vui lòng thử lại.', 'error');
+                } else if (error.code === -32002) {
+                    // Request đang pending
+                    showStatus('⚠️ Vui lòng kiểm tra MetaMask, có request đang chờ approve.', 'error');
+                } else {
+                    showStatus(`❌ Lỗi: ${error.message}`, 'error');
+                }
+
+                connectBtn.disabled = false;
+                connectBtn.textContent = 'Kết nối MetaMask';
+            }
+        }
+
+        // Kiểm tra nếu đã kết nối trước đó
+        window.addEventListener('load', async () => {
+            console.log('🚀 Page loaded');
+
+            if (typeof window.ethereum !== 'undefined') {
+                console.log('✅ MetaMask detected');
+
+                // Kiểm tra xem đã connect chưa
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_accounts' 
+                });
+
+                if (accounts.length > 0) {
+                    console.log('✅ Đã kết nối trước đó:', accounts[0]);
+                    showStatus('✅ Đã kết nối trước đó. Click để xem thông tin.', 'success');
+                    connectBtn.textContent = 'Xem thông tin';
+                }
+            } else {
+                console.log('❌ MetaMask not detected');
+                showStatus('❌ MetaMask chưa được cài đặt', 'error');
+                connectBtn.textContent = 'Cài đặt MetaMask';
+                connectBtn.onclick = () => {
+                    window.open('https://metamask.io/download/', '_blank');
+                };
+            }
+        });
+
+        // Listen to account changes
+        if (typeof window.ethereum !== 'undefined') {
+            window.ethereum.on('accountsChanged', (accounts) => {
+                console.log('👤 Account changed:', accounts);
+                if (accounts.length === 0) {
+                    showStatus('⚠️ Ví đã bị disconnect', 'error');
+                    walletInfo.classList.remove('show');
+                    connectBtn.disabled = false;
+                    connectBtn.textContent = 'Kết nối MetaMask';
+                } else {
+                    // Reload thông tin với account mới
+                    location.reload();
+                }
+            });
+
+            window.ethereum.on('chainChanged', (chainId) => {
+                console.log('🌐 Network changed:', chainId);
+                // Reload page khi đổi network
+                location.reload();
+            });
+        }
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,126 @@
+.App {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.App-header {
+  text-align: center;
+  color: white;
+  margin-bottom: 2rem;
+  padding: 2rem 0;
+}
+
+.App-header h1 {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.App-header p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+.App-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.connect-prompt {
+  background: white;
+  padding: 3rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.connect-prompt > p {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 2rem;
+}
+
+.instructions {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: left;
+  background: #f8f9fa;
+  padding: 2rem;
+  border-radius: 8px;
+}
+
+.instructions h3 {
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.instructions ol {
+  padding-left: 1.5rem;
+}
+
+.instructions li {
+  color: #555;
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+}
+
+.instructions a {
+  color: #646cff;
+  text-decoration: underline;
+}
+
+.App-footer {
+  text-align: center;
+  color: white;
+  padding: 2rem 0;
+  margin-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.App-footer p {
+  margin: 0.5rem 0;
+  opacity: 0.9;
+}
+
+.contract-info {
+  font-size: 0.9rem;
+  font-family: monospace;
+}
+
+.contract-info a {
+  color: white;
+  text-decoration: underline;
+}
+
+.contract-info a:hover {
+  opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  .App {
+    padding: 10px;
+  }
+
+  .App-header h1 {
+    font-size: 2rem;
+  }
+
+  .App-header p {
+    font-size: 1rem;
+  }
+
+  .connect-prompt {
+    padding: 2rem 1rem;
+  }
+
+  .instructions {
+    padding: 1.5rem;
+  }
+}
+

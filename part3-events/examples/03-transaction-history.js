@@ -1,0 +1,126 @@
+/**
+ * Script 3: Build Transaction History
+ * 
+ * Demo cách xây dựng lịch sử giao dịch đầy đủ cho một địa chỉ
+ * 
+ * Chạy: node 03-transaction-history.js <ADDRESS>
+ */
+
+import { ethers } from 'ethers';
+
+// Cấu hình
+const RPC_URL = 'https://api.zan.top/node/v1/eth/mainnet/7d5a7370dd004a1f913078deb248af07';
+const USDT_ADDRESS = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
+
+const ERC20_ABI = [
+  'event Transfer(address indexed from, address indexed to, uint256 value)',
+  'function decimals() view returns (uint8)',
+  'function symbol() view returns (string)',
+];
+
+async function getTransactionHistory(userAddress, fromBlock, toBlock) {
+  const provider = new ethers.JsonRpcProvider(RPC_URL);
+  const contract = new ethers.Contract(USDT_ADDRESS, ERC20_ABI, provider);
+
+  // Lấy thông tin token
+  const decimals = await contract.decimals();
+  const symbol = await contract.symbol();
+
+  console.log(`📊 Token: ${symbol}`);
+  console.log(`👤 User: ${userAddress}`);
+  console.log(`📦 Blocks: ${fromBlock} to ${toBlock}\n`);
+
+  // Lấy events gửi đi
+  console.log('📤 Fetching outgoing transfers...');
+  const sentFilter = contract.filters.Transfer(userAddress, null);
+  const sentEvents = await contract.queryFilter(sentFilter, fromBlock, toBlock);
+  console.log(`   Found ${sentEvents.length} events`);
+
+  // Lấy events nhận vào
+  console.log('📥 Fetching incoming transfers...');
+  const receivedFilter = contract.filters.Transfer(null, userAddress);
+  const receivedEvents = await contract.queryFilter(receivedFilter, fromBlock, toBlock);
+  console.log(`   Found ${receivedEvents.length} events\n`);
+
+  // Gộp và sắp xếp theo block number
+  const allEvents = [...sentEvents, ...receivedEvents].sort(
+    (a, b) => a.blockNumber - b.blockNumber
+  );
+
+  console.log(`📋 Total transactions: ${allEvents.length}\n`);
+
+  // Format kết quả
+  const history = [];
+
+  for (const event of allEvents) {
+    const isSent = event.args.from.toLowerCase() === userAddress.toLowerCase();
+    const block = await provider.getBlock(event.blockNumber);
+
+    history.push({
+      type: isSent ? 'SENT' : 'RECEIVED',
+      from: event.args.from,
+      to: event.args.to,
+      amount: ethers.formatUnits(event.args.value, decimals),
+      symbol: symbol,
+      blockNumber: event.blockNumber,
+      timestamp: new Date(Number(block.timestamp) * 1000).toISOString(),
+      txHash: event.transactionHash,
+    });
+  }
+
+  return history;
+}
+
+async function main() {
+  console.log('🚀 Starting Transaction History Builder\n');
+
+  // Lấy address từ command line hoặc dùng default
+  const userAddress = process.argv[2] || '0x28C6c06298d514Db089934071355E5743bf21d60';
+
+  const provider = new ethers.JsonRpcProvider(RPC_URL);
+  const currentBlock = await provider.getBlockNumber();
+  const fromBlock = currentBlock - 1000; // 1000 blocks (~3-4 hours)
+
+  try {
+    const history = await getTransactionHistory(userAddress, fromBlock, currentBlock);
+
+    // Hiển thị lịch sử
+    console.log('📜 Transaction History:');
+    console.log('═'.repeat(120));
+
+    history.forEach((tx, index) => {
+      const icon = tx.type === 'SENT' ? '📤' : '📥';
+      const color = tx.type === 'SENT' ? '\x1b[31m' : '\x1b[32m'; // Red for sent, green for received
+      const reset = '\x1b[0m';
+
+      console.log(`\n${icon} ${color}${tx.type}${reset} - Block ${tx.blockNumber}`);
+      console.log(`   ${tx.type === 'SENT' ? 'To:  ' : 'From:'} ${tx.type === 'SENT' ? tx.to : tx.from}`);
+      console.log(`   Amount: ${tx.amount} ${tx.symbol}`);
+      console.log(`   Time: ${tx.timestamp}`);
+      console.log(`   Tx: ${tx.txHash}`);
+    });
+
+    console.log('\n' + '═'.repeat(120));
+
+    // Thống kê
+    const sent = history.filter(tx => tx.type === 'SENT');
+    const received = history.filter(tx => tx.type === 'RECEIVED');
+
+    const totalSent = sent.reduce((sum, tx) => sum + parseFloat(tx.amount), 0);
+    const totalReceived = received.reduce((sum, tx) => sum + parseFloat(tx.amount), 0);
+
+    console.log(`\n📊 Summary:`);
+    console.log(`   Total transactions: ${history.length}`);
+    console.log(`   Sent: ${sent.length} transactions, ${totalSent.toFixed(2)} USDT`);
+    console.log(`   Received: ${received.length} transactions, ${totalReceived.toFixed(2)} USDT`);
+    console.log(`   Net: ${(totalReceived - totalSent).toFixed(2)} USDT`);
+
+  } catch (error) {
+    console.error('❌ Error:', error.message);
+  }
+
+  console.log('\n✅ Done!');
+}
+
+main().catch(console.error);
+

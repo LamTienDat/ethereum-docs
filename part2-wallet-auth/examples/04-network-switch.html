@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 4: Chuyển Network</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 700px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .status.info {
+            background: #e3f2fd;
+            color: #1976d2;
+            border-left: 4px solid #1976d2;
+        }
+
+        .status.success {
+            background: #e8f5e9;
+            color: #388e3c;
+            border-left: 4px solid #388e3c;
+        }
+
+        .status.error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+
+        .current-network {
+            background: #f5f5f5;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .current-network h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .network-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .network-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .chain-id {
+            font-size: 14px;
+            color: #666;
+            font-family: 'Courier New', monospace;
+        }
+
+        .networks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .network-card {
+            background: #f9f9f9;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .network-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        .network-card.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .network-card h4 {
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+        .network-card p {
+            font-size: 12px;
+            opacity: 0.8;
+            font-family: 'Courier New', monospace;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .steps {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .steps h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .steps ol {
+            margin-left: 20px;
+        }
+
+        .steps li {
+            color: #666;
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #e91e63;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌐 Chuyển Network</h1>
+        <p class="subtitle">Bài 4: Học cách switch và add networks trong MetaMask</p>
+
+        <div id="status" class="status info">
+            Kết nối ví để bắt đầu
+        </div>
+
+        <button id="connectBtn" onclick="connectWallet()">
+            Kết nối MetaMask
+        </button>
+
+        <div id="currentNetwork" class="current-network" style="display: none;">
+            <h3>🌐 Network hiện tại</h3>
+            <div class="network-info">
+                <span class="network-name" id="networkName">-</span>
+                <span class="chain-id" id="chainId">Chain ID: -</span>
+            </div>
+        </div>
+
+        <div id="networksGrid" class="networks-grid" style="display: none;">
+            <!-- Networks sẽ được render bằng JS -->
+        </div>
+
+        <div class="steps">
+            <h3>📚 Những gì bạn sẽ học:</h3>
+            <ol>
+                <li>Detect current network</li>
+                <li>Switch network với <code>wallet_switchEthereumChain</code></li>
+                <li>Add custom network với <code>wallet_addEthereumChain</code></li>
+                <li>Handle network change events</li>
+                <li>Xử lý lỗi khi network không tồn tại</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        const statusDiv = document.getElementById('status');
+        const connectBtn = document.getElementById('connectBtn');
+        const currentNetworkDiv = document.getElementById('currentNetwork');
+        const networksGridDiv = document.getElementById('networksGrid');
+
+        let currentAccount = null;
+        let currentChainId = null;
+
+        // Danh sách networks
+        const networks = [
+            {
+                chainId: '0x1',
+                chainIdNum: 1,
+                name: 'Ethereum Mainnet',
+                rpcUrl: 'https://mainnet.infura.io/v3/YOUR-PROJECT-ID',
+                blockExplorer: 'https://etherscan.io',
+                nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 }
+            },
+            {
+                chainId: '0xaa36a7',
+                chainIdNum: 11155111,
+                name: 'Sepolia Testnet',
+                rpcUrl: 'https://sepolia.infura.io/v3/YOUR-PROJECT-ID',
+                blockExplorer: 'https://sepolia.etherscan.io',
+                nativeCurrency: { name: 'SepoliaETH', symbol: 'ETH', decimals: 18 }
+            },
+            {
+                chainId: '0x89',
+                chainIdNum: 137,
+                name: 'Polygon Mainnet',
+                rpcUrl: 'https://polygon-rpc.com',
+                blockExplorer: 'https://polygonscan.com',
+                nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 }
+            },
+            {
+                chainId: '0x38',
+                chainIdNum: 56,
+                name: 'BSC Mainnet',
+                rpcUrl: 'https://bsc-dataseed.binance.org',
+                blockExplorer: 'https://bscscan.com',
+                nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 }
+            }
+        ];
+
+        function showStatus(message, type = 'info') {
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+        }
+
+        function updateCurrentNetwork(chainIdHex) {
+            const chainIdNum = parseInt(chainIdHex, 16);
+            currentChainId = chainIdNum;
+            
+            const network = networks.find(n => n.chainIdNum === chainIdNum);
+            const networkName = network ? network.name : `Unknown (${chainIdNum})`;
+            
+            document.getElementById('networkName').textContent = networkName;
+            document.getElementById('chainId').textContent = `Chain ID: ${chainIdNum}`;
+            
+            // Update active state
+            renderNetworks();
+        }
+
+        function renderNetworks() {
+            networksGridDiv.innerHTML = networks.map(network => `
+                <div class="network-card ${network.chainIdNum === currentChainId ? 'active' : ''}" 
+                     onclick="switchNetwork('${network.chainId}', ${JSON.stringify(network).replace(/"/g, '&quot;')})">
+                    <h4>${network.name}</h4>
+                    <p>Chain ID: ${network.chainIdNum}</p>
+                </div>
+            `).join('');
+        }
+
+        async function switchNetwork(chainId, network) {
+            console.log('🔄 Switching to network:', chainId);
+            showStatus(`⏳ Đang chuyển sang ${network.name}...`, 'info');
+
+            try {
+                // Thử switch network
+                await window.ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId }],
+                });
+
+                console.log('✅ Switched successfully');
+                showStatus(`✅ Đã chuyển sang ${network.name}`, 'success');
+
+            } catch (error) {
+                console.error('❌ Switch error:', error);
+
+                // Nếu network chưa được add vào MetaMask
+                if (error.code === 4902) {
+                    console.log('⚠️ Network chưa được add, đang thêm...');
+                    
+                    try {
+                        await window.ethereum.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [{
+                                chainId: chainId,
+                                chainName: network.name,
+                                nativeCurrency: network.nativeCurrency,
+                                rpcUrls: [network.rpcUrl],
+                                blockExplorerUrls: [network.blockExplorer]
+                            }]
+                        });
+
+                        console.log('✅ Network added successfully');
+                        showStatus(`✅ Đã thêm và chuyển sang ${network.name}`, 'success');
+
+                    } catch (addError) {
+                        console.error('❌ Add network error:', addError);
+                        showStatus(`❌ Lỗi khi thêm network: ${addError.message}`, 'error');
+                    }
+                } else if (error.code === 4001) {
+                    showStatus('❌ Bạn đã từ chối chuyển network', 'error');
+                } else {
+                    showStatus(`❌ Lỗi: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        async function connectWallet() {
+            if (typeof window.ethereum === 'undefined') {
+                showStatus('❌ MetaMask chưa được cài đặt!', 'error');
+                return;
+            }
+
+            try {
+                connectBtn.disabled = true;
+                connectBtn.textContent = 'Đang kết nối...';
+
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_requestAccounts' 
+                });
+
+                currentAccount = accounts[0];
+                console.log('✅ Connected:', currentAccount);
+
+                // Get current chain
+                const chainId = await window.ethereum.request({ 
+                    method: 'eth_chainId' 
+                });
+
+                updateCurrentNetwork(chainId);
+
+                currentNetworkDiv.style.display = 'block';
+                networksGridDiv.style.display = 'grid';
+                connectBtn.style.display = 'none';
+                
+                showStatus('✅ Đã kết nối! Chọn network để chuyển', 'success');
+
+            } catch (error) {
+                console.error('❌ Connection error:', error);
+                showStatus(`❌ Lỗi: ${error.message}`, 'error');
+                connectBtn.disabled = false;
+                connectBtn.textContent = 'Kết nối MetaMask';
+            }
+        }
+
+        // Listen to chain changes
+        if (typeof window.ethereum !== 'undefined') {
+            window.ethereum.on('chainChanged', (chainId) => {
+                console.log('🌐 Chain changed:', chainId);
+                updateCurrentNetwork(chainId);
+                showStatus('✅ Network đã được chuyển', 'success');
+            });
+
+            window.ethereum.on('accountsChanged', (accounts) => {
+                if (accounts.length === 0) {
+                    location.reload();
+                }
+            });
+        }
+
+        // Check if already connected
+        window.addEventListener('load', async () => {
+            if (typeof window.ethereum !== 'undefined') {
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_accounts' 
+                });
+
+                if (accounts.length > 0) {
+                    currentAccount = accounts[0];
+                    const chainId = await window.ethereum.request({ 
+                        method: 'eth_chainId' 
+                    });
+                    
+                    updateCurrentNetwork(chainId);
+                    currentNetworkDiv.style.display = 'block';
+                    networksGridDiv.style.display = 'grid';
+                    connectBtn.style.display = 'none';
+                    showStatus('✅ Đã kết nối! Chọn network để chuyển', 'success');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+
