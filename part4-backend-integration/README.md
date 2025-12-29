@@ -1,77 +1,77 @@
-# Phần 4: Tích hợp Off-chain (Backend Node.js)
+# Part 4: Off-chain Integration (Backend Node.js)
 
-Project ví dụ về tích hợp Ethereum với Backend Node.js, bao gồm quản lý wallet, gửi transaction tự động, RPC provider management, và monitoring.
+Example project for integrating Ethereum with Backend Node.js, including wallet management, automated transaction sending, RPC provider management, and monitoring.
 
-## 📋 Mục lục
+## 📋 Table of Contents
 
-- [Tổng quan](#tổng-quan)
-- [Cài đặt](#cài-đặt)
-- [Cấu hình](#cấu-hình)
-- [Các ví dụ](#các-ví-dụ)
+- [Overview](#overview)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Examples](#examples)
 - [WalletManager Class](#walletmanager-class)
 - [Best Practices](#best-practices)
 - [Troubleshooting](#troubleshooting)
 
-## 🎯 Tổng quan
+## 🎯 Overview
 
-Backend đóng vai trò quan trọng trong hệ thống blockchain, xử lý các tác vụ:
+Backend plays a crucial role in blockchain systems, handling tasks such as:
 
-- ✅ Tự động gửi transaction
-- ✅ Quản lý private keys an toàn
-- ✅ Monitor events và balance
-- ✅ Xử lý retry logic và error handling
-- ✅ Integration với database và services khác
+- ✅ Automated transaction sending
+- ✅ Secure private key management
+- ✅ Event and balance monitoring
+- ✅ Retry logic and error handling
+- ✅ Integration with database and other services
 
-### Kiến thức học được
+### What You'll Learn
 
 1. **Backend Wallet Management**
-   - Tạo wallet từ private key
-   - Quản lý nhiều wallets
+   - Create wallet from private key
+   - Manage multiple wallets
    - Security best practices
 
 2. **RPC Provider**
-   - Các loại provider (Alchemy, Infura, Public RPC)
-   - FallbackProvider cho high availability
+   - Types of providers (Alchemy, Infura, Public RPC)
+   - FallbackProvider for high availability
    - Performance optimization
 
 3. **Transaction Management**
-   - Gửi ETH và ERC20 tokens
+   - Send ETH and ERC20 tokens
    - Gas estimation
    - Nonce management
    - Retry logic
 
 4. **Monitoring & Alerting**
-   - Monitor balance tự động
-   - Alert khi số dư thấp
-   - Logging và reporting
+   - Automated balance monitoring
+   - Low balance alerts
+   - Logging and reporting
 
-## 🚀 Cài đặt
+## 🚀 Installation
 
-### Yêu cầu
+### Requirements
 
 - Node.js >= 16.0.0
-- npm hoặc pnpm
-- Ethereum wallet với testnet ETH (Sepolia)
+- npm or pnpm
+- Ethereum wallet with testnet ETH (Sepolia)
 
-### Các bước cài đặt
+### Installation Steps
 
 ```bash
-# 1. Di chuyển vào thư mục
+# 1. Navigate to directory
 cd part4-backend-integration
 
-# 2. Cài đặt dependencies
+# 2. Install dependencies
 npm install
 
-# 3. Copy file .env.example
+# 3. Copy .env.example file
 cp .env.example .env
 
-# 4. Chỉnh sửa .env với thông tin của bạn
+# 4. Edit .env with your information
 nano .env
 ```
 
-## ⚙️ Cấu hình
+## ⚙️ Configuration
 
-### File `.env`
+### `.env` File
 
 ```bash
 # RPC Provider URL
@@ -93,146 +93,146 @@ MONITOR_INTERVAL=30000
 MIN_BALANCE_ALERT=0.1
 ```
 
-### 🔐 Bảo mật Private Key
+### 🔐 Private Key Security
 
-**⚠️ QUAN TRỌNG:**
+**⚠️ IMPORTANT:**
 
-- **KHÔNG BAO GIỜ** commit private key lên Git
-- File `.env` đã được thêm vào `.gitignore`
-- Trong production, dùng secret management:
+- **NEVER** commit private key to Git
+- `.env` file is already added to `.gitignore`
+- In production, use secret management:
   - AWS Secrets Manager
   - HashiCorp Vault
   - Azure Key Vault
   - Google Secret Manager
 
-### Lấy Testnet ETH
+### Get Testnet ETH
 
 Sepolia Testnet:
 - [Alchemy Sepolia Faucet](https://sepoliafaucet.com/)
 - [Infura Sepolia Faucet](https://www.infura.io/faucet/sepolia)
 - [QuickNode Faucet](https://faucet.quicknode.com/ethereum/sepolia)
 
-### Đăng ký RPC Provider (Miễn phí)
+### Register RPC Provider (Free)
 
-1. **Alchemy** (Khuyến nghị): https://www.alchemy.com/
-   - Đăng ký → Tạo app → Copy API key
+1. **Alchemy** (Recommended): https://www.alchemy.com/
+   - Sign up → Create app → Copy API key
 
 2. **Infura**: https://infura.io/
-   - Đăng ký → Tạo project → Copy API key
+   - Sign up → Create project → Copy API key
 
-## 📚 Các ví dụ
+## 📚 Examples
 
-### Ví dụ 1: Wallet cơ bản
+### Example 1: Basic Wallet
 
-Học cách tạo wallet và kiểm tra thông tin.
+Learn how to create a wallet and check information.
 
 ```bash
 npm run wallet
 ```
 
-**Nội dung:**
-- Kết nối RPC Provider
-- Tạo wallet từ private key
-- Kiểm tra số dư ETH
-- Lấy thông tin blockchain
+**Content:**
+- Connect to RPC Provider
+- Create wallet from private key
+- Check ETH balance
+- Get blockchain information
 
 **File:** `examples/01-wallet-basic.js`
 
 ---
 
-### Ví dụ 2: Gửi ETH
+### Example 2: Send ETH
 
-Học cách gửi ETH từ backend.
+Learn how to send ETH from backend.
 
 ```bash
 npm run send-eth
-# Hoặc chỉ định số lượng
+# Or specify amount
 node examples/02-send-eth.js 0.01
 ```
 
-**Nội dung:**
-- Kiểm tra số dư trước khi gửi
-- Ước tính gas fee
-- Gửi transaction
-- Chờ confirmation
+**Content:**
+- Check balance before sending
+- Estimate gas fee
+- Send transaction
+- Wait for confirmation
 
 **File:** `examples/02-send-eth.js`
 
-⚠️ **Lưu ý:** Mặc định là DRY RUN (không gửi thật). Bỏ comment code để gửi thật.
+⚠️ **Note:** Default is DRY RUN (doesn't actually send). Uncomment code to send for real.
 
 ---
 
-### Ví dụ 3: Gửi ERC20 Token
+### Example 3: Send ERC20 Token
 
-Học cách gửi ERC20 token.
+Learn how to send ERC20 tokens.
 
 ```bash
 npm run send-token
 
-# Hoặc chỉ định token và số lượng
+# Or specify token and amount
 node examples/03-send-token.js <token_address> <recipient> <amount>
 ```
 
-**Nội dung:**
-- Kết nối với ERC20 contract
-- Lấy thông tin token (name, symbol, decimals)
-- Kiểm tra số dư token
-- Gửi token với amount đúng decimals
+**Content:**
+- Connect to ERC20 contract
+- Get token info (name, symbol, decimals)
+- Check token balance
+- Send token with correct decimals
 
 **File:** `examples/03-send-token.js`
 
 ---
 
-### Ví dụ 4: WalletManager Class
+### Example 4: WalletManager Class
 
-Demo WalletManager class với đầy đủ tính năng.
+Demo WalletManager class with full features.
 
 ```bash
 npm run wallet-manager
 ```
 
-**Nội dung:**
-- Quản lý wallet chuyên nghiệp
-- Kiểm tra số dư ETH và Token
-- Ước tính gas
-- Sign message và verify
+**Content:**
+- Professional wallet management
+- Check ETH and Token balance
+- Estimate gas
+- Sign message and verify
 - Validate address
 
 **File:** `examples/04-wallet-manager.js`
 
 ---
 
-### Ví dụ 5: RPC Provider
+### Example 5: RPC Provider
 
-Học các loại RPC provider và FallbackProvider.
+Learn about RPC provider types and FallbackProvider.
 
 ```bash
 npm run rpc-provider
 ```
 
-**Nội dung:**
+**Content:**
 - JsonRpcProvider
 - AlchemyProvider
 - InfuraProvider
 - FallbackProvider (high availability)
-- So sánh performance
+- Performance comparison
 
 **File:** `examples/05-rpc-provider.js`
 
 ---
 
-### Ví dụ 6: Retry Logic
+### Example 6: Retry Logic
 
-Học cách xử lý lỗi và retry với exponential backoff.
+Learn how to handle errors and retry with exponential backoff.
 
 ```bash
 npm run retry-logic
 ```
 
-**Nội dung:**
-- Retry cơ bản
+**Content:**
+- Basic retry
 - Exponential backoff
-- Phân loại lỗi (retryable vs non-retryable)
+- Error classification (retryable vs non-retryable)
 - Timeout handling
 - Rate limiting
 
@@ -240,31 +240,31 @@ npm run retry-logic
 
 ---
 
-### Ví dụ 7: Monitor Balance
+### Example 7: Monitor Balance
 
-Monitor số dư và alert tự động.
+Monitor balance and automated alerts.
 
 ```bash
 npm run monitor
 ```
 
-**Nội dung:**
-- Monitor balance định kỳ
-- Track thay đổi số dư
-- Alert khi số dư thấp
+**Content:**
+- Periodic balance monitoring
+- Track balance changes
+- Low balance alerts
 - Logging best practices
 
 **File:** `examples/07-monitor-balance.js`
 
-⚠️ **Lưu ý:** Script sẽ chạy trong 2 phút rồi tự động dừng. Nhấn `Ctrl+C` để dừng sớm.
+⚠️ **Note:** Script will run for 2 minutes then automatically stop. Press `Ctrl+C` to stop early.
 
 ---
 
 ## 🏗️ WalletManager Class
 
-Class quản lý wallet production-ready với đầy đủ tính năng.
+Production-ready wallet management class with full features.
 
-### Khởi tạo
+### Initialization
 
 ```javascript
 const WalletManager = require('./src/WalletManager');
@@ -275,28 +275,28 @@ const walletManager = new WalletManager(
 );
 ```
 
-### Các method chính
+### Main Methods
 
 #### Balance Management
 
 ```javascript
-// Lấy số dư ETH
+// Get ETH balance
 const balance = await walletManager.getBalance();
 
-// Lấy số dư token
+// Get token balance
 const tokenBalance = await walletManager.getTokenBalance(tokenAddress);
 
-// Lấy thông tin token
+// Get token info
 const tokenInfo = await walletManager.getTokenInfo(tokenAddress);
 ```
 
 #### Send Transactions
 
 ```javascript
-// Gửi ETH
+// Send ETH
 const result = await walletManager.sendETH(toAddress, '0.1');
 
-// Gửi Token
+// Send Token
 const result = await walletManager.sendToken(
   tokenAddress,
   toAddress,
@@ -307,13 +307,13 @@ const result = await walletManager.sendToken(
 #### Gas & Estimation
 
 ```javascript
-// Ước tính gas
+// Estimate gas
 const gasEstimate = await walletManager.estimateGas(
   toAddress,
   ethers.parseEther('0.1')
 );
 
-// Lấy fee data
+// Get fee data
 const feeData = await walletManager.getFeeData();
 ```
 
@@ -357,7 +357,7 @@ const isValid = WalletManager.isValidAddress(address);
 const formatted = WalletManager.formatAddress(address);
 ```
 
-### Xem thêm
+### See More
 
 File: `src/WalletManager.js`
 
@@ -365,7 +365,7 @@ File: `src/WalletManager.js`
 
 ## 🔧 Retry Utilities
 
-Helper functions cho retry logic.
+Helper functions for retry logic.
 
 ```javascript
 const {
@@ -383,7 +383,7 @@ const result = await callWithRetry(
   1000   // initial delay
 );
 
-// RPC retry với options
+// RPC retry with options
 const blockNumber = await rpcCallWithRetry(
   () => provider.getBlockNumber(),
   {
@@ -402,143 +402,143 @@ File: `utils/retry.js`
 
 ### 1. Security
 
-- ✅ Store private keys trong environment variables
-- ✅ Sử dụng `.gitignore` cho `.env`
-- ✅ Encrypt private keys trong database
-- ✅ Dùng secret management service (production)
-- ✅ Rotate keys định kỳ
-- ✅ Separate hot wallet và cold wallet
+- ✅ Store private keys in environment variables
+- ✅ Use `.gitignore` for `.env`
+- ✅ Encrypt private keys in database
+- ✅ Use secret management service (production)
+- ✅ Rotate keys regularly
+- ✅ Separate hot wallet and cold wallet
 
 ### 2. RPC Provider
 
-- ✅ Dùng Alchemy/Infura cho production
+- ✅ Use Alchemy/Infura for production
 - ✅ Implement FallbackProvider
 - ✅ Monitor rate limits
-- ✅ Cache kết quả khi có thể
+- ✅ Cache results when possible
 - ✅ Implement retry logic
 - ✅ Set appropriate timeouts
 
 ### 3. Transaction Management
 
-- ✅ Validate input trước khi gửi
-- ✅ Kiểm tra số dư trước transaction
-- ✅ Ước tính gas chính xác
+- ✅ Validate input before sending
+- ✅ Check balance before transaction
+- ✅ Estimate gas accurately
 - ✅ Handle nonce properly
-- ✅ Implement retry cho network errors
+- ✅ Implement retry for network errors
 - ✅ Wait for confirmations
-- ✅ Log tất cả transactions
+- ✅ Log all transactions
 
 ### 4. Error Handling
 
-- ✅ Phân loại lỗi (retryable vs fatal)
-- ✅ Exponential backoff cho retry
-- ✅ Set max retries phù hợp
-- ✅ Log chi tiết errors
-- ✅ Alert cho critical errors
+- ✅ Classify errors (retryable vs fatal)
+- ✅ Exponential backoff for retry
+- ✅ Set appropriate max retries
+- ✅ Log detailed errors
+- ✅ Alert for critical errors
 - ✅ Handle edge cases
 
 ### 5. Monitoring
 
-- ✅ Monitor balance định kỳ
+- ✅ Monitor balance regularly
 - ✅ Track gas prices
-- ✅ Alert khi số dư thấp
-- ✅ Log tất cả operations
-- ✅ Metrics và dashboards
+- ✅ Alert on low balance
+- ✅ Log all operations
+- ✅ Metrics and dashboards
 - ✅ Health checks
 
 ### 6. Performance
 
 - ✅ Cache token info
-- ✅ Batch requests khi có thể
+- ✅ Batch requests when possible
 - ✅ Use connection pooling
 - ✅ Optimize RPC calls
 - ✅ Implement rate limiting
-- ✅ Load balancing cho multiple providers
+- ✅ Load balancing for multiple providers
 
 ---
 
 ## 🐛 Troubleshooting
 
-### Lỗi kết nối RPC
+### RPC Connection Error
 
-**Triệu chứng:**
+**Symptoms:**
 ```
 Error: could not detect network
 Error: NETWORK_ERROR
 ```
 
-**Giải pháp:**
-1. Kiểm tra `RPC_URL` trong `.env`
-2. Verify API key còn hiệu lực
+**Solutions:**
+1. Check `RPC_URL` in `.env`
+2. Verify API key is still valid
 3. Check rate limits
-4. Thử provider khác
+4. Try different provider
 5. Implement FallbackProvider
 
 ---
 
 ### Insufficient funds
 
-**Triệu chứng:**
+**Symptoms:**
 ```
 Error: insufficient funds for gas * price + value
 ```
 
-**Giải pháp:**
-1. Kiểm tra số dư ETH
-2. Lấy testnet ETH từ faucet
-3. Giảm gas price nếu có thể
+**Solutions:**
+1. Check ETH balance
+2. Get testnet ETH from faucet
+3. Reduce gas price if possible
 4. Check gas estimation
 
 ---
 
 ### Nonce too low
 
-**Triệu chứng:**
+**Symptoms:**
 ```
 Error: nonce has already been used
 Error: replacement transaction underpriced
 ```
 
-**Giải pháp:**
-1. Đợi transaction trước complete
-2. Lấy nonce mới: `getTransactionCount('pending')`
-3. Không gửi nhiều tx cùng lúc
+**Solutions:**
+1. Wait for previous transaction to complete
+2. Get new nonce: `getTransactionCount('pending')`
+3. Don't send multiple tx at once
 4. Implement nonce management
 
 ---
 
 ### Rate limit exceeded
 
-**Triệu chứng:**
+**Symptoms:**
 ```
 Error: rate limit exceeded
 Error: 429 Too Many Requests
 ```
 
-**Giải pháp:**
+**Solutions:**
 1. Upgrade RPC provider plan
 2. Implement rate limiting
 3. Cache results
-4. Sử dụng multiple providers
-5. Add delays giữa requests
+4. Use multiple providers
+5. Add delays between requests
 
 ---
 
 ### Transaction timeout
 
-**Triệu chứng:**
-- Transaction không được confirm sau lâu
+**Symptoms:**
+- Transaction not confirmed after long time
 - Stuck pending
 
-**Giải pháp:**
-1. Check gas price có đủ cao không
-2. Tăng `maxFeePerGas` và `maxPriorityFeePerGas`
-3. Replace transaction với gas price cao hơn
-4. Wait thêm thời gian (có thể đợi nhiều blocks)
+**Solutions:**
+1. Check if gas price is high enough
+2. Increase `maxFeePerGas` and `maxPriorityFeePerGas`
+3. Replace transaction with higher gas price
+4. Wait longer (may take many blocks)
 
 ---
 
-## 📖 Tài liệu tham khảo
+## 📖 References
 
 - [Ethers.js Documentation](https://docs.ethers.org/v6/)
 - [Alchemy Documentation](https://docs.alchemy.com/)
@@ -548,27 +548,27 @@ Error: 429 Too Many Requests
 
 ---
 
-## 📝 Ghi chú
+## 📝 Notes
 
 ### Testing
 
-Tất cả ví dụ mặc định chạy trên **Sepolia Testnet**. Để chuyển sang mainnet:
+All examples run on **Sepolia Testnet** by default. To switch to mainnet:
 
-1. Đổi `RPC_URL` trong `.env`
-2. Đảm bảo wallet có ETH thật
-3. Test kỹ trước khi deploy
+1. Change `RPC_URL` in `.env`
+2. Ensure wallet has real ETH
+3. Test thoroughly before deployment
 4. **CAREFUL**: Mainnet = Real money!
 
 ### Production Deployment
 
-Khi deploy production:
+When deploying to production:
 
-- [ ] Sử dụng secret management service
-- [ ] Setup monitoring và alerting
+- [ ] Use secret management service
+- [ ] Setup monitoring and alerting
 - [ ] Implement proper logging
-- [ ] Database cho tracking transactions
-- [ ] Load balancing cho RPC calls
-- [ ] Backup và recovery plan
+- [ ] Database for tracking transactions
+- [ ] Load balancing for RPC calls
+- [ ] Backup and recovery plan
 - [ ] Security audit
 - [ ] Rate limiting
 - [ ] Error tracking (Sentry)
@@ -576,9 +576,9 @@ Khi deploy production:
 
 ---
 
-## 🤝 Đóng góp
+## 🤝 Contributing
 
-Nếu bạn tìm thấy bug hoặc có suggestions, vui lòng tạo issue hoặc pull request.
+If you find bugs or have suggestions, please create an issue or pull request.
 
 ---
 
@@ -588,12 +588,11 @@ MIT
 
 ---
 
-## 🎓 Học tiếp
+## 🎓 Next Steps
 
-- **Phần 5**: Nhập môn Bảo mật và Kiểm toán
-- **Phần 6**: Bài tập tổng hợp
+- **Part 5**: Introduction to Security and Auditing
+- **Part 6**: Comprehensive Exercise
 
 ---
 
 **Happy Coding! 🚀**
-

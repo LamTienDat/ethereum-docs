@@ -1,189 +1,189 @@
-# Phần 1: Chuyển tiền và Nghiệp vụ giao dịch (Transaction)
+# Part 1: Money Transfer and Transaction Operations
 
-Ví dụ thực hành về cơ chế chuyển tiền trên Ethereum testnet.
+Practical examples of money transfer mechanisms on Ethereum testnet.
 
-## 📋 Mục tiêu học tập
+## 📋 Learning Objectives
 
-- Hiểu sự khác biệt giữa chuyển ETH và ERC20 token
-- Thực hành `transfer`, `approve`, `transferFrom`
-- Quan sát Nonce, Gas, và Confirmations
-- Deploy và tương tác với smart contract thực tế
+- Understand the difference between ETH and ERC20 token transfers
+- Practice `transfer`, `approve`, `transferFrom`
+- Observe Nonce, Gas, and Confirmations
+- Deploy and interact with real smart contracts
 
-## 🛠️ Công nghệ sử dụng
+## 🛠️ Technologies Used
 
 - **Network**: Sepolia Testnet
 - **Framework**: Hardhat
 - **Library**: Ethers.js v6
 - **Language**: Solidity 0.8.20, JavaScript
 
-## 📁 Cấu trúc thư mục
+## 📁 Directory Structure
 
 ```
 part1-transactions/
 ├── contracts/
-│   └── SimpleERC20.sol          # Smart contract ERC20 đơn giản
+│   └── SimpleERC20.sol          # Simple ERC20 smart contract
 ├── scripts/
 │   ├── 01-deploy.js             # Deploy contract
-│   ├── 02-transfer-eth.js       # Demo chuyển ETH
-│   ├── 03-transfer-erc20.js     # Demo transfer ERC20
+│   ├── 02-transfer-eth.js       # Demo ETH transfer
+│   ├── 03-transfer-erc20.js     # Demo ERC20 transfer
 │   ├── 04-approve-transferFrom.js # Demo approve/transferFrom
 │   ├── 05-nonce-demo.js         # Demo Nonce
 │   ├── 06-gas-estimation.js     # Demo Gas estimation
 │   └── 07-confirmations.js      # Demo Confirmations
 ├── test/
 │   └── SimpleERC20.test.js      # Unit tests
-├── .env.example                 # Template cho environment variables
+├── .env.example                 # Template for environment variables
 ├── hardhat.config.js            # Hardhat configuration
 ├── package.json
 └── README.md
 ```
 
-## 🚀 Hướng dẫn cài đặt
+## 🚀 Installation Guide
 
-### 1. Cài đặt dependencies
+### 1. Install dependencies
 
 ```bash
 cd part1-transactions
 npm install
 ```
 
-### 2. Cấu hình môi trường
+### 2. Environment configuration
 
-Tạo file `.env` từ `.env.example`:
+Create `.env` file from `.env.example`:
 
 ```bash
 cp .env.example .env
 ```
 
-Điền thông tin vào `.env`:
+Fill in the information in `.env`:
 
 ```env
-# Sepolia RPC URL (lấy từ Alchemy hoặc Infura)
+# Sepolia RPC URL (get from Alchemy or Infura)
 SEPOLIA_RPC_URL=https://eth-sepolia.g.alchemy.com/v2/YOUR_API_KEY
 
-# Private key của ví test (KHÔNG BAO GIỜ dùng ví thật!)
+# Private key of test wallet (NEVER use real wallet!)
 PRIVATE_KEY=your_private_key_here
 
-# Etherscan API key (để verify contract)
+# Etherscan API key (to verify contract)
 ETHERSCAN_API_KEY=your_etherscan_api_key
 ```
 
-### 3. Lấy Sepolia ETH (Testnet)
+### 3. Get Sepolia ETH (Testnet)
 
-Truy cập các faucets sau để lấy ETH test:
+Visit these faucets to get test ETH:
 
 - https://sepoliafaucet.com/
 - https://www.alchemy.com/faucets/ethereum-sepolia
 - https://faucet.quicknode.com/ethereum/sepolia
 
-## 📝 Các bài thực hành
+## 📝 Practice Exercises
 
-### Bài 1: Deploy Smart Contract
+### Exercise 1: Deploy Smart Contract
 
 ```bash
 npx hardhat run scripts/01-deploy.js --network sepolia
 ```
 
-**Học được:**
+**What you'll learn:**
 
-- Cách deploy smart contract lên testnet
-- Gas cost cho deployment
-- Verify contract trên Etherscan
+- How to deploy smart contract to testnet
+- Gas cost for deployment
+- Verify contract on Etherscan
 
-### Bài 2: Chuyển ETH
+### Exercise 2: Transfer ETH
 
 ```bash
 npx hardhat run scripts/02-transfer-eth.js --network sepolia
 ```
 
-**Học được:**
+**What you'll learn:**
 
-- Cơ chế chuyển native token (ETH)
-- Gas cost cho ETH transfer (~21,000 gas)
-- Transaction receipt và block confirmation
+- Native token (ETH) transfer mechanism
+- Gas cost for ETH transfer (~21,000 gas)
+- Transaction receipt and block confirmation
 
-### Bài 3: Transfer ERC20
+### Exercise 3: Transfer ERC20
 
 ```bash
 npx hardhat run scripts/03-transfer-erc20.js --network sepolia
 ```
 
-**Học được:**
+**What you'll learn:**
 
-- Cách gọi hàm `transfer()` của ERC20
-- Gas cost cho ERC20 transfer (~50,000-65,000 gas)
-- So sánh với ETH transfer
+- How to call ERC20 `transfer()` function
+- Gas cost for ERC20 transfer (~50,000-65,000 gas)
+- Comparison with ETH transfer
 
-### Bài 4: Approve và TransferFrom
+### Exercise 4: Approve and TransferFrom
 
 ```bash
 npx hardhat run scripts/04-approve-transferFrom.js --network sepolia
 ```
 
-**Học được:**
+**What you'll learn:**
 
-- Flow của approve/transferFrom
+- Flow of approve/transferFrom
 - Use case: DEX, payment gateway
-- Kiểm tra allowance
+- Check allowance
 
-### Bài 5: Nonce Demo
+### Exercise 5: Nonce Demo
 
 ```bash
 npx hardhat run scripts/05-nonce-demo.js --network sepolia
 ```
 
-**Học được:**
+**What you'll learn:**
 
-- Nonce là gì và tại sao quan trọng
-- Stuck transaction và cách fix
+- What is nonce and why it's important
+- Stuck transaction and how to fix
 - Parallel transactions
 
-### Bài 6: Gas Estimation
+### Exercise 6: Gas Estimation
 
 ```bash
 npx hardhat run scripts/06-gas-estimation.js --network sepolia
 ```
 
-**Học được:**
+**What you'll learn:**
 
-- Estimate gas trước khi gửi transaction
+- Estimate gas before sending transaction
 - EIP-1559: Base Fee + Priority Fee
-- Xử lý gas tự động vs manual
+- Automatic vs manual gas handling
 
-### Bài 7: Confirmations
+### Exercise 7: Confirmations
 
 ```bash
 npx hardhat run scripts/07-confirmations.js --network sepolia
 ```
 
-**Học được:**
+**What you'll learn:**
 
-- Đợi confirmations
-- Tại sao cần nhiều confirmations
+- Wait for confirmations
+- Why multiple confirmations are needed
 - Re-org attack
 
-## 🧪 Chạy Tests
+## 🧪 Run Tests
 
 ```bash
-# Chạy tất cả tests
+# Run all tests
 npx hardhat test
 
-# Chạy với coverage
+# Run with coverage
 npx hardhat coverage
 
-# Chạy test cụ thể
+# Run specific test
 npx hardhat test test/SimpleERC20.test.js
 ```
 
-## 📊 Kết quả mong đợi
+## 📊 Expected Results
 
-Sau khi hoàn thành các bài thực hành, bạn sẽ:
+After completing the exercises, you will:
 
-✅ Hiểu rõ sự khác biệt ETH vs ERC20  
-✅ Biết cách sử dụng transfer/approve/transferFrom  
-✅ Hiểu Nonce và cách xử lý stuck transactions  
-✅ Biết estimate và optimize gas  
-✅ Hiểu confirmations và transaction finality
+✅ Understand the difference between ETH vs ERC20  
+✅ Know how to use transfer/approve/transferFrom  
+✅ Understand Nonce and how to handle stuck transactions  
+✅ Know how to estimate and optimize gas  
+✅ Understand confirmations and transaction finality
 
 ## 🔗 Resources
 
@@ -193,38 +193,38 @@ Sau khi hoàn thành các bài thực hành, bạn sẽ:
 - [Hardhat Documentation](https://hardhat.org/docs)
 - [Ethers.js v6 Documentation](https://docs.ethers.org/v6/)
 
-## ⚠️ Lưu ý quan trọng
+## ⚠️ Important Notes
 
-1. **KHÔNG BAO GIỜ** push private key lên Git
-2. Chỉ sử dụng ví test, không dùng ví chứa tiền thật
-3. Sepolia ETH không có giá trị, có thể xin miễn phí
-4. Mỗi transaction cần đợi ~12 giây để được confirm
+1. **NEVER** push private key to Git
+2. Only use test wallet, don't use wallet with real money
+3. Sepolia ETH has no value, can be obtained for free
+4. Each transaction needs to wait ~12 seconds to be confirmed
 
 ## 🆘 Troubleshooting
 
-### Lỗi: "insufficient funds for gas"
+### Error: "insufficient funds for gas"
 
-- Cần xin thêm Sepolia ETH từ faucet
+- Need to get more Sepolia ETH from faucet
 
-### Lỗi: "nonce too low"
+### Error: "nonce too low"
 
 - Reset MetaMask: Settings → Advanced → Clear activity tab data
 
-### Lỗi: "replacement transaction underpriced"
+### Error: "replacement transaction underpriced"
 
-- Tăng gas price hoặc đợi transaction cũ complete
+- Increase gas price or wait for old transaction to complete
 
-### Transaction bị stuck
+### Transaction stuck
 
-- Xem script `05-nonce-demo.js` để học cách fix
+- See script `05-nonce-demo.js` to learn how to fix
 
-## 📞 Hỗ trợ
+## 📞 Support
 
-Nếu gặp vấn đề, tham khảo:
+If you encounter issues, refer to:
 
 - [Hardhat Discord](https://hardhat.org/discord)
 - [Ethereum Stack Exchange](https://ethereum.stackexchange.com/)
-- Documentation trong từng script
+- Documentation in each script
 
 ---
 

@@ -1,15 +1,15 @@
 /**
  * Script 5: Filtered Real-time Listener
  * 
- * Demo cách lắng nghe events với filter (chỉ địa chỉ cụ thể)
+ * Demo how to listen to events with filter (specific address only)
  * 
- * Chạy: node 05-filter-listener.js <ADDRESS>
- * (Ctrl+C để dừng)
+ * Run: node 05-filter-listener.js <ADDRESS>
+ * (Ctrl+C to stop)
  */
 
 import { ethers } from 'ethers';
 
-// Cấu hình
+// Configuration
 const RPC_URL = 'wss://eth.llamarpc.com';
 const USDT_ADDRESS = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
 
@@ -22,7 +22,7 @@ const ERC20_ABI = [
 async function main() {
   console.log('🚀 Starting Filtered Real-time Listener\n');
 
-  // Lấy address từ command line hoặc dùng default (Binance)
+  // Get address from command line or use default (Binance)
   const watchAddress = process.argv[2] || '0x28C6c06298d514Db089934071355E5743bf21d60';
 
   const provider = new ethers.WebSocketProvider(RPC_URL);
@@ -42,7 +42,7 @@ async function main() {
   let incomingVolume = 0n;
   let outgoingVolume = 0n;
 
-  // Lắng nghe giao dịch NHẬN VÀO
+  // Listen to INCOMING transactions
   const incomingFilter = contract.filters.Transfer(null, watchAddress);
   contract.on(incomingFilter, async (from, to, value, event) => {
     incomingCount++;
@@ -59,7 +59,7 @@ async function main() {
     console.log('─'.repeat(100));
   });
 
-  // Lắng nghe giao dịch GỬI ĐI
+  // Listen to OUTGOING transactions
   const outgoingFilter = contract.filters.Transfer(watchAddress, null);
   contract.on(outgoingFilter, async (from, to, value, event) => {
     outgoingCount++;
@@ -76,7 +76,7 @@ async function main() {
     console.log('─'.repeat(100));
   });
 
-  // Hiển thị thống kê mỗi 60 giây
+  // Display statistics every 60 seconds
   setInterval(() => {
     console.log(`\n📊 Statistics for ${watchAddress}:`);
     console.log(`   Incoming: ${incomingCount} transfers, ${ethers.formatUnits(incomingVolume, decimals)} ${symbol}`);
@@ -86,7 +86,7 @@ async function main() {
     console.log('─'.repeat(100));
   }, 60000);
 
-  // Xử lý khi dừng
+  // Handle stop
   process.on('SIGINT', () => {
     console.log('\n\n🛑 Stopping listener...');
     console.log(`\n📊 Final Statistics:`);

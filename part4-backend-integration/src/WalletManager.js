@@ -1,12 +1,12 @@
 /**
  * WalletManager Class - Production Ready
  * 
- * Class quản lý wallet với các tính năng:
- * - Kiểm tra số dư ETH và Token
- * - Gửi ETH và Token
- * - Ước tính gas
- * - Lấy transaction history
- * - Error handling và retry logic
+ * Wallet management class with features:
+ * - Check ETH and Token balance
+ * - Send ETH and Token
+ * - Estimate gas
+ * - Get transaction history
+ * - Error handling and retry logic
  */
 
 require('dotenv').config();
@@ -14,26 +14,26 @@ const { ethers } = require('ethers');
 
 class WalletManager {
   /**
-   * Khởi tạo WalletManager
-   * @param {string} rpcUrl - URL của RPC provider
-   * @param {string} privateKey - Private key của wallet
+   * Initialize WalletManager
+   * @param {string} rpcUrl - RPC provider URL
+   * @param {string} privateKey - Wallet private key
    */
   constructor(rpcUrl, privateKey) {
     if (!rpcUrl || !privateKey) {
-      throw new Error('RPC URL và Private Key là bắt buộc');
+      throw new Error('RPC URL and Private Key are required');
     }
 
     this.provider = new ethers.JsonRpcProvider(rpcUrl);
     this.wallet = new ethers.Wallet(privateKey, this.provider);
     this.address = this.wallet.address;
 
-    // Cache để tối ưu performance
+    // Cache for performance optimization
     this.networkCache = null;
     this.tokenInfoCache = new Map();
   }
 
   /**
-   * Lấy thông tin network
+   * Get network information
    * @returns {Promise<Object>}
    */
   async getNetwork() {
@@ -44,20 +44,20 @@ class WalletManager {
   }
 
   /**
-   * Lấy số dư ETH
-   * @returns {Promise<string>} Số dư dạng ETH
+   * Get ETH balance
+   * @returns {Promise<string>} Balance in ETH format
    */
   async getBalance() {
     try {
       const balance = await this.provider.getBalance(this.address);
       return ethers.formatEther(balance);
     } catch (error) {
-      throw new Error(`Lỗi khi lấy số dư ETH: ${error.message}`);
+      throw new Error(`Error getting ETH balance: ${error.message}`);
     }
   }
 
   /**
-   * Lấy số dư ETH dạng raw (wei)
+   * Get raw ETH balance (wei)
    * @returns {Promise<BigInt>}
    */
   async getBalanceRaw() {
@@ -65,12 +65,12 @@ class WalletManager {
   }
 
   /**
-   * Lấy thông tin token
-   * @param {string} tokenAddress - Địa chỉ token contract
+   * Get token information
+   * @param {string} tokenAddress - Token contract address
    * @returns {Promise<Object>}
    */
   async getTokenInfo(tokenAddress) {
-    // Kiểm tra cache
+    // Check cache
     if (this.tokenInfoCache.has(tokenAddress)) {
       return this.tokenInfoCache.get(tokenAddress);
     }
@@ -96,18 +96,18 @@ class WalletManager {
 
       const info = { name, symbol, decimals };
       
-      // Lưu vào cache
+      // Save to cache
       this.tokenInfoCache.set(tokenAddress, info);
       
       return info;
     } catch (error) {
-      throw new Error(`Lỗi khi lấy thông tin token: ${error.message}`);
+      throw new Error(`Error getting token info: ${error.message}`);
     }
   }
 
   /**
-   * Lấy số dư token
-   * @param {string} tokenAddress - Địa chỉ token contract
+   * Get token balance
+   * @param {string} tokenAddress - Token contract address
    * @returns {Promise<Object>}
    */
   async getTokenBalance(tokenAddress) {
@@ -137,31 +137,31 @@ class WalletManager {
         raw: balance,
       };
     } catch (error) {
-      throw new Error(`Lỗi khi lấy số dư token: ${error.message}`);
+      throw new Error(`Error getting token balance: ${error.message}`);
     }
   }
 
   /**
-   * Gửi ETH
-   * @param {string} to - Địa chỉ người nhận
-   * @param {string} amountInEther - Số lượng ETH
-   * @param {Object} options - Các tùy chọn (gasLimit, gasPrice, etc.)
+   * Send ETH
+   * @param {string} to - Recipient address
+   * @param {string} amountInEther - Amount in ETH
+   * @param {Object} options - Options (gasLimit, gasPrice, etc.)
    * @returns {Promise<Object>}
    */
   async sendETH(to, amountInEther, options = {}) {
     try {
       const amount = ethers.parseEther(amountInEther);
 
-      // Kiểm tra số dư
+      // Check balance
       const balance = await this.provider.getBalance(this.address);
       if (balance < amount) {
         throw new Error(
-          `Số dư không đủ: Cần ${amountInEther} ETH, có ${ethers.formatEther(balance)} ETH`
+          `Insufficient balance: Need ${amountInEther} ETH, have ${ethers.formatEther(balance)} ETH`
         );
       }
 
-      // Gửi transaction
-      console.log(`[ETH Transfer] Gửi ${amountInEther} ETH đến ${to}...`);
+      // Send transaction
+      console.log(`[ETH Transfer] Sending ${amountInEther} ETH to ${to}...`);
       const tx = await this.wallet.sendTransaction({
         to: to,
         value: amount,
@@ -169,9 +169,9 @@ class WalletManager {
       });
 
       console.log(`[ETH Transfer] TX Hash: ${tx.hash}`);
-      console.log(`[ETH Transfer] Đang chờ confirmation...`);
+      console.log(`[ETH Transfer] Waiting for confirmation...`);
 
-      // Chờ confirmation
+      // Wait for confirmation
       const receipt = await tx.wait();
 
       const result = {
@@ -194,11 +194,11 @@ class WalletManager {
   }
 
   /**
-   * Gửi ERC20 Token
-   * @param {string} tokenAddress - Địa chỉ token contract
-   * @param {string} to - Địa chỉ người nhận
-   * @param {string} amount - Số lượng token
-   * @param {Object} options - Các tùy chọn
+   * Send ERC20 Token
+   * @param {string} tokenAddress - Token contract address
+   * @param {string} to - Recipient address
+   * @param {string} amount - Token amount
+   * @param {Object} options - Options
    * @returns {Promise<Object>}
    */
   async sendToken(tokenAddress, to, amount, options = {}) {
@@ -212,7 +212,7 @@ class WalletManager {
     try {
       const contract = new ethers.Contract(tokenAddress, ERC20_ABI, this.wallet);
 
-      // Lấy thông tin token
+      // Get token info
       const [decimals, symbol, balance] = await Promise.all([
         contract.decimals(),
         contract.symbol(),
@@ -221,21 +221,21 @@ class WalletManager {
 
       const amountInWei = ethers.parseUnits(amount, decimals);
 
-      // Kiểm tra số dư
+      // Check balance
       if (balance < amountInWei) {
         throw new Error(
-          `Số dư ${symbol} không đủ: Cần ${amount}, có ${ethers.formatUnits(balance, decimals)}`
+          `Insufficient ${symbol} balance: Need ${amount}, have ${ethers.formatUnits(balance, decimals)}`
         );
       }
 
-      // Gửi transaction
-      console.log(`[${symbol} Transfer] Gửi ${amount} ${symbol} đến ${to}...`);
+      // Send transaction
+      console.log(`[${symbol} Transfer] Sending ${amount} ${symbol} to ${to}...`);
       const tx = await contract.transfer(to, amountInWei, options);
 
       console.log(`[${symbol} Transfer] TX Hash: ${tx.hash}`);
-      console.log(`[${symbol} Transfer] Đang chờ confirmation...`);
+      console.log(`[${symbol} Transfer] Waiting for confirmation...`);
 
-      // Chờ confirmation
+      // Wait for confirmation
       const receipt = await tx.wait();
 
       const result = {
@@ -260,9 +260,9 @@ class WalletManager {
   }
 
   /**
-   * Ước tính gas cho transaction
-   * @param {string} to - Địa chỉ đích
-   * @param {string} value - Giá trị (wei)
+   * Estimate gas for transaction
+   * @param {string} to - Destination address
+   * @param {string} value - Value (wei)
    * @param {string} data - Data (hex)
    * @returns {Promise<Object>}
    */
@@ -289,12 +289,12 @@ class WalletManager {
         estimatedCost: ethers.formatEther(gasEstimate * feeData.gasPrice) + ' ETH',
       };
     } catch (error) {
-      throw new Error(`Lỗi khi ước tính gas: ${error.message}`);
+      throw new Error(`Error estimating gas: ${error.message}`);
     }
   }
 
   /**
-   * Lấy transaction count (nonce)
+   * Get transaction count (nonce)
    * @returns {Promise<number>}
    */
   async getTransactionCount() {
@@ -302,7 +302,7 @@ class WalletManager {
   }
 
   /**
-   * Lấy thông tin transaction
+   * Get transaction information
    * @param {string} txHash - Transaction hash
    * @returns {Promise<Object>}
    */
@@ -310,16 +310,16 @@ class WalletManager {
     try {
       const tx = await this.provider.getTransaction(txHash);
       if (!tx) {
-        throw new Error('Transaction không tồn tại');
+        throw new Error('Transaction does not exist');
       }
       return tx;
     } catch (error) {
-      throw new Error(`Lỗi khi lấy transaction: ${error.message}`);
+      throw new Error(`Error getting transaction: ${error.message}`);
     }
   }
 
   /**
-   * Lấy receipt của transaction
+   * Get transaction receipt
    * @param {string} txHash - Transaction hash
    * @returns {Promise<Object>}
    */
@@ -327,29 +327,29 @@ class WalletManager {
     try {
       const receipt = await this.provider.getTransactionReceipt(txHash);
       if (!receipt) {
-        throw new Error('Transaction receipt không tồn tại');
+        throw new Error('Transaction receipt does not exist');
       }
       return receipt;
     } catch (error) {
-      throw new Error(`Lỗi khi lấy transaction receipt: ${error.message}`);
+      throw new Error(`Error getting transaction receipt: ${error.message}`);
     }
   }
 
   /**
-   * Chờ transaction được confirm
+   * Wait for transaction confirmation
    * @param {string} txHash - Transaction hash
-   * @param {number} confirmations - Số confirmation cần chờ
+   * @param {number} confirmations - Number of confirmations to wait
    * @returns {Promise<Object>}
    */
   async waitForTransaction(txHash, confirmations = 1) {
-    console.log(`Đang chờ ${confirmations} confirmation cho tx ${txHash}...`);
+    console.log(`Waiting for ${confirmations} confirmation(s) for tx ${txHash}...`);
     const receipt = await this.provider.waitForTransaction(txHash, confirmations);
-    console.log(`✓ Transaction đã có ${confirmations} confirmation`);
+    console.log(`✓ Transaction has ${confirmations} confirmation(s)`);
     return receipt;
   }
 
   /**
-   * Lấy block number hiện tại
+   * Get current block number
    * @returns {Promise<number>}
    */
   async getBlockNumber() {
@@ -357,7 +357,7 @@ class WalletManager {
   }
 
   /**
-   * Lấy thông tin block
+   * Get block information
    * @param {number} blockNumber - Block number
    * @returns {Promise<Object>}
    */
@@ -366,7 +366,7 @@ class WalletManager {
   }
 
   /**
-   * Lấy gas price hiện tại
+   * Get current gas price
    * @returns {Promise<Object>}
    */
   async getFeeData() {
@@ -384,7 +384,7 @@ class WalletManager {
 
   /**
    * Sign message
-   * @param {string} message - Message cần ký
+   * @param {string} message - Message to sign
    * @returns {Promise<string>}
    */
   async signMessage(message) {
@@ -393,16 +393,16 @@ class WalletManager {
 
   /**
    * Verify signature
-   * @param {string} message - Message gốc
+   * @param {string} message - Original message
    * @param {string} signature - Signature
-   * @returns {string} Địa chỉ của signer
+   * @returns {string} Signer address
    */
   verifyMessage(message, signature) {
     return ethers.verifyMessage(message, signature);
   }
 
   /**
-   * Lấy địa chỉ wallet
+   * Get wallet address
    * @returns {string}
    */
   getAddress() {
@@ -419,7 +419,7 @@ class WalletManager {
   }
 
   /**
-   * Kiểm tra địa chỉ hợp lệ
+   * Check if address is valid
    * @param {string} address
    * @returns {boolean}
    */
@@ -429,4 +429,3 @@ class WalletManager {
 }
 
 module.exports = WalletManager;
-

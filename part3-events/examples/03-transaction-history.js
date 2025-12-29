@@ -1,14 +1,14 @@
 /**
  * Script 3: Build Transaction History
  * 
- * Demo cách xây dựng lịch sử giao dịch đầy đủ cho một địa chỉ
+ * Demo how to build complete transaction history for an address
  * 
- * Chạy: node 03-transaction-history.js <ADDRESS>
+ * Run: node 03-transaction-history.js <ADDRESS>
  */
 
 import { ethers } from 'ethers';
 
-// Cấu hình
+// Configuration
 const RPC_URL = 'https://api.zan.top/node/v1/eth/mainnet/7d5a7370dd004a1f913078deb248af07';
 const USDT_ADDRESS = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
 
@@ -22,7 +22,7 @@ async function getTransactionHistory(userAddress, fromBlock, toBlock) {
   const provider = new ethers.JsonRpcProvider(RPC_URL);
   const contract = new ethers.Contract(USDT_ADDRESS, ERC20_ABI, provider);
 
-  // Lấy thông tin token
+  // Get token info
   const decimals = await contract.decimals();
   const symbol = await contract.symbol();
 
@@ -30,26 +30,26 @@ async function getTransactionHistory(userAddress, fromBlock, toBlock) {
   console.log(`👤 User: ${userAddress}`);
   console.log(`📦 Blocks: ${fromBlock} to ${toBlock}\n`);
 
-  // Lấy events gửi đi
+  // Get outgoing events
   console.log('📤 Fetching outgoing transfers...');
   const sentFilter = contract.filters.Transfer(userAddress, null);
   const sentEvents = await contract.queryFilter(sentFilter, fromBlock, toBlock);
   console.log(`   Found ${sentEvents.length} events`);
 
-  // Lấy events nhận vào
+  // Get incoming events
   console.log('📥 Fetching incoming transfers...');
   const receivedFilter = contract.filters.Transfer(null, userAddress);
   const receivedEvents = await contract.queryFilter(receivedFilter, fromBlock, toBlock);
   console.log(`   Found ${receivedEvents.length} events\n`);
 
-  // Gộp và sắp xếp theo block number
+  // Combine and sort by block number
   const allEvents = [...sentEvents, ...receivedEvents].sort(
     (a, b) => a.blockNumber - b.blockNumber
   );
 
   console.log(`📋 Total transactions: ${allEvents.length}\n`);
 
-  // Format kết quả
+  // Format results
   const history = [];
 
   for (const event of allEvents) {
@@ -74,7 +74,7 @@ async function getTransactionHistory(userAddress, fromBlock, toBlock) {
 async function main() {
   console.log('🚀 Starting Transaction History Builder\n');
 
-  // Lấy address từ command line hoặc dùng default
+  // Get address from command line or use default
   const userAddress = process.argv[2] || '0x28C6c06298d514Db089934071355E5743bf21d60';
 
   const provider = new ethers.JsonRpcProvider(RPC_URL);
@@ -84,7 +84,7 @@ async function main() {
   try {
     const history = await getTransactionHistory(userAddress, fromBlock, currentBlock);
 
-    // Hiển thị lịch sử
+    // Display history
     console.log('📜 Transaction History:');
     console.log('═'.repeat(120));
 
@@ -102,7 +102,7 @@ async function main() {
 
     console.log('\n' + '═'.repeat(120));
 
-    // Thống kê
+    // Statistics
     const sent = history.filter(tx => tx.type === 'SENT');
     const received = history.filter(tx => tx.type === 'RECEIVED');
 

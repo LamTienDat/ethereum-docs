@@ -1,11 +1,11 @@
 /**
- * Ví dụ 6: Retry Logic với Exponential Backoff
+ * Example 6: Retry Logic with Exponential Backoff
  * 
- * Học cách:
- * - Xử lý lỗi network
- * - Retry với exponential backoff
- * - Timeout cho requests
- * - Phân biệt lỗi có thể retry và không thể retry
+ * Learn how to:
+ * - Handle network errors
+ * - Retry with exponential backoff
+ * - Timeout for requests
+ * - Distinguish retryable vs non-retryable errors
  */
 
 require('dotenv').config();
@@ -19,37 +19,37 @@ const {
 } = require('../utils/retry');
 
 async function demoRetryLogic() {
-  console.log('=== VÍ DỤ 6: RETRY LOGIC ===\n');
+  console.log('=== EXAMPLE 6: RETRY LOGIC ===\n');
 
   const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
   const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
 
-  // Demo 1: Retry cơ bản
+  // Demo 1: Basic retry
   await demo1_BasicRetry(provider);
 
-  // Demo 2: Retry với RPC calls
+  // Demo 2: Retry with RPC calls
   await demo2_RpcRetry(provider);
 
-  // Demo 3: Phân loại lỗi
+  // Demo 3: Error classification
   await demo3_ErrorClassification();
 
-  // Demo 4: Retry khi gửi transaction
+  // Demo 4: Retry when sending transaction
   await demo4_TransactionRetry(wallet, provider);
 }
 
 /**
- * Demo 1: Retry cơ bản
+ * Demo 1: Basic retry
  */
 async function demo1_BasicRetry(provider) {
-  console.log('📝 Demo 1: Retry Logic Cơ Bản\n');
+  console.log('📝 Demo 1: Basic Retry Logic\n');
 
-  // Simulate function có thể fail
+  // Simulate function that can fail
   let attemptCount = 0;
   const unreliableFunction = async () => {
     attemptCount++;
     console.log(`   Attempt ${attemptCount}...`);
     
-    // Fail 2 lần đầu, thành công lần thứ 3
+    // Fail first 2 times, succeed on 3rd
     if (attemptCount < 3) {
       throw new Error('Network timeout');
     }
@@ -58,7 +58,7 @@ async function demo1_BasicRetry(provider) {
   };
 
   try {
-    console.log('Đang thực thi function không ổn định với retry...\n');
+    console.log('Executing unreliable function with retry...\n');
     
     const result = await callWithRetry(
       unreliableFunction,
@@ -66,20 +66,20 @@ async function demo1_BasicRetry(provider) {
       500    // Delay 500ms
     );
     
-    console.log(`\n✓ Kết quả: ${result}\n`);
+    console.log(`\n✓ Result: ${result}\n`);
   } catch (error) {
-    console.error(`✗ Thất bại sau nhiều lần retry: ${error.message}\n`);
+    console.error(`✗ Failed after multiple retries: ${error.message}\n`);
   }
 }
 
 /**
- * Demo 2: Retry với RPC calls
+ * Demo 2: Retry with RPC calls
  */
 async function demo2_RpcRetry(provider) {
-  console.log('📝 Demo 2: Retry cho RPC Calls\n');
+  console.log('📝 Demo 2: Retry for RPC Calls\n');
 
   try {
-    console.log('Đang lấy block number với retry...');
+    console.log('Getting block number with retry...');
     
     const blockNumber = await rpcCallWithRetry(
       async () => {
@@ -94,8 +94,8 @@ async function demo2_RpcRetry(provider) {
     
     console.log(`✓ Block number: ${blockNumber}\n`);
 
-    // Lấy nhiều thông tin cùng lúc
-    console.log('Đang lấy thông tin chi tiết...');
+    // Get multiple information at once
+    console.log('Getting detailed information...');
     
     const [network, feeData, balance] = await Promise.all([
       rpcCallWithRetry(() => provider.getNetwork()),
@@ -110,15 +110,15 @@ async function demo2_RpcRetry(provider) {
     console.log(`✓ Balance: ${ethers.formatEther(balance)} ETH\n`);
 
   } catch (error) {
-    console.error(`✗ Lỗi: ${error.message}\n`);
+    console.error(`✗ Error: ${error.message}\n`);
   }
 }
 
 /**
- * Demo 3: Phân loại lỗi
+ * Demo 3: Error classification
  */
 async function demo3_ErrorClassification() {
-  console.log('📝 Demo 3: Phân Loại Lỗi\n');
+  console.log('📝 Demo 3: Error Classification\n');
 
   const testErrors = [
     new Error('NETWORK_ERROR: Connection failed'),
@@ -129,19 +129,19 @@ async function demo3_ErrorClassification() {
     { code: 'INVALID_ARGUMENT', message: 'Invalid parameter' },
   ];
 
-  console.log('Kiểm tra các loại lỗi:\n');
+  console.log('Checking error types:\n');
 
   testErrors.forEach((error, index) => {
     console.log(`${index + 1}. "${error.message}"`);
     console.log(`   Network Error: ${isNetworkError(error) ? '✓' : '✗'}`);
     console.log(`   Rate Limit: ${isRateLimitError(error) ? '✓' : '✗'}`);
-    console.log(`   Có thể Retry: ${isRetryableError(error) ? '✓ YES' : '✗ NO'}`);
+    console.log(`   Can Retry: ${isRetryableError(error) ? '✓ YES' : '✗ NO'}`);
     console.log();
   });
 }
 
 /**
- * Demo 4: Retry khi gửi transaction
+ * Demo 4: Retry when sending transaction
  */
 async function demo4_TransactionRetry(wallet, provider) {
   console.log('📝 Demo 4: Retry Transaction (DRY RUN)\n');
@@ -149,16 +149,16 @@ async function demo4_TransactionRetry(wallet, provider) {
   const recipientAddress = process.env.RECIPIENT_ADDRESS || '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb';
 
   try {
-    console.log('Kiểm tra số dư trước khi gửi...');
+    console.log('Checking balance before sending...');
     
     const balance = await rpcCallWithRetry(
       () => provider.getBalance(wallet.address)
     );
     
-    console.log(`Số dư: ${ethers.formatEther(balance)} ETH\n`);
+    console.log(`Balance: ${ethers.formatEther(balance)} ETH\n`);
 
-    // Ước tính gas với retry
-    console.log('Ước tính gas với retry...');
+    // Estimate gas with retry
+    console.log('Estimating gas with retry...');
     
     const gasEstimate = await rpcCallWithRetry(
       async () => {
@@ -177,16 +177,16 @@ async function demo4_TransactionRetry(wallet, provider) {
     
     console.log(`✓ Gas estimate: ${gasEstimate.toString()}\n`);
 
-    console.log('💡 Trong production, bạn nên:');
-    console.log('   1. Retry khi network error');
-    console.log('   2. KHÔNG retry khi: insufficient funds, nonce too low');
-    console.log('   3. Increase delay khi rate limit');
-    console.log('   4. Set timeout phù hợp cho từng loại transaction');
-    console.log('   5. Log chi tiết để debug\n');
+    console.log('💡 In production, you should:');
+    console.log('   1. Retry on network error');
+    console.log('   2. DO NOT retry on: insufficient funds, nonce too low');
+    console.log('   3. Increase delay on rate limit');
+    console.log('   4. Set appropriate timeout for each transaction type');
+    console.log('   5. Log details for debugging\n');
 
-    // Uncomment để thực sự gửi transaction với retry
+    // Uncomment to actually send transaction with retry
     /*
-    console.log('Đang gửi transaction với retry...');
+    console.log('Sending transaction with retry...');
     
     const tx = await callWithRetry(
       async () => {
@@ -198,12 +198,12 @@ async function demo4_TransactionRetry(wallet, provider) {
       },
       3,  // Max 3 retries
       2000, // 2s delay
-      isRetryableError // Chỉ retry khi lỗi có thể retry
+      isRetryableError // Only retry on retryable errors
     );
     
     console.log(`✓ Transaction sent: ${tx.hash}`);
     
-    // Chờ confirmation với retry
+    // Wait for confirmation with retry
     const receipt = await rpcCallWithRetry(
       () => tx.wait(),
       {
@@ -217,7 +217,7 @@ async function demo4_TransactionRetry(wallet, provider) {
     */
 
   } catch (error) {
-    console.error(`✗ Lỗi: ${error.message}\n`);
+    console.error(`✗ Error: ${error.message}\n`);
   }
 }
 
@@ -225,16 +225,16 @@ async function demo4_TransactionRetry(wallet, provider) {
  * Demo 5: Advanced - Rate Limiting
  */
 async function demo5_RateLimiting() {
-  console.log('📝 Demo 5: Rate Limiting (Giới hạn số request)\n');
+  console.log('📝 Demo 5: Rate Limiting\n');
 
-  console.log('💡 Để tránh rate limit từ RPC provider:');
-  console.log('   1. Sử dụng queue để giới hạn concurrent requests');
-  console.log('   2. Thêm delay giữa các requests');
-  console.log('   3. Cache kết quả khi có thể');
-  console.log('   4. Sử dụng multiple providers với load balancing');
-  console.log('   5. Monitor usage và upgrade plan khi cần\n');
+  console.log('💡 To avoid rate limit from RPC provider:');
+  console.log('   1. Use queue to limit concurrent requests');
+  console.log('   2. Add delay between requests');
+  console.log('   3. Cache results when possible');
+  console.log('   4. Use multiple providers with load balancing');
+  console.log('   5. Monitor usage and upgrade plan when needed\n');
 
-  console.log('Ví dụ simple rate limiter:');
+  console.log('Example simple rate limiter:');
   console.log(`
   class RateLimiter {
     constructor(maxRequests, perMilliseconds) {
@@ -261,7 +261,7 @@ async function demo5_RateLimiting() {
     }
   }
   
-  // Sử dụng
+  // Usage
   const limiter = new RateLimiter(5, 1000); // 5 requests/second
   
   await limiter.acquire();
@@ -269,26 +269,25 @@ async function demo5_RateLimiting() {
   `);
 }
 
-// Chạy demo
+// Run demo
 async function main() {
   await demoRetryLogic();
   await demo5_RateLimiting();
 
-  console.log('\n✅ Demo hoàn thành!\n');
-  console.log('📚 Tóm tắt:');
-  console.log('   ✓ Luôn implement retry cho network operations');
-  console.log('   ✓ Sử dụng exponential backoff');
-  console.log('   ✓ Phân biệt lỗi có thể retry vs không thể retry');
-  console.log('   ✓ Set timeout phù hợp');
-  console.log('   ✓ Implement rate limiting khi cần');
-  console.log('   ✓ Log chi tiết để debug');
-  console.log('\n   Xem code chi tiết trong utils/retry.js');
+  console.log('\n✅ Demo complete!\n');
+  console.log('📚 Summary:');
+  console.log('   ✓ Always implement retry for network operations');
+  console.log('   ✓ Use exponential backoff');
+  console.log('   ✓ Distinguish retryable vs non-retryable errors');
+  console.log('   ✓ Set appropriate timeout');
+  console.log('   ✓ Implement rate limiting when needed');
+  console.log('   ✓ Log details for debugging');
+  console.log('\n   See detailed code in utils/retry.js');
 }
 
 main()
   .then(() => process.exit(0))
   .catch((error) => {
-    console.error('\n❌ Lỗi:', error);
+    console.error('\n❌ Error:', error);
     process.exit(1);
   });
-

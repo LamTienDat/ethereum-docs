@@ -1,17 +1,17 @@
-# Phần 2: Ví, Ký và Xác thực (Client-side)
+# Part 2: Wallet, Signing and Authentication (Client-side)
 
-Ví dụ thực hành về kết nối ví, ký message và xác thực người dùng trên Ethereum.
+Practical examples of wallet connection, message signing, and user authentication on Ethereum.
 
-## 📋 Mục tiêu học tập
+## 📋 Learning Objectives
 
-- Kết nối MetaMask với website
-- Hiểu Provider vs Signer trong Ethers.js
-- Xử lý events từ MetaMask (account change, network change)
+- Connect MetaMask to website
+- Understand Provider vs Signer in Ethers.js
+- Handle events from MetaMask (account change, network change)
 - Implement SIWE (Sign-In With Ethereum)
-- Ký và verify messages
-- Quản lý session với JWT
+- Sign and verify messages
+- Manage sessions with JWT
 
-## 🛠️ Công nghệ sử dụng
+## 🛠️ Technologies Used
 
 - **Frontend**: React 18, Vite
 - **Library**: Ethers.js v6
@@ -19,20 +19,20 @@ Ví dụ thực hành về kết nối ví, ký message và xác thực người
 - **Auth**: SIWE (EIP-4361), JWT
 - **Network**: Sepolia Testnet
 
-## 📁 Cấu trúc thư mục
+## 📁 Directory Structure
 
 ```
 part2-wallet-auth/
 ├── frontend/                        # React app
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── WalletConnect.jsx    # Kết nối MetaMask
-│   │   │   ├── NetworkSwitcher.jsx  # Chuyển network
-│   │   │   ├── SignMessage.jsx      # Ký message
+│   │   │   ├── WalletConnect.jsx    # MetaMask connection
+│   │   │   ├── NetworkSwitcher.jsx  # Network switcher
+│   │   │   ├── SignMessage.jsx      # Message signing
 │   │   │   └── SIWEAuth.jsx         # SIWE authentication
 │   │   ├── hooks/
-│   │   │   ├── useWallet.js         # Custom hook cho wallet
-│   │   │   └── useAuth.js           # Custom hook cho auth
+│   │   │   ├── useWallet.js         # Custom hook for wallet
+│   │   │   └── useAuth.js           # Custom hook for auth
 │   │   ├── utils/
 │   │   │   ├── ethereum.js          # Ethereum utilities
 │   │   │   └── siwe.js              # SIWE utilities
@@ -63,60 +63,60 @@ part2-wallet-auth/
 └── README.md
 ```
 
-## 🚀 Hướng dẫn cài đặt
+## 🚀 Installation Guide
 
-> 📖 **Chi tiết đầy đủ**: Xem file [SETUP.md](./SETUP.md) để có hướng dẫn setup chi tiết và troubleshooting.
+> 📖 **Full Details**: See [SETUP.md](./SETUP.md) for detailed setup instructions and troubleshooting.
 
-### 1. Cài đặt Backend
+### 1. Backend Setup
 
 ```bash
 cd part2-wallet-auth/backend
 npm install
 
-# Tạo file .env (hoặc copy từ .env.example)
+# Create .env file (or copy from .env.example)
 echo 'PORT=3001
 JWT_SECRET=your_super_secret_jwt_key_change_this_in_production_123456
 FRONTEND_URL=http://localhost:5173' > .env
 ```
 
-### 2. Cài đặt Frontend
+### 2. Frontend Setup
 
 ```bash
 cd part2-wallet-auth/frontend
 npm install
 
-# Tạo file .env (hoặc copy từ .env.example)
+# Create .env file (or copy from .env.example)
 echo 'VITE_API_URL=http://localhost:3001' > .env
 ```
 
-### 3. Cài đặt MetaMask
+### 3. MetaMask Setup
 
-Nếu chưa có MetaMask:
-1. Truy cập https://metamask.io/
-2. Cài extension cho Chrome/Firefox/Brave
-3. Tạo ví mới hoặc import ví test
-4. Chuyển sang Sepolia network
+If you don't have MetaMask:
+1. Visit https://metamask.io/
+2. Install extension for Chrome/Firefox/Brave
+3. Create new wallet or import test wallet
+4. Switch to Sepolia network
 
-## 📝 Các bài thực hành
+## 📝 Practice Exercises
 
-### Bài 1: Kết nối MetaMask cơ bản
+### Exercise 1: Basic MetaMask Connection
 
-Mở file `examples/01-connect-metamask.html` trong browser.
+Open file `examples/01-connect-metamask.html` in browser.
 
-**Học được:**
-- Kiểm tra MetaMask đã cài chưa
-- Kết nối ví với `eth_requestAccounts`
-- Lấy địa chỉ ví và số dư
-- Xử lý lỗi khi user reject
+**What you'll learn:**
+- Check if MetaMask is installed
+- Connect wallet with `eth_requestAccounts`
+- Get wallet address and balance
+- Handle errors when user rejects
 
 **Code highlights:**
 ```javascript
-// Kiểm tra MetaMask
+// Check MetaMask
 if (typeof window.ethereum !== 'undefined') {
   console.log('MetaMask is installed!');
 }
 
-// Kết nối
+// Connect
 const accounts = await window.ethereum.request({ 
   method: 'eth_requestAccounts' 
 });
@@ -124,15 +124,15 @@ const accounts = await window.ethereum.request({
 
 ---
 
-### Bài 2: Provider vs Signer
+### Exercise 2: Provider vs Signer
 
-Mở file `examples/02-provider-signer.html` trong browser.
+Open file `examples/02-provider-signer.html` in browser.
 
-**Học được:**
+**What you'll learn:**
 - Provider: Read-only operations
-- Signer: Write operations (cần signature)
-- Khi nào dùng Provider, khi nào dùng Signer
-- Các loại Providers
+- Signer: Write operations (requires signature)
+- When to use Provider vs Signer
+- Types of Providers
 
 **Concepts:**
 ```
@@ -150,35 +150,35 @@ Signer (Write):
 
 ---
 
-### Bài 3: Ký và Verify Message
+### Exercise 3: Sign and Verify Message
 
-Mở file `examples/03-sign-message.html` trong browser.
+Open file `examples/03-sign-message.html` in browser.
 
-**Học được:**
-- Ký message với MetaMask
+**What you'll learn:**
+- Sign message with MetaMask
 - Verify signature
 - Personal sign vs Typed data
 - Use cases: Proof of ownership
 
 **Flow:**
 ```
-1. User nhập message
+1. User enters message
 2. Click "Sign" → MetaMask popup
-3. User confirm → Nhận signature
+3. User confirms → Receive signature
 4. Verify signature → Recover address
-5. So sánh với wallet address
+5. Compare with wallet address
 ```
 
 ---
 
-### Bài 4: Chuyển Network
+### Exercise 4: Switch Network
 
-Mở file `examples/04-network-switch.html` trong browser.
+Open file `examples/04-network-switch.html` in browser.
 
-**Học được:**
+**What you'll learn:**
 - Detect current network
-- Switch network với `wallet_switchEthereumChain`
-- Add network với `wallet_addEthereumChain`
+- Switch network with `wallet_switchEthereumChain`
+- Add network with `wallet_addEthereumChain`
 - Handle network change events
 
 **Networks:**
@@ -189,11 +189,11 @@ Mở file `examples/04-network-switch.html` trong browser.
 
 ---
 
-### Bài 5: SIWE Simple
+### Exercise 5: SIWE Simple
 
-Mở file `examples/05-siwe-simple.html` trong browser.
+Open file `examples/05-siwe-simple.html` in browser.
 
-**Học được:**
+**What you'll learn:**
 - SIWE message format
 - Sign-in flow
 - Nonce generation
@@ -210,9 +210,9 @@ Mở file `examples/05-siwe-simple.html` trong browser.
 
 ---
 
-### Bài 6: Full-stack App với SIWE
+### Exercise 6: Full-stack App with SIWE
 
-Chạy cả frontend và backend:
+Run both frontend and backend:
 
 ```bash
 # Terminal 1 - Backend
@@ -224,26 +224,26 @@ cd frontend
 npm run dev
 ```
 
-Truy cập: http://localhost:5173
+Visit: http://localhost:5173
 
-**Học được:**
-- Complete SIWE implementation với React
+**What you'll learn:**
+- Complete SIWE implementation with React
 - JWT authentication flow
-- Protected routes với Bearer token
-- Session management với localStorage
-- Auto sign-out khi account/network thay đổi
-- Logout flow hoàn chỉnh
+- Protected routes with Bearer token
+- Session management with localStorage
+- Auto sign-out when account/network changes
+- Complete logout flow
 
 **Features:**
-- ✅ Connect wallet với MetaMask
+- ✅ Connect wallet with MetaMask
 - ✅ Sign-in with Ethereum (EIP-4361)
-- ✅ Nonce generation và verification
+- ✅ Nonce generation and verification
 - ✅ JWT token management
 - ✅ View profile (protected route demo)
-- ✅ Logout và clear session
+- ✅ Logout and clear session
 - ✅ Auto-reconnect wallet
 - ✅ Handle account/network changes
-- ✅ Error handling và user feedback
+- ✅ Error handling and user feedback
 
 **Tech Stack:**
 - Frontend: React 18 + Vite + Ethers.js v6
@@ -272,22 +272,22 @@ npm run test
 ### Manual Testing Checklist
 
 **MetaMask Connection:**
-- [ ] Connect wallet thành công
-- [ ] Hiển thị đúng địa chỉ
-- [ ] Hiển thị đúng số dư
-- [ ] Handle user reject
+- [ ] Connect wallet successfully
+- [ ] Display correct address
+- [ ] Display correct balance
+- [ ] Handle user rejection
 - [ ] Handle MetaMask not installed
 
 **Network Switching:**
 - [ ] Detect current network
-- [ ] Switch network thành công
+- [ ] Switch network successfully
 - [ ] Add custom network
 - [ ] Handle network change event
 
 **Message Signing:**
-- [ ] Sign message thành công
-- [ ] Verify signature đúng
-- [ ] Handle user reject
+- [ ] Sign message successfully
+- [ ] Verify signature correctly
+- [ ] Handle user rejection
 - [ ] Display signature
 
 **SIWE Authentication:**
@@ -297,7 +297,7 @@ npm run test
 - [ ] Verify on backend
 - [ ] Receive JWT token
 - [ ] Access protected routes
-- [ ] Logout thành công
+- [ ] Logout successfully
 
 **Event Handling:**
 - [ ] accountsChanged event
@@ -307,15 +307,15 @@ npm run test
 
 ---
 
-## 📊 Kết quả mong đợi
+## 📊 Expected Results
 
-Sau khi hoàn thành các bài thực hành, bạn sẽ:
+After completing the exercises, you will:
 
-✅ Biết cách kết nối MetaMask với website  
-✅ Hiểu rõ Provider vs Signer  
-✅ Xử lý được wallet events  
+✅ Know how to connect MetaMask to website  
+✅ Understand Provider vs Signer clearly  
+✅ Handle wallet events properly  
 ✅ Implement SIWE authentication  
-✅ Quản lý session với JWT  
+✅ Manage sessions with JWT  
 ✅ Build complete auth flow  
 
 ---
@@ -339,20 +339,20 @@ Sau khi hoàn thành các bài thực hành, bạn sẽ:
 
 ---
 
-## ⚠️ Lưu ý quan trọng
+## ⚠️ Important Notes
 
-### Bảo mật
+### Security
 
-1. **KHÔNG BAO GIỜ** lưu private key trên frontend
-2. **LUÔN** verify signature trên backend
-3. **SỬ DỤNG** HTTPS trong production
-4. **KHÔNG** trust data từ client
-5. **VALIDATE** tất cả inputs
+1. **NEVER** store private key on frontend
+2. **ALWAYS** verify signature on backend
+3. **USE** HTTPS in production
+4. **DON'T** trust data from client
+5. **VALIDATE** all inputs
 
 ### Best Practices
 
 1. **Handle errors gracefully**
-   - User reject connection
+   - User rejects connection
    - MetaMask not installed
    - Network errors
 
@@ -375,34 +375,34 @@ Sau khi hoàn thành các bài thực hành, bạn sẽ:
 
 ## 🆘 Troubleshooting
 
-### Lỗi: "MetaMask is not installed"
-- Cài đặt MetaMask extension
-- Refresh page sau khi cài
+### Error: "MetaMask is not installed"
+- Install MetaMask extension
+- Refresh page after installation
 
-### Lỗi: "User rejected the request"
-- User đã click "Cancel" trên MetaMask
-- Đây là behavior bình thường
-- Show message yêu cầu user thử lại
+### Error: "User rejected the request"
+- User clicked "Cancel" on MetaMask
+- This is normal behavior
+- Show message asking user to try again
 
-### Lỗi: "Chain ID mismatch"
-- User đang ở wrong network
-- Prompt user switch network
-- Hoặc tự động switch với `wallet_switchEthereumChain`
+### Error: "Chain ID mismatch"
+- User is on wrong network
+- Prompt user to switch network
+- Or automatically switch with `wallet_switchEthereumChain`
 
-### Lỗi: "Nonce already used"
-- Nonce phải unique cho mỗi sign-in attempt
-- Generate nonce mới cho mỗi request
+### Error: "Nonce already used"
+- Nonce must be unique for each sign-in attempt
+- Generate new nonce for each request
 
-### Frontend không connect được Backend
-- Check backend đang chạy
+### Frontend can't connect to Backend
+- Check backend is running
 - Check CORS settings
 - Check port numbers
 
 ---
 
-## 📞 Hỗ trợ
+## 📞 Support
 
-Nếu gặp vấn đề:
+If you encounter issues:
 - [MetaMask Support](https://metamask.zendesk.com/)
 - [Ethers.js Discussions](https://github.com/ethers-io/ethers.js/discussions)
 - [SIWE Discord](https://discord.gg/login-xyz)

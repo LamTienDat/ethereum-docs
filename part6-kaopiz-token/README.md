@@ -1,45 +1,45 @@
 # 🪙 KaopizCoin (KPC) - Complete DApp Project
 
-Project hoàn chỉnh từ Smart Contract đến Frontend cho token ERC20 tùy chỉnh.
+Complete project from Smart Contract to Frontend for custom ERC20 token.
 
-## 📋 Tổng quan
+## 📋 Overview
 
-**KaopizCoin (KPC)** là một ERC20 token với các tính năng:
+**KaopizCoin (KPC)** is an ERC20 token with features:
 
-- ✅ Tuân thủ chuẩn ERC20
-- ✅ Mint tokens (chỉ owner)
-- ✅ Burn tokens (bất kỳ ai)
-- ✅ Pause/Unpause transfers (chỉ owner)
-- ✅ Event logging đầy đủ
-- ✅ Max supply limit (1 tỷ tokens)
-- ✅ Initial supply (100 triệu tokens)
+- ✅ ERC20 standard compliant
+- ✅ Mint tokens (owner only)
+- ✅ Burn tokens (anyone)
+- ✅ Pause/Unpause transfers (owner only)
+- ✅ Complete event logging
+- ✅ Max supply limit (1 billion tokens)
+- ✅ Initial supply (100 million tokens)
 
-## 🎯 Mục tiêu học tập
+## 🎯 Learning Objectives
 
-Sau khi hoàn thành project này, bạn sẽ biết cách:
+After completing this project, you will know how to:
 
 1. **Smart Contract Development**
 
-   - Viết ERC20 token với OpenZeppelin
+   - Write ERC20 token with OpenZeppelin
    - Implement access control (Ownable)
-   - Thêm pausable mechanism
-   - Custom events và modifiers
+   - Add pausable mechanism
+   - Custom events and modifiers
 
 2. **Testing**
 
-   - Viết unit tests với Hardhat và Chai
-   - Test các edge cases
+   - Write unit tests with Hardhat and Chai
+   - Test edge cases
    - Coverage testing
 
 3. **Deployment**
 
-   - Deploy lên testnet (Sepolia/BSC Testnet)
-   - Verify contract trên Etherscan
-   - Quản lý deployment scripts
+   - Deploy to testnet (Sepolia/BSC Testnet)
+   - Verify contract on Etherscan
+   - Manage deployment scripts
 
 4. **Frontend Development**
-   - Connect wallet với MetaMask
-   - Tương tác với smart contract
+   - Connect wallet with MetaMask
+   - Interact with smart contract
    - Display token information
    - Send transactions
    - Listen to events
@@ -49,14 +49,14 @@ Sau khi hoàn thành project này, bạn sẽ biết cách:
 ### Prerequisites
 
 - Node.js >= 16.0.0
-- npm hoặc pnpm
+- npm or pnpm
 - MetaMask wallet
-- Testnet ETH (từ faucet)
+- Testnet ETH (from faucet)
 
 ### Installation
 
 ```bash
-# 1. Clone hoặc copy project
+# 1. Clone or copy project
 cd part6-kaopiz-token
 
 # 2. Install backend dependencies
@@ -69,22 +69,22 @@ cd ..
 
 # 4. Setup environment
 cp .env.example .env
-# Chỉnh sửa .env với thông tin của bạn
+# Edit .env with your information
 ```
 
 ### Configuration
 
-Tạo file `.env`:
+Create `.env` file:
 
 ```bash
-# Private key của wallet (để deploy)
+# Wallet private key (for deployment)
 PRIVATE_KEY=0x...your_private_key...
 
 # RPC URLs
 SEPOLIA_RPC_URL=https://eth-sepolia.g.alchemy.com/v2/YOUR_API_KEY
 BSC_TESTNET_RPC_URL=https://data-seed-prebsc-1-s1.binance.org:8545
 
-# API Keys cho verify
+# API Keys for verification
 ETHERSCAN_API_KEY=your_etherscan_api_key
 BSCSCAN_API_KEY=your_bscscan_api_key
 ```
@@ -94,13 +94,13 @@ BSCSCAN_API_KEY=your_bscscan_api_key
 ```
 part6-kaopiz-token/
 ├── contracts/
-│   └── KaopizCoin.sol          # Smart contract chính
+│   └── KaopizCoin.sol          # Main smart contract
 ├── test/
 │   └── KaopizCoin.test.js      # Unit tests
 ├── scripts/
 │   ├── deploy.js               # Deploy script
 │   ├── interact.js             # Interact with contract
-│   └── verify.js               # Verify trên Etherscan
+│   └── verify.js               # Verify on Etherscan
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
@@ -188,7 +188,7 @@ Output:
    Max Supply: 1000000000.0 KPC
 ```
 
-**⚠️ LƯU Ý:** Copy contract address để dùng cho frontend!
+**⚠️ NOTE:** Copy contract address to use for frontend!
 
 ### 4. Verify Contract
 
@@ -206,7 +206,7 @@ npx hardhat verify --network bscTestnet <CONTRACT_ADDRESS> <OWNER_ADDRESS>
 # Mint tokens
 npx hardhat run scripts/interact.js --network sepolia
 
-# Hoặc dùng Hardhat console
+# Or use Hardhat console
 npx hardhat console --network sepolia
 ```
 
@@ -235,26 +235,26 @@ await kpc.transfer("0x...recipient...", ethers.parseEther("100"));
 cd frontend
 
 # Copy contract address
-# Chỉnh sửa src/App.jsx và thay YOUR_CONTRACT_ADDRESS
+# Edit src/App.jsx and replace YOUR_CONTRACT_ADDRESS
 
 # Start development server
 npm run dev
 ```
 
-Mở browser: `http://localhost:5173`
+Open browser: `http://localhost:5173`
 
 ### Frontend Features
 
 1. **Wallet Connection**
 
    - Connect/Disconnect MetaMask
-   - Display account và network
+   - Display account and network
    - Auto-detect network changes
 
 2. **Token Information**
 
    - Display token name, symbol, decimals
-   - Show total supply và max supply
+   - Show total supply and max supply
    - Show user balance
    - Refresh button
 
@@ -376,34 +376,34 @@ All files          |     100 |      100 |     100 |     100 |
 
 ✅ **Deployment**
 
-- Contract owner được set đúng
-- Initial supply được mint cho owner
-- Token info đúng (name, symbol, decimals)
+- Contract owner is set correctly
+- Initial supply minted to owner
+- Token info is correct (name, symbol, decimals)
 
 ✅ **Minting**
 
-- Owner có thể mint
-- Non-owner không thể mint
-- Không vượt quá max supply
-- Events được emit
+- Owner can mint
+- Non-owner cannot mint
+- Cannot exceed max supply
+- Events are emitted
 
 ✅ **Burning**
 
-- User có thể burn tokens của mình
-- BurnFrom với approve
-- Events được emit
+- User can burn their tokens
+- BurnFrom with approve
+- Events are emitted
 
 ✅ **Transfer**
 
-- Transfer giữa accounts
-- Fail khi insufficient balance
-- Fail khi paused
+- Transfer between accounts
+- Fail on insufficient balance
+- Fail when paused
 
 ✅ **Pausable**
 
-- Owner có thể pause/unpause
-- Transfer bị block khi paused
-- Mint/burn vẫn hoạt động khi paused (nếu owner)
+- Owner can pause/unpause
+- Transfer blocked when paused
+- Mint/burn still work when paused (if owner)
 
 ## 🔒 Security Considerations
 
@@ -411,7 +411,7 @@ All files          |     100 |      100 |     100 |     100 |
 
 ✅ **Access Control**
 
-- `onlyOwner` modifier cho mint và pause
+- `onlyOwner` modifier for mint and pause
 - OpenZeppelin's Ownable
 
 ✅ **Pausable**
@@ -503,14 +503,14 @@ Contract source code not verified
 ### Beginner
 
 1. Deploy contract to local network
-2. Run tests và understand results
+2. Run tests and understand results
 3. Interact via Hardhat console
 
 ### Intermediate
 
 4. Deploy to testnet
 5. Verify contract
-6. Connect frontend với MetaMask
+6. Connect frontend with MetaMask
 
 ### Advanced
 
@@ -521,9 +521,9 @@ Contract source code not verified
 
 ## 🤝 Contributing
 
-Nếu bạn tìm thấy bug hoặc có suggestions:
+If you find bugs or have suggestions:
 
-1. Tạo issue
+1. Create issue
 2. Fork project
 3. Create feature branch
 4. Submit pull request
@@ -536,12 +536,12 @@ MIT License - See LICENSE file
 
 ## 📞 Support
 
-Nếu gặp vấn đề:
+If you encounter issues:
 
-1. Đọc lại documentation
+1. Re-read documentation
 2. Check Troubleshooting section
-3. Search trên Google/StackOverflow
-4. Hỏi trên Discord/Forum
+3. Search on Google/StackOverflow
+4. Ask on Discord/Forum
 
 ---
 

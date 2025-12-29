@@ -1,7 +1,7 @@
 {
   "name": "part1-transactions",
   "version": "1.0.0",
-  "description": "Phần 1: Chuyển tiền và Nghiệp vụ giao dịch - Ethereum Training",
+  "description": "Part 1: Money Transfer and Transaction Operations - Ethereum Training",
   "main": "index.js",
   "scripts": {
     "test": "hardhat test",

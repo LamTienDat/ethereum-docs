@@ -4,39 +4,39 @@ const { ethers } = require("hardhat");
 /**
  * Script 1: Deploy SimpleERC20 Contract
  * 
- * Mục đích:
- * - Học cách deploy smart contract lên testnet
- * - Quan sát gas cost cho deployment
- * - Verify contract trên Etherscan
+ * Purpose:
+ * - Learn how to deploy smart contract to testnet
+ * - Observe gas cost for deployment
+ * - Verify contract on Etherscan
  * 
- * Chạy: npx hardhat run scripts/01-deploy.js --network sepolia
+ * Run: npx hardhat run scripts/01-deploy.js --network sepolia
  */
 
 async function main() {
-  console.log("🚀 Bắt đầu deploy SimpleERC20 contract...\n");
+  console.log("🚀 Starting SimpleERC20 contract deployment...\n");
 
-  // Lấy thông tin deployer
+  // Get deployer information
   const [deployer] = await ethers.getSigners();
-  console.log("📍 Deploying từ địa chỉ:", deployer.address);
+  console.log("📍 Deploying from address:", deployer.address);
 
-  // Kiểm tra số dư
+  // Check balance
   const balance = await ethers.provider.getBalance(deployer.address);
-  console.log("💰 Số dư:", ethers.formatEther(balance), "ETH\n");
+  console.log("💰 Balance:", ethers.formatEther(balance), "ETH\n");
 
   if (balance === 0n) {
-    console.log("❌ Không có ETH! Vui lòng xin Sepolia ETH từ faucet:");
+    console.log("❌ No ETH! Please get Sepolia ETH from faucet:");
     console.log("   - https://sepoliafaucet.com/");
     console.log("   - https://www.alchemy.com/faucets/ethereum-sepolia\n");
     return;
   }
 
-  // Thông số token
+  // Token parameters
   const TOKEN_NAME = "Kaopiz Coin";
   const TOKEN_SYMBOL = "KPC";
   const TOKEN_DECIMALS = 18;
-  const INITIAL_SUPPLY = ethers.parseUnits("1000000", TOKEN_DECIMALS); // 1 triệu token
+  const INITIAL_SUPPLY = ethers.parseUnits("1000000", TOKEN_DECIMALS); // 1 million tokens
 
-  console.log("📋 Thông số token:");
+  console.log("📋 Token parameters:");
   console.log("   Name:", TOKEN_NAME);
   console.log("   Symbol:", TOKEN_SYMBOL);
   console.log("   Decimals:", TOKEN_DECIMALS);
@@ -44,7 +44,7 @@ async function main() {
   console.log();
 
   // Deploy contract
-  console.log("⏳ Đang deploy contract...");
+  console.log("⏳ Deploying contract...");
   const SimpleERC20 = await ethers.getContractFactory("SimpleERC20");
   const token = await SimpleERC20.deploy(
     TOKEN_NAME,
@@ -53,15 +53,15 @@ async function main() {
     INITIAL_SUPPLY
   );
 
-  // Đợi deployment hoàn tất
+  // Wait for deployment to complete
   await token.waitForDeployment();
   const tokenAddress = await token.getAddress();
 
-  console.log("✅ Deploy thành công!");
+  console.log("✅ Deployment successful!");
   console.log("📍 Contract address:", tokenAddress);
   console.log();
 
-  // Lấy thông tin deployment transaction
+  // Get deployment transaction information
   const deployTx = token.deploymentTransaction();
   if (deployTx) {
     console.log("📊 Deployment Transaction:");
@@ -70,14 +70,14 @@ async function main() {
     console.log("   Gas Used:", deployTx.gasLimit.toString());
     console.log("   Gas Price:", ethers.formatUnits(deployTx.gasPrice || 0n, "gwei"), "gwei");
     
-    // Tính cost
+    // Calculate cost
     const cost = (deployTx.gasLimit * (deployTx.gasPrice || 0n));
     console.log("   Deployment Cost:", ethers.formatEther(cost), "ETH");
     console.log();
   }
 
-  // Verify thông tin token
-  console.log("🔍 Verify thông tin token:");
+  // Verify token information
+  console.log("🔍 Verify token information:");
   const name = await token.name();
   const symbol = await token.symbol();
   const decimals = await token.decimals();
@@ -91,8 +91,8 @@ async function main() {
   console.log("   Deployer Balance:", ethers.formatUnits(deployerBalance, decimals), symbol);
   console.log();
 
-  // Lưu địa chỉ contract
-  console.log("💾 Lưu địa chỉ contract vào file deployed-address.txt");
+  // Save contract address
+  console.log("💾 Saving contract address to deployed-address.txt");
   const fs = require("fs");
   fs.writeFileSync(
     "deployed-address.txt",
@@ -102,8 +102,8 @@ async function main() {
     `Deployment Time: ${new Date().toISOString()}\n`
   );
 
-  // Hướng dẫn verify trên Etherscan
-  console.log("📝 Để verify contract trên Etherscan, chạy lệnh:");
+  // Instructions to verify on Etherscan
+  console.log("📝 To verify contract on Etherscan, run:");
   console.log(`   npx hardhat verify --network sepolia ${tokenAddress} "${TOKEN_NAME}" "${TOKEN_SYMBOL}" ${TOKEN_DECIMALS} "${INITIAL_SUPPLY}"`);
   console.log();
 
@@ -113,15 +113,15 @@ async function main() {
   console.log(`   Transaction: https://sepolia.etherscan.io/tx/${deployTx?.hash}`);
   console.log();
 
-  console.log("✨ Deploy hoàn tất! Giờ bạn có thể chạy các script khác.");
-  console.log("   Tiếp theo: npx hardhat run scripts/02-transfer-eth.js --network sepolia");
+  console.log("✨ Deployment complete! You can now run other scripts.");
+  console.log("   Next: npx hardhat run scripts/02-transfer-eth.js --network sepolia");
 }
 
-// Xử lý lỗi
+// Error handling
 main()
   .then(() => process.exit(0))
   .catch((error) => {
-    console.error("❌ Lỗi:", error);
+    console.error("❌ Error:", error);
     process.exit(1);
   });
 

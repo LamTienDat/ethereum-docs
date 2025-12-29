@@ -1,18 +1,18 @@
 /**
- * Retry Helper - Xử lý retry logic với exponential backoff
+ * Retry Helper - Handle retry logic with exponential backoff
  * 
- * Tính năng:
- * - Retry với số lần tùy chỉnh
+ * Features:
+ * - Retry with customizable attempts
  * - Exponential backoff
- * - Logging chi tiết
+ * - Detailed logging
  */
 
 /**
- * Thực thi function với retry logic
- * @param {Function} fn - Function cần thực thi
- * @param {number} maxRetries - Số lần retry tối đa (mặc định 3)
- * @param {number} delay - Thời gian chờ ban đầu ms (mặc định 1000)
- * @param {Function} shouldRetry - Function kiểm tra có nên retry không
+ * Execute function with retry logic
+ * @param {Function} fn - Function to execute
+ * @param {number} maxRetries - Maximum retry attempts (default 3)
+ * @param {number} delay - Initial wait time in ms (default 1000)
+ * @param {Function} shouldRetry - Function to check if should retry
  * @returns {Promise<any>}
  */
 async function callWithRetry(
@@ -25,36 +25,36 @@ async function callWithRetry(
 
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
-      // Thực thi function
+      // Execute function
       const result = await fn();
       
-      // Thành công
+      // Success
       if (attempt > 0) {
-        console.log(`✓ Thành công sau ${attempt + 1} lần thử`);
+        console.log(`✓ Succeeded after ${attempt + 1} attempt(s)`);
       }
       
       return result;
     } catch (error) {
       lastError = error;
       
-      console.error(`❌ Lần thử ${attempt + 1}/${maxRetries} thất bại:`);
-      console.error(`   Lỗi: ${error.message}`);
+      console.error(`❌ Attempt ${attempt + 1}/${maxRetries} failed:`);
+      console.error(`   Error: ${error.message}`);
 
-      // Kiểm tra xem có nên retry không
+      // Check if should retry
       if (shouldRetry && !shouldRetry(error)) {
-        console.error('   → Lỗi không thể retry, dừng lại');
+        console.error('   → Error is not retryable, stopping');
         throw error;
       }
 
-      // Nếu đã hết số lần retry
+      // If out of retry attempts
       if (attempt === maxRetries - 1) {
-        console.error('   → Đã hết số lần retry');
+        console.error('   → Out of retry attempts');
         throw error;
       }
 
-      // Tính thời gian chờ với exponential backoff
+      // Calculate wait time with exponential backoff
       const waitTime = delay * Math.pow(2, attempt);
-      console.log(`   ⏳ Đợi ${waitTime}ms trước khi thử lại...\n`);
+      console.log(`   ⏳ Waiting ${waitTime}ms before retry...\n`);
       
       await sleep(waitTime);
     }
@@ -73,10 +73,10 @@ function sleep(ms) {
 }
 
 /**
- * Retry với timeout
- * @param {Function} fn - Function cần thực thi
+ * Retry with timeout
+ * @param {Function} fn - Function to execute
  * @param {number} timeoutMs - Timeout milliseconds
- * @param {string} timeoutMessage - Message khi timeout
+ * @param {string} timeoutMessage - Message on timeout
  * @returns {Promise<any>}
  */
 async function callWithTimeout(fn, timeoutMs, timeoutMessage = 'Operation timeout') {
@@ -89,7 +89,7 @@ async function callWithTimeout(fn, timeoutMs, timeoutMessage = 'Operation timeou
 }
 
 /**
- * Kiểm tra lỗi có phải network error không
+ * Check if error is network error
  * @param {Error} error
  * @returns {boolean}
  */
@@ -109,7 +109,7 @@ function isNetworkError(error) {
 }
 
 /**
- * Kiểm tra lỗi có phải rate limit không
+ * Check if error is rate limit error
  * @param {Error} error
  * @returns {boolean}
  */
@@ -122,42 +122,42 @@ function isRateLimitError(error) {
 }
 
 /**
- * Kiểm tra lỗi có thể retry không
+ * Check if error is retryable
  * @param {Error} error
  * @returns {boolean}
  */
 function isRetryableError(error) {
-  // Network errors - có thể retry
+  // Network errors - can retry
   if (isNetworkError(error)) {
     return true;
   }
 
-  // Rate limit - có thể retry với delay lớn hơn
+  // Rate limit - can retry with larger delay
   if (isRateLimitError(error)) {
     return true;
   }
 
-  // Nonce too low - không nên retry
+  // Nonce too low - should not retry
   if (error.message.includes('nonce too low')) {
     return false;
   }
 
-  // Insufficient funds - không nên retry
+  // Insufficient funds - should not retry
   if (error.message.includes('insufficient funds')) {
     return false;
   }
 
-  // Invalid parameter - không nên retry
+  // Invalid parameter - should not retry
   if (error.code === 'INVALID_ARGUMENT') {
     return false;
   }
 
-  // Các lỗi khác - retry
+  // Other errors - retry
   return true;
 }
 
 /**
- * Retry wrapper cho RPC calls
+ * Retry wrapper for RPC calls
  * @param {Function} fn - RPC function
  * @param {Object} options - Options
  * @returns {Promise<any>}
@@ -192,4 +192,3 @@ module.exports = {
   isRetryableError,
   sleep,
 };
-

@@ -3,14 +3,14 @@ const fs = require("fs");
 require("dotenv").config();
 
 /**
- * Script 6: Demo Gas Estimation
+ * Script 6: Gas Estimation Demo
  * 
- * Mục đích:
- * - Hiểu cách estimate gas trước khi gửi transaction
+ * Purpose:
+ * - Understand how to estimate gas before sending transaction
  * - EIP-1559: Base Fee + Priority Fee
- * - Xử lý gas tự động vs manual
+ * - Automatic vs manual gas handling
  * 
- * Chạy: npx hardhat run scripts/06-gas-estimation.js --network sepolia
+ * Run: npx hardhat run scripts/06-gas-estimation.js --network sepolia
  */
 
 async function main() {
@@ -22,28 +22,28 @@ async function main() {
   console.log("👤 Sender:", sender.address);
   console.log();
 
-  // ========== PHẦN 1: Hiểu về Gas ==========
+  // ========== PART 1: Understanding Gas ==========
   console.log("=".repeat(60));
-  console.log("PHẦN 1: Gas là gì?");
+  console.log("PART 1: What is Gas?");
   console.log("=".repeat(60));
   console.log();
 
-  console.log("💡 Định nghĩa:");
-  console.log("   Gas = Đơn vị đo lường computational work");
-  console.log("   Gas Price = Giá bạn sẵn sàng trả cho 1 unit gas");
+  console.log("💡 Definition:");
+  console.log("   Gas = Unit of measurement for computational work");
+  console.log("   Gas Price = Price you're willing to pay per gas unit");
   console.log("   Transaction Fee = Gas Used × Gas Price");
   console.log();
 
   console.log("📊 EIP-1559 (London Hard Fork):");
   console.log("   Transaction Fee = Gas Used × (Base Fee + Priority Fee)");
   console.log();
-  console.log("   - Base Fee: Phí cơ bản của network (tự động điều chỉnh)");
-  console.log("   - Priority Fee: Tip cho validators (để ưu tiên transaction)");
-  console.log("   - Max Fee: Giới hạn tối đa bạn sẵn sàng trả");
+  console.log("   - Base Fee: Network's base fee (automatically adjusted)");
+  console.log("   - Priority Fee: Tip for validators (to prioritize transaction)");
+  console.log("   - Max Fee: Maximum you're willing to pay");
   console.log();
 
-  // Lấy thông tin gas hiện tại
-  console.log("📊 Thông tin Gas hiện tại:");
+  // Get current gas information
+  console.log("📊 Current Gas Information:");
   const feeData = await ethers.provider.getFeeData();
   
   console.log(`   Gas Price (Legacy): ${ethers.formatUnits(feeData.gasPrice || 0n, "gwei")} gwei`);
@@ -51,16 +51,16 @@ async function main() {
   console.log(`   Max Priority Fee: ${ethers.formatUnits(feeData.maxPriorityFeePerGas || 0n, "gwei")} gwei`);
   console.log();
 
-  // Lấy base fee từ latest block
+  // Get base fee from latest block
   const latestBlock = await ethers.provider.getBlock("latest");
   if (latestBlock && latestBlock.baseFeePerGas) {
     console.log(`   Base Fee (from block): ${ethers.formatUnits(latestBlock.baseFeePerGas, "gwei")} gwei`);
     console.log();
   }
 
-  // ========== PHẦN 2: Estimate Gas cho ETH Transfer ==========
+  // ========== PART 2: Estimate Gas for ETH Transfer ==========
   console.log("=".repeat(60));
-  console.log("PHẦN 2: Estimate Gas cho ETH Transfer");
+  console.log("PART 2: Estimate Gas for ETH Transfer");
   console.log("=".repeat(60));
   console.log();
 
@@ -80,23 +80,23 @@ async function main() {
 
   console.log("📊 Gas Estimation:");
   console.log(`   Estimated Gas: ${estimatedGasETH.toString()} gas`);
-  console.log(`   (ETH transfer luôn là 21,000 gas)`);
+  console.log(`   (ETH transfer is always 21,000 gas)`);
   console.log();
 
-  // Tính cost
+  // Calculate cost
   const estimatedCostETH = estimatedGasETH * (feeData.maxFeePerGas || 0n);
   console.log("💸 Estimated Cost:");
   console.log(`   ${ethers.formatEther(estimatedCostETH)} ETH`);
-  console.log(`   (~$${(parseFloat(ethers.formatEther(estimatedCostETH)) * 3000).toFixed(4)} nếu ETH = $3000)`);
+  console.log(`   (~$${(parseFloat(ethers.formatEther(estimatedCostETH)) * 3000).toFixed(4)} if ETH = $3000)`);
   console.log();
 
-  // ========== PHẦN 3: Estimate Gas cho ERC20 Transfer ==========
+  // ========== PART 3: Estimate Gas for ERC20 Transfer ==========
   console.log("=".repeat(60));
-  console.log("PHẦN 3: Estimate Gas cho ERC20 Transfer");
+  console.log("PART 3: Estimate Gas for ERC20 Transfer");
   console.log("=".repeat(60));
   console.log();
 
-  // Đọc contract address
+  // Read contract address
   let contractAddress;
   try {
     const deployedInfo = fs.readFileSync("deployed-address.txt", "utf8");
@@ -105,7 +105,7 @@ async function main() {
       contractAddress = match[1];
     }
   } catch (error) {
-    console.log("⚠️ Chưa deploy contract, skip phần này");
+    console.log("⚠️ Contract not deployed yet, skipping this part");
     contractAddress = null;
   }
 
@@ -127,40 +127,40 @@ async function main() {
     console.log(`   (ERC20 transfer: ~50,000-65,000 gas)`);
     console.log();
 
-    // Tính cost
+    // Calculate cost
     const estimatedCostERC20 = estimatedGasERC20 * (feeData.maxFeePerGas || 0n);
     console.log("💸 Estimated Cost:");
     console.log(`   ${ethers.formatEther(estimatedCostERC20)} ETH`);
     console.log();
 
-    // So sánh
-    console.log("📊 So sánh ETH vs ERC20:");
+    // Compare
+    console.log("📊 Compare ETH vs ERC20:");
     console.log(`   ETH: ${estimatedGasETH.toString()} gas`);
     console.log(`   ERC20: ${estimatedGasERC20.toString()} gas`);
-    console.log(`   Chênh lệch: ${((Number(estimatedGasERC20) / Number(estimatedGasETH)) * 100 - 100).toFixed(1)}% cao hơn`);
+    console.log(`   Difference: ${((Number(estimatedGasERC20) / Number(estimatedGasETH)) * 100 - 100).toFixed(1)}% higher`);
     console.log();
   }
 
-  // ========== PHẦN 4: Xử lý Gas Tự động ==========
+  // ========== PART 4: Automatic vs Manual Gas Handling ==========
   console.log("=".repeat(60));
-  console.log("PHẦN 4: Xử lý Gas Tự động vs Manual");
+  console.log("PART 4: Automatic vs Manual Gas Handling");
   console.log("=".repeat(60));
   console.log();
 
-  console.log("1️⃣ Tự động (Recommended):");
+  console.log("1️⃣ Automatic (Recommended):");
   console.log();
   console.log("```javascript");
   console.log("const tx = await signer.sendTransaction({");
   console.log("  to: recipient,");
   console.log("  value: amount");
-  console.log("  // Gas sẽ được estimate tự động");
+  console.log("  // Gas will be estimated automatically");
   console.log("});");
   console.log("```");
   console.log();
-  console.log("✅ Ưu điểm:");
-  console.log("   - Đơn giản, không cần tính toán");
-  console.log("   - Ethers.js tự động estimate và thêm buffer");
-  console.log("   - Phù hợp cho hầu hết use cases");
+  console.log("✅ Advantages:");
+  console.log("   - Simple, no calculations needed");
+  console.log("   - Ethers.js automatically estimates and adds buffer");
+  console.log("   - Suitable for most use cases");
   console.log();
 
   console.log("2️⃣ Manual (Advanced):");
@@ -178,38 +178,38 @@ async function main() {
   console.log("});");
   console.log("```");
   console.log();
-  console.log("✅ Ưu điểm:");
-  console.log("   - Kiểm soát chính xác chi phí");
-  console.log("   - Có thể optimize gas cost");
-  console.log("   - Phù hợp cho production backend");
+  console.log("✅ Advantages:");
+  console.log("   - Precise cost control");
+  console.log("   - Can optimize gas cost");
+  console.log("   - Suitable for production backend");
   console.log();
 
-  // ========== PHẦN 5: Demo Tự động ==========
+  // ========== PART 5: Demo Automatic ==========
   console.log("=".repeat(60));
-  console.log("PHẦN 5: Demo Gas Tự động");
+  console.log("PART 5: Demo Automatic Gas");
   console.log("=".repeat(60));
   console.log();
 
-  console.log("📝 Gửi transaction với gas tự động:");
+  console.log("📝 Sending transaction with automatic gas:");
   console.log();
 
   const autoTx = await sender.sendTransaction({
     to: recipient,
     value: ethers.parseEther("0.0001")
-    // Không cung cấp gas parameters
+    // No gas parameters provided
   });
 
-  console.log("✅ Transaction đã gửi!");
+  console.log("✅ Transaction sent!");
   console.log("📍 TX Hash:", autoTx.hash);
   console.log();
 
-  console.log("📊 Gas Parameters (tự động):");
+  console.log("📊 Gas Parameters (automatic):");
   console.log(`   Gas Limit: ${autoTx.gasLimit?.toString() || "N/A"}`);
   console.log(`   Max Fee: ${ethers.formatUnits(autoTx.maxFeePerGas || 0n, "gwei")} gwei`);
   console.log(`   Max Priority Fee: ${ethers.formatUnits(autoTx.maxPriorityFeePerGas || 0n, "gwei")} gwei`);
   console.log();
 
-  console.log("⏳ Đang đợi confirmation...");
+  console.log("⏳ Waiting for confirmation...");
   const autoReceipt = await autoTx.wait();
   console.log("✅ Confirmed!");
   console.log();
@@ -220,25 +220,25 @@ async function main() {
   console.log(`   Total Cost: ${ethers.formatEther(autoReceipt.gasUsed * autoReceipt.gasPrice)} ETH`);
   console.log();
 
-  // ========== PHẦN 6: Demo Manual ==========
+  // ========== PART 6: Demo Manual ==========
   console.log("=".repeat(60));
-  console.log("PHẦN 6: Demo Gas Manual");
+  console.log("PART 6: Demo Manual Gas");
   console.log("=".repeat(60));
   console.log();
 
-  console.log("📝 Gửi transaction với gas manual:");
+  console.log("📝 Sending transaction with manual gas:");
   console.log();
 
-  // Estimate trước
+  // Estimate first
   const manualEstimatedGas = await ethers.provider.estimateGas({
     to: recipient,
     value: ethers.parseEther("0.0001")
   });
 
-  // Thêm 20% buffer
+  // Add 20% buffer
   const gasLimit = manualEstimatedGas * 120n / 100n;
 
-  // Lấy fee data
+  // Get fee data
   const manualFeeData = await ethers.provider.getFeeData();
 
   console.log("📊 Manual Gas Parameters:");
@@ -256,11 +256,11 @@ async function main() {
     maxPriorityFeePerGas: manualFeeData.maxPriorityFeePerGas
   });
 
-  console.log("✅ Transaction đã gửi!");
+  console.log("✅ Transaction sent!");
   console.log("📍 TX Hash:", manualTx.hash);
   console.log();
 
-  console.log("⏳ Đang đợi confirmation...");
+  console.log("⏳ Waiting for confirmation...");
   const manualReceipt = await manualTx.wait();
   console.log("✅ Confirmed!");
   console.log();
@@ -271,39 +271,39 @@ async function main() {
   console.log(`   Total Cost: ${ethers.formatEther(manualReceipt.gasUsed * manualReceipt.gasPrice)} ETH`);
   console.log();
 
-  // ========== TÓM TẮT ==========
+  // ========== SUMMARY ==========
   console.log("=".repeat(60));
-  console.log("📝 Tóm tắt về Gas");
+  console.log("📝 Gas Summary");
   console.log("=".repeat(60));
   console.log();
 
-  console.log("✅ Điều cần nhớ:");
+  console.log("✅ Key Points:");
   console.log();
   console.log("1. Gas = Computational work");
   console.log("2. Transaction Fee = Gas Used × Gas Price");
   console.log("3. EIP-1559: Base Fee + Priority Fee");
-  console.log("4. ETH transfer: 21,000 gas (cố định)");
+  console.log("4. ETH transfer: 21,000 gas (fixed)");
   console.log("5. ERC20 transfer: ~50,000-65,000 gas");
-  console.log("6. Luôn estimate gas trước khi gửi");
-  console.log("7. Thêm buffer (10-20%) cho gas limit");
-  console.log("8. Frontend: Dùng gas tự động");
-  console.log("9. Backend: Có thể dùng manual để optimize");
+  console.log("6. Always estimate gas before sending");
+  console.log("7. Add buffer (10-20%) for gas limit");
+  console.log("8. Frontend: Use automatic gas");
+  console.log("9. Backend: Can use manual to optimize");
   console.log();
 
-  console.log("🔗 Tools hữu ích:");
+  console.log("🔗 Useful Tools:");
   console.log("   - Etherscan Gas Tracker: https://etherscan.io/gastracker");
   console.log("   - Blocknative Gas Estimator: https://www.blocknative.com/gas-estimator");
   console.log("   - ETH Gas Station: https://ethgasstation.info/");
   console.log();
 
-  console.log("✨ Demo hoàn tất!");
-  console.log("   Tiếp theo: npx hardhat run scripts/07-confirmations.js --network sepolia");
+  console.log("✨ Demo complete!");
+  console.log("   Next: npx hardhat run scripts/07-confirmations.js --network sepolia");
 }
 
 main()
   .then(() => process.exit(0))
   .catch((error) => {
-    console.error("❌ Lỗi:", error);
+    console.error("❌ Error:", error);
     process.exit(1);
   });
 

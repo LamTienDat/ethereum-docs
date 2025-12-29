@@ -1,12 +1,12 @@
-# トレーニング資料: BLOCKCHAIN システム開発 (ETHEREUM/EVM)
+# TÀI LIỆU ĐÀO TẠO: PHÁT TRIỂN HỆ THỐNG BLOCKCHAIN (ETHEREUM/EVM)
 
-> **目的**: 技術チームに基礎知識と実践的な統合スキルを提供する。
+> **Mục tiêu**: Trang bị kiến thức nền tảng và kỹ năng tích hợp thực tế cho đội ngũ kỹ thuật.
 >
 > **Tech Stack**: Solidity (Smart Contract), Ethers.js (Client library), Node.js (Backend)
 
 ---
 
-## 📖 公式ドキュメント
+## 📖 Tài liệu tham khảo chính thức
 
 - **Ethereum Official Docs**: https://ethereum.org/en/developers/docs/
 - **Ethers.js Documentation**: https://docs.ethers.org/v6/
@@ -20,36 +20,36 @@
 
 ---
 
-## 📚 目次
+## 📚 Mục lục
 
-1. [パート 1: 送金とトランザクション業務](#パート1-送金とトランザクション業務)
-2. [パート 2: ウォレット、署名と認証 (Client-side)](#パート2-ウォレット署名と認証-client-side)
-3. [パート 3: イベント処理](#パート3-イベント処理)
-4. [パート 4: Off-chain 統合 (Backend Node.js)](#パート4-off-chain統合-backend-nodejs)
-5. [パート 5: セキュリティと監査入門](#パート5-セキュリティと監査入門)
-6. [パート 6: 総合演習](#パート6-総合演習)
-7. [パート 7: Ethereum vs Hyperledger Fabric の比較](#パート7-ethereum-vs-hyperledger-fabric-の比較)
+1. [Phần 1: Chuyển tiền và Nghiệp vụ giao dịch (Transaction)](#phần-1-chuyển-tiền-và-nghiệp-vụ-giao-dịch-transaction)
+2. [Phần 2: Ví, Ký và Xác thực (Client-side)](#phần-2-ví-ký-và-xác-thực-client-side)
+3. [Phần 3: Xử lý sự kiện (Event)](#phần-3-xử-lý-sự-kiện-event)
+4. [Phần 4: Tích hợp Off-chain (Backend Node.js)](#phần-4-tích-hợp-off-chain-backend-nodejs)
+5. [Phần 5: Nhập môn Bảo mật và Kiểm toán](#phần-5-nhập-môn-bảo-mật-và-kiểm-toán)
+6. [Phần 6: Bài tập tổng hợp](#phần-6-bài-tập-tổng-hợp)
+7. [Phần 7: So sánh Ethereum vs Hyperledger Fabric](#phần-7-so-sánh-ethereum-vs-hyperledger-fabric)
 
 ---
 
-## パート 1: 送金とトランザクション業務
+## Phần 1: Chuyển tiền và Nghiệp vụ giao dịch (Transaction)
 
-### 1.1. ETH vs ERC20 の送金メカニズム
+### 1.1. Cơ chế chuyển ETH vs ERC20
 
-Ethereum エコシステムには、全く異なるメカニズムで動作する 2 種類のデジタル資産があります：
+Trong hệ sinh thái Ethereum, có hai loại tài sản số hoạt động theo cơ chế hoàn toàn khác nhau:
 
 #### 🔷 Native Token (ETH)
 
-**ETH** は Ethereum ネットワークのネイティブ通貨（native currency）です。ETH の送金は blockchain の **プロトコルレベルで直接処理**されます。
+**ETH** là tiền tệ gốc (native currency) của mạng lưới Ethereum. Việc chuyển ETH được xử lý **trực tiếp ở cấp độ protocol** của blockchain.
 
-**特徴:**
+**Đặc điểm:**
 
-- ETH の残高は **blockchain の state** に保存され、ウォレットアドレスに紐付けられています
-- Smart contract による管理は不要
-- Ethereum 上のすべてのトランザクションは ETH で gas 手数料を支払う必要があります
-- コード実行が不要なため、処理速度が速い
+- Số dư ETH được lưu trữ trong **state của blockchain**, gắn liền với địa chỉ ví
+- Không cần smart contract để quản lý
+- Mọi giao dịch trên Ethereum đều phải trả phí gas bằng ETH
+- Tốc độ xử lý nhanh hơn vì không cần thực thi code
 
-**例:**
+**Ví dụ minh họa:**
 
 ```
 Wallet A has 10 ETH, Wallet B has 5 ETH
@@ -69,34 +69,34 @@ A sends 1 ETH to B:
 └─────────────────────────────────────┘
 ```
 
-**コード例 (Ethers.js):**
+**Code ví dụ (Ethers.js):**
 
 ```javascript
-// 自分のウォレットから別のウォレットへ ETH を送金
+// Chuyển ETH từ ví của bạn sang ví khác
 const tx = await signer.sendTransaction({
   to: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
-  value: ethers.parseEther("1.0"), // 1 ETH を送金
+  value: ethers.parseEther("1.0"), // Chuyển 1 ETH
 });
 
 console.log("Transaction hash:", tx.hash);
-await tx.wait(); // transaction が confirm されるまで待機
+await tx.wait(); // Chờ transaction được confirm
 console.log("Transfer completed!");
 ```
 
 #### 🔶 ERC20 Token
 
-**ERC20** はカスタムトークンを作成するための **Smart Contract 標準**です。実際、ERC20 token は従来の意味での「通貨」ではなく、**Smart Contract によって管理されるデータ**です。
+**ERC20** là một **chuẩn smart contract** để tạo ra các token tùy chỉnh. Thực chất, ERC20 token không phải là "tiền" theo nghĩa truyền thống, mà là **dữ liệu được quản lý bởi một smart contract**.
 
-> 📖 **参考資料**: [ERC20 Token Standard (EIP-20)](https://eips.ethereum.org/EIPS/eip-20)
+> 📖 **Tài liệu tham khảo**: [ERC20 Token Standard (EIP-20)](https://eips.ethereum.org/EIPS/eip-20)
 
-**特徴:**
+**Đặc điểm:**
 
-- 残高はウォレット内にあるのではなく、contract 内の**データ行**です
-- Contract は「テーブル」(mapping) 形式で残高を保存: `ウォレットアドレス → トークン数量`
-- トークンの送金 = contract の `transfer()` 関数を呼び出す
-- Contract 関数を実行するために ETH で gas を支払う必要があります
+- Số dư của bạn không nằm trong ví, mà là một **dòng dữ liệu** trong contract
+- Contract lưu trữ số dư trong một "bảng" (mapping) dạng: `địa chỉ ví → số lượng token`
+- Mỗi lần chuyển token = gọi hàm `transfer()` của contract
+- Cần trả gas bằng ETH để thực thi hàm contract
 
-**例:**
+**Ví dụ minh họa:**
 
 ```
 Smart Contract USDT at address: 0xdAC17F958D2ee523a2206206994597C13D831ec7
@@ -119,7 +119,7 @@ When A wants to send 100 USDT to B:
 4. Contract emits event: Transfer(A, B, 100)
 ```
 
-**シンプルな ERC20 Smart Contract のコード例:**
+**Code ví dụ Smart Contract ERC20 đơn giản:**
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -131,22 +131,22 @@ contract SimpleERC20 {
     uint8 public decimals = 18;
     uint256 public totalSupply;
 
-    // 各アドレスの残高を保存するテーブル
+    // Bảng lưu số dư của từng địa chỉ
     mapping(address => uint256) public balanceOf;
 
-    // 委任権限 (allowance) を保存するテーブル
+    // Bảng lưu quyền ủy thác (allowance)
     mapping(address => mapping(address => uint256)) public allowance;
 
-    // 送金時のイベント
+    // Sự kiện khi có chuyển tiền
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(address indexed owner, address indexed spender, uint256 value);
 
     constructor(uint256 _initialSupply) {
         totalSupply = _initialSupply * 10 ** uint256(decimals);
-        balanceOf[msg.sender] = totalSupply; // deploy した人に全トークンを割り当て
+        balanceOf[msg.sender] = totalSupply; // Gán toàn bộ token cho người deploy
     }
 
-    // トークン送金関数
+    // Hàm chuyển token
     function transfer(address _to, uint256 _value) public returns (bool success) {
         require(balanceOf[msg.sender] >= _value, "Insufficient balance");
         require(_to != address(0), "Invalid address");
@@ -160,32 +160,32 @@ contract SimpleERC20 {
 }
 ```
 
-**ERC20 との連携コード例 (Ethers.js):**
+**Code ví dụ tương tác với ERC20 (Ethers.js):**
 
 ```javascript
-// ERC20 contract の ABI（必要な関数のみ）
+// ABI của contract ERC20 (chỉ lấy các hàm cần thiết)
 const ERC20_ABI = [
-  // address の残高を返す
+  // Trả về số dư của address.
   "function balanceOf(address owner) view returns (uint256)",
-  // address にトークン数量を送金
+  // Chuyển số lượng token đến address.
   "function transfer(address to, uint256 amount) returns (bool)",
-  // spender が owner からトークンを引き出すことを許可
+  // Cho phép spender lấy lượng token từ owner.
   "function approve(address spender, uint256 amount) returns (bool)",
-  // spender が owner から引き出せるトークン数量を返す
+  // Trả về số lượng token mà người spender có thể rút từ owner.
   "function allowance(address owner, address spender) view returns (uint256)",
 ];
 
-// Ethereum Mainnet 上の USDT contract アドレス
+// Địa chỉ contract USDT trên Ethereum Mainnet
 const USDT_ADDRESS = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
 
-// Contract に接続
+// Kết nối với contract
 const usdtContract = new ethers.Contract(USDT_ADDRESS, ERC20_ABI, signer);
 
-// 残高確認
+// Kiểm tra số dư
 const balance = await usdtContract.balanceOf(myAddress);
-console.log("Balance:", ethers.formatUnits(balance, 6)); // USDT は 6 decimals
+console.log("Balance:", ethers.formatUnits(balance, 6)); // USDT có 6 decimals
 
-// 他の人に 100 USDT を送金
+// Chuyển 100 USDT cho người khác
 const tx = await usdtContract.transfer(
   "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
   ethers.parseUnits("100", 6) // 100 USDT
@@ -196,27 +196,27 @@ console.log("Transfer completed!");
 
 ---
 
-### 1.2. 重要な 3 つの関数: transfer / transferFrom / approve
+### 1.2. Bộ ba hàm quan trọng: transfer / transferFrom / approve
 
-これらは ERC20 標準の**3 つのコア関数**で、柔軟かつ安全にトークン送金を管理するのに役立ちます。
+Đây là **3 hàm cốt lõi** của chuẩn ERC20, giúp quản lý việc chuyển token một cách linh hoạt và an toàn.
 
-#### 🔹 関数 `transfer(address to, uint256 amount)`
+#### 🔹 Hàm `transfer(address to, uint256 amount)`
 
-**目的:** ウォレットの所有者が自分のトークンを他の人に送る。
+**Mục đích:** Chủ ví tự tay gửi token của mình cho người khác.
 
-**動作方法:**
+**Cách hoạt động:**
 
-1. 関数を呼び出した人（`msg.sender`）がトークンを送りたい
-2. Contract が `msg.sender` の残高を確認
-3. 十分な残高があれば、`msg.sender` から減額し `to` に加算
-4. `Transfer` イベントを発行
+1. Người gọi hàm (`msg.sender`) muốn gửi token
+2. Contract kiểm tra số dư của `msg.sender`
+3. Nếu đủ, trừ tiền của `msg.sender` và cộng cho `to`
+4. Phát sự kiện `Transfer`
 
-**実例:**
+**Ví dụ thực tế:**
 
-- 友達に 50 USDT を送る
-- MetaMask ウォレットから自分の Ledger ウォレットに 100 DAI を送る
+- Bạn gửi 50 USDT cho bạn bè
+- Bạn chuyển 100 DAI từ ví MetaMask sang ví Ledger của mình
 
-**Solidity コード:**
+**Code Solidity:**
 
 ```solidity
 function transfer(address to, uint256 amount) public returns (bool) {
@@ -231,36 +231,36 @@ function transfer(address to, uint256 amount) public returns (bool) {
 }
 ```
 
-**JavaScript コード (Ethers.js):**
+**Code JavaScript (Ethers.js):**
 
 ```javascript
-// 友達に 50 USDT を送る
+// Gửi 50 USDT cho bạn
 const tx = await usdtContract.transfer(
-  "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb", // 友達のアドレス
+  "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb", // Địa chỉ bạn
   ethers.parseUnits("50", 6) // 50 USDT
 );
 await tx.wait();
-console.log("50 USDT の送金が完了しました！");
+console.log("Đã gửi 50 USDT thành công!");
 ```
 
 ---
 
-#### 🔹 関数 `approve(address spender, uint256 amount)`
+#### 🔹 Hàm `approve(address spender, uint256 amount)`
 
-**目的:** 別のアドレス（人または Smart Contract）に**あなたのお金を使う権限**を制限付きで付与する。
+**Mục đích:** Cấp quyền cho một địa chỉ khác (có thể là người hoặc smart contract) được phép **tiêu tiền của bạn** trong giới hạn cho phép.
 
-**動作方法:**
+**Cách hoạt động:**
 
-1. `approve(spender, amount)` を呼び出す
-2. Contract が記録: 「アドレス `spender` はあなたのウォレットから最大 `amount` トークンを取得できる」
-3. この情報は mapping `allowance[owner][spender]` に保存される
+1. Bạn gọi `approve(spender, amount)`
+2. Contract ghi nhận: "Địa chỉ `spender` được phép lấy tối đa `amount` token từ ví của bạn"
+3. Thông tin này được lưu trong mapping `allowance[owner][spender]`
 
-**なぜ approve が必要？**
+**Tại sao cần approve?**
 
-- DEX（Uniswap、PancakeSwap）は取引を実行するためにあなたのウォレットからトークンを取得する権限が必要
-- dApp（lending、staking）は期限が来たときに自動的にトークンを引き出す権限が必要
+- Các sàn DEX (Uniswap, PancakeSwap) cần quyền lấy token từ ví bạn để thực hiện giao dịch
+- Các dApp (lending, staking) cần quyền để tự động rút token khi đến hạn
 
-**実例:**
+**Ví dụ thực tế:**
 
 ```
 You want to swap 1000 USDT for ETH on Uniswap:
@@ -275,7 +275,7 @@ Step 2: Swap
 - Uniswap takes your 1000 USDT and sends you ETH
 ```
 
-**Solidity コード:**
+**Code Solidity:**
 
 ```solidity
 function approve(address spender, uint256 amount) public returns (bool) {
@@ -288,44 +288,44 @@ function approve(address spender, uint256 amount) public returns (bool) {
 }
 ```
 
-**JavaScript コード (Ethers.js):**
+**Code JavaScript (Ethers.js):**
 
 ```javascript
-// Uniswap Router にウォレットから 1000 USDT を取得する権限を付与
+// Cho phép Uniswap Router lấy 1000 USDT từ ví bạn
 const UNISWAP_ROUTER = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D";
 
 const tx = await usdtContract.approve(
   UNISWAP_ROUTER,
-  ethers.parseUnits("1000", 6) // 1000 USDT を approve
+  ethers.parseUnits("1000", 6) // Approve 1000 USDT
 );
 await tx.wait();
-console.log("Approve が完了しました！");
+console.log("Đã approve thành công!");
 
-// allowance を確認
+// Kiểm tra allowance
 const allowance = await usdtContract.allowance(myAddress, UNISWAP_ROUTER);
 console.log("Allowance:", ethers.formatUnits(allowance, 6), "USDT");
 ```
 
-**⚠️ セキュリティ注意:**
+**⚠️ Lưu ý bảo mật:**
 
-- **大きすぎる数量を approve しない**（例: `2^256 - 1`）。contract がハッキングされた場合、ハッカーがあなたのお金をすべて引き出せます
-- 必要な数量だけ approve すべき
-- 使用後は `approve(spender, 0)` を呼び出して権限を取り消すべき
+- **Không nên approve số lượng quá lớn** (ví dụ: `2^256 - 1`) vì nếu contract bị hack, hacker có thể rút hết tiền của bạn
+- Nên approve đúng số lượng cần dùng
+- Sau khi dùng xong, nên gọi `approve(spender, 0)` để thu hồi quyền
 
 ---
 
-#### 🔹 関数 `transferFrom(address from, address to, uint256 amount)`
+#### 🔹 Hàm `transferFrom(address from, address to, uint256 amount)`
 
-**目的:** approve されたアドレスが**他人のウォレットからお金を引き出して**送金できるようにする。
+**Mục đích:** Cho phép một địa chỉ (đã được approve) **rút tiền từ ví người khác** và chuyển đi.
 
-**動作方法:**
+**Cách hoạt động:**
 
-1. 関数を呼び出した人（`msg.sender`）が `from` のウォレットからトークンを取得したい
-2. Contract が確認: `from` は `msg.sender` に approve したか？
-3. 確認: approve された数量は十分か？
-4. 有効な場合: `from` から減額、`to` に加算、allowance を減らす
+1. Người gọi hàm (`msg.sender`) muốn lấy token từ ví `from`
+2. Contract kiểm tra: `from` đã approve cho `msg.sender` chưa?
+3. Kiểm tra: Số lượng approve có đủ không?
+4. Nếu hợp lệ: Trừ tiền của `from`, cộng cho `to`, giảm allowance
 
-**実例:**
+**Ví dụ thực tế:**
 
 ```
 Scenario: You have approved Uniswap to take 1000 USDT
@@ -342,7 +342,7 @@ When you execute swap:
 4. Emits event Transfer(you, Uniswap, 1000)
 ```
 
-**Solidity コード:**
+**Code Solidity:**
 
 ```solidity
 function transferFrom(address from, address to, uint256 amount) public returns (bool) {
@@ -359,11 +359,11 @@ function transferFrom(address from, address to, uint256 amount) public returns (
 }
 ```
 
-**JavaScript コード (Ethers.js) - DEX Smart Contract の例:**
+**Code JavaScript (Ethers.js) - Ví dụ Smart Contract DEX:**
 
 ```solidity
-// あなたの DEX contract が transferFrom を使用してユーザーからトークンを取得
-// File: DEX.sol (簡略化)
+// Contract DEX của bạn sử dụng transferFrom để lấy token từ user
+// File: DEX.sol (đơn giản hóa)
 
 contract SimpleDEX {
     IERC20 public usdtToken;
@@ -372,17 +372,17 @@ contract SimpleDEX {
         usdtToken = IERC20(_usdtAddress);
     }
 
-    // ユーザーはこの関数を呼び出す前に approve する必要があります
+    // User phải approve trước khi gọi hàm này
     function deposit(uint256 amount) external {
-        // ユーザーのウォレットから USDT を取得してこの contract に送金
+        // Lấy USDT từ ví user và chuyển vào contract này
         usdtToken.transferFrom(msg.sender, address(this), amount);
 
-        // 後続処理のロジック（DEX 内のユーザー残高を更新...）
+        // Logic xử lý tiếp (cập nhật số dư user trong DEX...)
     }
 }
 ```
 
-**総合フロー図:**
+**Sơ đồ tổng hợp:**
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -411,36 +411,36 @@ User A                    Smart Contract                 User B / DEX
   │<─────────────────────────────│                              │
 ```
 
-#### 📝 3 つの関数のまとめ
+#### 📝 Tóm tắt bộ ba hàm
 
-| 関数             | 誰が呼び出す？   | 何をする？                                         | 実例                                           |
-| ---------------- | ---------------- | -------------------------------------------------- | ---------------------------------------------- |
-| **transfer**     | ウォレット所有者 | 自分でトークンを他の人に送る                       | 友達に送金                                     |
-| **approve**      | ウォレット所有者 | 別のアドレスにトークンを取得する権限を付与         | Uniswap で swap するために approve             |
-| **transferFrom** | approve された人 | 他人のウォレットからトークンを取得（approve 済み） | Uniswap が swap 時に自動的にトークンを引き出す |
+| Hàm              | Ai gọi?            | Làm gì?                                   | Ví dụ thực tế                      |
+| ---------------- | ------------------ | ----------------------------------------- | ---------------------------------- |
+| **transfer**     | Chủ ví             | Tự tay gửi token cho người khác           | Gửi tiền cho bạn bè                |
+| **approve**      | Chủ ví             | Cấp quyền cho địa chỉ khác được lấy token | Approve cho Uniswap để swap        |
+| **transferFrom** | Người được approve | Lấy token từ ví người khác (đã approve)   | Uniswap tự động rút token khi swap |
 
 ---
 
-### 1.3. コア概念: Nonce、Gas、Confirmations
+### 1.3. Các khái niệm cốt lõi: Nonce, Gas, Confirmations
 
 #### 🔢 Nonce (Number Only Used Once)
 
-**定義:** Nonce は、あるアドレスからのトランザクションの**シーケンス番号**で、0 から始まり順次増加します。
+**Định nghĩa:** Nonce là **số thứ tự** của giao dịch từ một địa chỉ ví, bắt đầu từ 0 và tăng dần.
 
-> 📖 **参考資料**: [Ethereum Transactions - Nonce](https://ethereum.org/en/developers/docs/transactions/#nonce)
+> 📖 **Tài liệu tham khảo**: [Ethereum Transactions - Nonce](https://ethereum.org/en/developers/docs/transactions/#nonce)
 
-**なぜ Nonce が必要？**
+**Tại sao cần Nonce?**
 
-1. **Replay Attack を防ぐ:**
+1. **Chống tấn công Replay Attack:**
 
-   - Nonce がなければ、ハッカーは有効なトランザクションをコピーして何度も再送信できます
-   - 例: 友達に 1 ETH を送る。Nonce がなければ、ハッカーはそのトランザクションをコピーして、あなたがさらに多くの ETH を失う可能性があります
+   - Nếu không có nonce, hacker có thể sao chép một giao dịch hợp lệ và phát lại nhiều lần
+   - Ví dụ: Bạn gửi 1 ETH cho bạn bè. Nếu không có nonce, hacker có thể copy transaction đó và làm bạn mất thêm nhiều ETH
 
-2. **実行順序を保証:**
-   - Nonce 0 のトランザクションが完了してから、Nonce 1 が処理されます
-   - Nonce 1 が Nonce 0 より先に到着した場合、Nonce 0 が完了するまで pending 状態になります
+2. **Đảm bảo thứ tự thực hiện:**
+   - Giao dịch nonce 0 phải xong thì nonce 1 mới được xử lý
+   - Nếu nonce 1 đến trước nonce 0, nó sẽ bị pending cho đến khi nonce 0 hoàn thành
 
-**例:**
+**Ví dụ minh họa:**
 
 ```
 Wallet A sends 3 transactions:
@@ -458,21 +458,21 @@ If you want to "skip" Transaction 1:
 → Old transaction will be replaced
 ```
 
-**コード例 (Ethers.js):**
+**Code ví dụ (Ethers.js):**
 
 ```javascript
-// ウォレットの現在の nonce を取得
+// Lấy nonce hiện tại của ví
 const nonce = await provider.getTransactionCount(myAddress);
 console.log("Current nonce:", nonce);
 
-// 特定の nonce でトランザクションを送信
+// Gửi transaction với nonce cụ thể
 const tx = await signer.sendTransaction({
   to: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
   value: ethers.parseEther("1.0"),
-  nonce: nonce, // nonce を指定
+  nonce: nonce, // Chỉ định nonce
 });
 
-// 複数のトランザクションを並行送信（nonce を順次増加）
+// Gửi nhiều transaction song song (nonce tăng dần)
 const tx1 = await signer.sendTransaction({
   to: addressB,
   value: ethers.parseEther("1.0"),
@@ -482,7 +482,7 @@ const tx1 = await signer.sendTransaction({
 const tx2 = await signer.sendTransaction({
   to: addressC,
   value: ethers.parseEther("2.0"),
-  nonce: nonce + 1, // 手動で増加
+  nonce: nonce + 1, // Phải tăng thủ công
 });
 
 const tx3 = await signer.sendTransaction({
@@ -492,10 +492,10 @@ const tx3 = await signer.sendTransaction({
 });
 ```
 
-**⚠️ よくあるエラー:**
+**⚠️ Lỗi thường gặp:**
 
 ```javascript
-// ❌ 間違い: nonce を指定せずに2つのトランザクションを同時に送信
+// ❌ SAI: Gửi 2 transaction cùng lúc mà không chỉ định nonce
 const tx1 = await signer.sendTransaction({
   to: addressB,
   value: ethers.parseEther("1.0"),
@@ -504,9 +504,9 @@ const tx2 = await signer.sendTransaction({
   to: addressC,
   value: ethers.parseEther("2.0"),
 });
-// → 両方のトランザクションが同じ nonce を持つ → 後のトランザクションが前のトランザクションを置き換える
+// → Cả 2 transaction sẽ có cùng nonce → Transaction sau sẽ thay thế transaction trước
 
-// ✅ 正しい: nonce を明示的に指定
+// ✅ ĐÚNG: Chỉ định nonce rõ ràng
 const nonce = await provider.getTransactionCount(myAddress);
 const tx1 = await signer.sendTransaction({
   to: addressB,
@@ -522,40 +522,40 @@ const tx2 = await signer.sendTransaction({
 
 ---
 
-#### ⛽ Gas (トランザクション手数料)
+#### ⛽ Gas (Phí giao dịch)
 
-**定義:** Gas は、Ethereum ネットワークがあなたのトランザクションを処理するために実行する必要がある**作業量の測定単位**です。
+**Định nghĩa:** Gas là **đơn vị đo lường công việc** mà mạng lưới Ethereum phải thực hiện để xử lý giao dịch của bạn.
 
-> 📖 **参考資料**:
+> 📖 **Tài liệu tham khảo**:
 >
 > - [Gas and Fees](https://ethereum.org/en/developers/docs/gas/)
 > - [EIP-1559: Fee Market](https://eips.ethereum.org/EIPS/eip-1559)
 
-**手数料計算式:**
+**Công thức tính phí:**
 
 ```
 Transaction Fee = Gas Used × Gas Price
 
 Where:
-- Gas Used: 実際に消費された gas（トランザクションの複雑さに依存）
-- Gas Price: gas 単位あたりに支払う価格（単位: Gwei）
+- Gas Used: Actual gas consumed (depends on transaction complexity)
+- Gas Price: Price you're willing to pay per gas unit (unit: Gwei)
 
 1 Gwei = 0.000000001 ETH = 10^-9 ETH
 ```
 
-**具体例:**
+**Ví dụ cụ thể:**
 
 ```
 ETH Transfer Transaction:
-- Gas Used: 21,000 gas (固定)
+- Gas Used: 21,000 gas (fixed)
 - Gas Price: 50 Gwei
 
 Transaction Fee = 21,000 × 50 = 1,050,000 Gwei
                 = 0.00105 ETH
-                ≈ $2.1 (ETH = $2000 の場合)
+                ≈ $2.1 (if ETH = $2000)
 
 ERC20 Token Transfer Transaction:
-- Gas Used: 65,000 gas (より複雑)
+- Gas Used: 65,000 gas (more complex)
 - Gas Price: 50 Gwei
 
 Transaction Fee = 65,000 × 50 = 3,250,000 Gwei
@@ -563,56 +563,56 @@ Transaction Fee = 65,000 × 50 = 3,250,000 Gwei
                 ≈ $6.5
 ```
 
-**Gas の種類:**
+**Các loại Gas:**
 
-1. **Gas Limit:** 支払う意思がある最大 gas 量
+1. **Gas Limit:** Số gas tối đa bạn sẵn sàng trả
 
-   - 低すぎる設定 → トランザクション失敗だが手数料は失われる
-   - 高すぎる設定 → 実際に使用した gas のみ消費される
+   - Nếu đặt quá thấp → Transaction fail nhưng vẫn mất phí
+   - Nếu đặt quá cao → Chỉ mất đúng số gas thực tế dùng
 
-2. **Gas Price:** gas 単位あたりに支払う価格
+2. **Gas Price:** Giá bạn trả cho mỗi đơn vị gas
 
-   - 高い → トランザクションが速く処理される（優先）
-   - 低い → トランザクションが遅いか stuck する
+   - Cao → Transaction được xử lý nhanh (ưu tiên)
+   - Thấp → Transaction chậm hoặc bị stuck
 
 3. **Base Fee + Priority Fee (EIP-1559):**
 
-   - **Base Fee:** 基本手数料、ネットワーク負荷に応じて自動調整（burn される）
-   - **Priority Fee (Tip):** マイナー/バリデーターへのチップでトランザクションを優先
+   - **Base Fee:** Phí cơ bản, tự động điều chỉnh theo tải mạng (bị đốt - burn)
+   - **Priority Fee (Tip):** Tiền tip cho miner/validator để ưu tiên transaction
 
-   > 📖 **詳細**: [Understanding EIP-1559](https://ethereum.org/en/developers/docs/gas/#eip-1559)
+   > 📖 **Đọc thêm**: [Understanding EIP-1559](https://ethereum.org/en/developers/docs/gas/#eip-1559)
 
-**コード例 (Ethers.js):**
+**Code ví dụ (Ethers.js):**
 
 ```javascript
-// 現在の gas price を取得
+// Lấy gas price hiện tại
 const feeData = await provider.getFeeData();
 console.log("Gas Price:", ethers.formatUnits(feeData.gasPrice, "gwei"), "Gwei");
 
-// カスタム gas price でトランザクションを送信
+// Gửi transaction với gas price tùy chỉnh
 const tx = await signer.sendTransaction({
   to: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
   value: ethers.parseEther("1.0"),
-  gasLimit: 21000, // gas 制限
+  gasLimit: 21000, // Giới hạn gas
   gasPrice: ethers.parseUnits("50", "gwei"), // 50 Gwei
 });
 
-// EIP-1559 を使用（maxFeePerGas + maxPriorityFeePerGas）
+// Sử dụng EIP-1559 (maxFeePerGas + maxPriorityFeePerGas)
 const tx2 = await signer.sendTransaction({
   to: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
   value: ethers.parseEther("1.0"),
-  maxFeePerGas: ethers.parseUnits("100", "gwei"), // 最大 100 Gwei
-  maxPriorityFeePerGas: ethers.parseUnits("2", "gwei"), // チップ 2 Gwei
+  maxFeePerGas: ethers.parseUnits("100", "gwei"), // Tối đa 100 Gwei
+  maxPriorityFeePerGas: ethers.parseUnits("2", "gwei"), // Tip 2 Gwei
 });
 
-// トランザクションの gas を見積もる
+// Ước tính gas cho một transaction
 const estimatedGas = await signer.estimateGas({
   to: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
   value: ethers.parseEther("1.0"),
 });
 console.log("Estimated Gas:", estimatedGas.toString());
 
-// Contract 関数呼び出しの gas を見積もる
+// Ước tính gas cho việc gọi hàm contract
 const estimatedGasForTransfer = await usdtContract.transfer.estimateGas(
   "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
   ethers.parseUnits("100", 6)
@@ -623,29 +623,29 @@ console.log(
 );
 ```
 
-#### 🤖 自動 Gas 処理（Gas Limit と Gas Price を指定しない）
+#### 🤖 Xử lý Gas tự động (Không chỉ định Gas Limit và Gas Price)
 
-ほとんどの場合、**gas limit と gas price を手動で指定する必要はありません**。Ethers.js（および他のライブラリ）が自動的に処理します。
+Trong hầu hết các trường hợp, **bạn không cần chỉ định gas limit và gas price thủ công**. Ethers.js (và các thư viện khác) sẽ tự động xử lý cho bạn.
 
-> 📖 **参考資料**: [Ethers.js - Gas Price](https://docs.ethers.org/v6/api/providers/#Provider-getFeeData)
+> 📖 **Tài liệu tham khảo**: [Ethers.js - Gas Price](https://docs.ethers.org/v6/api/providers/#Provider-getFeeData)
 
-**動作メカニズム:**
+**Cơ chế hoạt động:**
 
 ```javascript
-// ✅ 最もシンプルな方法 - ライブラリに自動処理させる
+// ✅ Cách đơn giản nhất - Để thư viện tự động xử lý
 const tx = await signer.sendTransaction({
   to: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
   value: ethers.parseEther("1.0"),
-  // gasLimit、gasPrice、maxFeePerGas... を指定する必要なし
+  // Không cần chỉ định gasLimit, gasPrice, maxFeePerGas...
 });
 
-// Ethers.js が自動的に:
-// 1. eth_estimateGas を呼び出して gas limit を計算
-// 2. eth_gasPrice または eth_feeHistory を呼び出して適切な gas price を取得
-// 3. トランザクション失敗を防ぐため gas limit に ~20% のバッファを追加
+// Ethers.js sẽ tự động:
+// 1. Gọi eth_estimateGas để tính gas limit
+// 2. Gọi eth_gasPrice hoặc eth_feeHistory để lấy gas price phù hợp
+// 3. Thêm buffer ~20% cho gas limit để đảm bảo transaction không fail
 ```
 
-**自動プロセス:**
+**Quy trình tự động:**
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -672,11 +672,11 @@ Step 3: Send Transaction
 └─ Transaction is sent with calculated gas parameters
 ```
 
-**詳細例:**
+**Ví dụ chi tiết:**
 
 ```javascript
 // ============================================
-// 方法1: ライブラリに自動処理させる（推奨）
+// CÁCH 1: Để thư viện tự động xử lý (KHUYẾN NGHỊ)
 // ============================================
 const tx = await signer.sendTransaction({
   to: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
@@ -691,43 +691,43 @@ console.log(
   "Gwei"
 );
 
-// 出力例:
+// Output ví dụ:
 // Gas Limit (auto): 25200 (21000 + 20% buffer)
-// Gas Price (auto): 45.5 Gwei (ネットワークから自動取得)
+// Gas Price (auto): 45.5 Gwei (tự động lấy từ mạng)
 
 // ============================================
-// 方法2: 一部を指定、残りは自動
+// CÁCH 2: Chỉ định một phần, phần còn lại tự động
 // ============================================
 
-// gas price のみ指定、gas limit は自動
+// Chỉ định gas price, để gas limit tự động
 const tx2 = await signer.sendTransaction({
   to: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
   value: ethers.parseEther("1.0"),
-  gasPrice: ethers.parseUnits("100", "gwei"), // 優先度を上げるため高い gas price を指定
-  // gasLimit は自動見積もり
+  gasPrice: ethers.parseUnits("100", "gwei"), // Chỉ định gas price cao để ưu tiên
+  // gasLimit sẽ được tự động ước tính
 });
 
-// gas limit のみ指定、gas price は自動
+// Chỉ định gas limit, để gas price tự động
 const tx3 = await signer.sendTransaction({
   to: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
   value: ethers.parseEther("1.0"),
-  gasLimit: 30000, // 特定の gas limit を指定
-  // gasPrice はネットワークから自動取得
+  gasLimit: 30000, // Chỉ định gas limit cụ thể
+  // gasPrice sẽ được tự động lấy từ mạng
 });
 
 // ============================================
-// 方法3: 使用される gas を事前に確認
+// CÁCH 3: Xem trước gas sẽ được sử dụng
 // ============================================
 const txRequest = {
   to: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
   value: ethers.parseEther("1.0"),
 };
 
-// gas limit を見積もる
+// Ước tính gas limit
 const estimatedGas = await signer.estimateGas(txRequest);
 console.log("Estimated Gas:", estimatedGas.toString());
 
-// 現在の fee data を取得
+// Lấy fee data hiện tại
 const feeData = await provider.getFeeData();
 console.log(
   "Current Gas Price:",
@@ -745,30 +745,30 @@ console.log(
   "Gwei"
 );
 
-// 予想コストを計算
+// Tính toán chi phí dự kiến
 const estimatedCost = estimatedGas * feeData.gasPrice;
 console.log("Estimated Cost:", ethers.formatEther(estimatedCost), "ETH");
 
-// その後トランザクションを送信（まだ自動）
+// Sau đó gửi transaction (vẫn để tự động)
 const tx4 = await signer.sendTransaction(txRequest);
 ```
 
-**いつ手動で gas を指定すべきか？**
+**Khi nào nên chỉ định gas thủ công?**
 
-| 状況                        | 解決策                                      | 理由                                           |
-| --------------------------- | ------------------------------------------- | ---------------------------------------------- |
-| **Transaction が stuck**    | `gasPrice` または `maxFeePerGas` を上げる   | トランザクションを優先して速く処理             |
-| **Gas estimation が間違い** | より高い `gasLimit` を指定                  | 一部の複雑な contract では estimation が不正確 |
-| **手数料を節約したい**      | `maxPriorityFeePerGas` を 0-1 Gwei に下げる | 待ち時間が長くなることを受け入れて節約         |
-| **ネットワークが混雑**      | `maxFeePerGas` を 2-3 倍に上げる            | トランザクションが処理されることを保証         |
-| **Backend 自動化**          | `gasLimit` を固定で指定                     | 毎回 estimation する時間を節約                 |
+| Tình huống               | Giải pháp                                  | Lý do                                                |
+| ------------------------ | ------------------------------------------ | ---------------------------------------------------- |
+| **Transaction bị stuck** | Tăng `gasPrice` hoặc `maxFeePerGas`        | Ưu tiên transaction để xử lý nhanh hơn               |
+| **Gas estimation sai**   | Chỉ định `gasLimit` cao hơn                | Một số contract phức tạp, estimation không chính xác |
+| **Muốn tiết kiệm phí**   | Giảm `maxPriorityFeePerGas` xuống 0-1 Gwei | Chấp nhận chờ lâu hơn để tiết kiệm tiền              |
+| **Mạng quá tải**         | Tăng `maxFeePerGas` lên 2-3x               | Đảm bảo transaction được xử lý                       |
+| **Backend tự động**      | Chỉ định cố định `gasLimit`                | Tránh estimation mỗi lần (tốn thời gian)             |
 
-**gas estimation が失敗した場合のエラー処理例:**
+**Ví dụ xử lý lỗi khi gas estimation thất bại:**
 
 ```javascript
 async function sendTransactionWithFallback(signer, txRequest) {
   try {
-    // 自動 gas でトランザクションを送信
+    // Thử gửi với gas tự động
     const tx = await signer.sendTransaction(txRequest);
     console.log("✓ Transaction sent with auto gas:", tx.hash);
     return tx;
@@ -776,21 +776,21 @@ async function sendTransactionWithFallback(signer, txRequest) {
     if (error.code === "UNPREDICTABLE_GAS_LIMIT") {
       console.log("⚠ Gas estimation failed, using manual gas limit...");
 
-      // Fallback: 手動で gas limit を指定
+      // Fallback: Chỉ định gas limit thủ công
       const tx = await signer.sendTransaction({
         ...txRequest,
-        gasLimit: 500000, // 高い gas limit を設定して保証
+        gasLimit: 500000, // Đặt gas limit cao để đảm bảo
       });
 
       console.log("✓ Transaction sent with manual gas:", tx.hash);
       return tx;
     }
 
-    throw error; // 他のエラーは上に投げる
+    throw error; // Ném lỗi khác lên trên
   }
 }
 
-// 使用例
+// Sử dụng
 const tx = await sendTransactionWithFallback(signer, {
   to: contractAddress,
   data: contractInterface.encodeFunctionData("complexFunction", [
@@ -800,63 +800,63 @@ const tx = await sendTransactionWithFallback(signer, {
 });
 ```
 
-**ベストプラクティス:**
+**Best Practices:**
 
-1. **開発/テスト環境:**
+1. **Môi trường Development/Testing:**
 
    ```javascript
-   // 完全に自動 - デバッグが簡単
+   // Để tự động hoàn toàn - Dễ debug
    const tx = await signer.sendTransaction({ to, value });
    ```
 
-2. **本番環境 (Frontend):**
+2. **Môi trường Production (Frontend):**
 
    ```javascript
-   // ユーザーに送信前に見積もりを表示
+   // Hiển thị ước tính cho user trước khi gửi
    const estimatedGas = await signer.estimateGas({ to, value });
    const feeData = await provider.getFeeData();
    const estimatedCost = estimatedGas * feeData.gasPrice;
 
-   // 表示: "Estimated fee: 0.0015 ETH"
-   // ユーザーが確認 -> トランザクションを送信（まだ自動）
+   // Hiển thị: "Estimated fee: 0.0015 ETH"
+   // User xác nhận -> Gửi transaction (vẫn để tự động)
    const tx = await signer.sendTransaction({ to, value });
    ```
 
-3. **本番環境 (Backend):**
+3. **Môi trường Production (Backend):**
 
    ```javascript
-   // 速い処理を保証するため高い gas price を指定
+   // Chỉ định gas price cao hơn để đảm bảo xử lý nhanh
    const feeData = await provider.getFeeData();
 
    const tx = await signer.sendTransaction({
      to,
      value,
-     maxFeePerGas: (feeData.maxFeePerGas * 120n) / 100n, // 20% 増加
-     maxPriorityFeePerGas: ethers.parseUnits("2", "gwei"), // 固定チップ
+     maxFeePerGas: (feeData.maxFeePerGas * 120n) / 100n, // Tăng 20%
+     maxPriorityFeePerGas: ethers.parseUnits("2", "gwei"), // Tip cố định
    });
    ```
 
-**Smart Contract での処理:**
+**Xử lý với Smart Contract:**
 
 ```javascript
-// Contract 関数呼び出し - Gas 自動
+// Gọi hàm contract - Gas tự động
 const tx = await contract.transfer(
   "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
   ethers.parseUnits("100", 6)
-  // gas を指定する必要なし
+  // Không cần chỉ định gas
 );
 
-// gas をオーバーライドしたい場合
+// Nếu muốn override gas
 const tx2 = await contract.transfer(
   "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
   ethers.parseUnits("100", 6),
   {
-    gasLimit: 100000, // gas limit をオーバーライド
-    maxFeePerGas: ethers.parseUnits("100", "gwei"), // max fee をオーバーライド
+    gasLimit: 100000, // Override gas limit
+    maxFeePerGas: ethers.parseUnits("100", "gwei"), // Override max fee
   }
 );
 
-// 呼び出し前に gas を見積もる
+// Ước tính gas trước khi gọi
 const estimatedGas = await contract.transfer.estimateGas(
   "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
   ethers.parseUnits("100", 6)
@@ -864,30 +864,30 @@ const estimatedGas = await contract.transfer.estimateGas(
 console.log("Estimated gas for transfer:", estimatedGas.toString());
 ```
 
-**📊 Gas Used 参考表:**
+**📊 Bảng tham khảo Gas Used:**
 
-| トランザクションタイプ | Gas Used (平均)      |
-| ---------------------- | -------------------- |
-| ETH 送金               | 21,000               |
-| ERC20 Token 送金       | 50,000 - 80,000      |
-| ERC20 Approve          | 45,000 - 50,000      |
-| Uniswap で Swap        | 150,000 - 200,000    |
-| NFT Mint               | 80,000 - 150,000     |
-| Smart Contract Deploy  | 500,000 - 2,000,000+ |
+| Loại giao dịch        | Gas Used (trung bình) |
+| --------------------- | --------------------- |
+| Chuyển ETH            | 21,000                |
+| Chuyển ERC20 Token    | 50,000 - 80,000       |
+| Approve ERC20         | 45,000 - 50,000       |
+| Swap trên Uniswap     | 150,000 - 200,000     |
+| Mint NFT              | 80,000 - 150,000      |
+| Deploy Smart Contract | 500,000 - 2,000,000+  |
 
 ---
 
-#### ✅ Confirmations (確認数)
+#### ✅ Confirmations (Số xác nhận)
 
-**定義:** Confirmations は、**あなたのトランザクションを含むブロックの後に生成されたブロック数**です。
+**Định nghĩa:** Confirmations là **số lượng block được sinh ra sau block chứa giao dịch của bạn**.
 
-> 📖 **参考資料**: [Transaction Finality](https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/#finality)
+> 📖 **Tài liệu tham khảo**: [Transaction Finality](https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/#finality)
 
-**なぜ Confirmations が必要？**
+**Tại sao cần Confirmations?**
 
-Blockchain は **Re-org (Reorganization)** される可能性があります - つまり、より長いチェーンが出現したためにブロックチェーンが「逆転」する可能性があります。これによりあなたのトランザクションがキャンセルされる可能性があります。
+Blockchain có thể bị **Re-org (Reorganization)** - tức là chuỗi block bị "đảo chiều" do có chuỗi dài hơn xuất hiện. Điều này có thể khiến giao dịch của bạn bị hủy bỏ.
 
-**例:**
+**Ví dụ minh họa:**
 
 ```
 Scenario: You send 10 ETH to an exchange to buy Bitcoin
@@ -916,10 +916,10 @@ If you wait for 12 confirmations:
 → Absolutely safe
 ```
 
-**コード例 (Ethers.js):**
+**Code ví dụ (Ethers.js):**
 
 ```javascript
-// トランザクションを送信
+// Gửi transaction
 const tx = await signer.sendTransaction({
   to: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
   value: ethers.parseEther("10.0"),
@@ -928,15 +928,15 @@ const tx = await signer.sendTransaction({
 console.log("Transaction hash:", tx.hash);
 console.log("Transaction sent! Waiting for confirmations...");
 
-// 1 confirmation を待つ（デフォルト）
+// Chờ 1 confirmation (mặc định)
 const receipt = await tx.wait();
 console.log("Transaction confirmed in block:", receipt.blockNumber);
 
-// 12 confirmations を待つ（より安全）
+// Chờ 12 confirmations (an toàn hơn)
 const receipt12 = await tx.wait(12);
 console.log("Transaction confirmed with 12 blocks!");
 
-// リアルタイムで confirmations を追跡
+// Theo dõi số confirmations theo thời gian thực
 async function waitForConfirmations(txHash, requiredConfirmations) {
   console.log(`Waiting for ${requiredConfirmations} confirmations...`);
 
@@ -955,16 +955,16 @@ async function waitForConfirmations(txHash, requiredConfirmations) {
       }
     }
 
-    // 3秒待ってから再確認
+    // Chờ 3 giây rồi kiểm tra lại
     await new Promise((resolve) => setTimeout(resolve, 3000));
   }
 }
 
-// 使用例
+// Sử dụng
 await waitForConfirmations(tx.hash, 12);
 ```
 
-**Backend ベストプラクティス (Node.js):**
+**Backend Best Practice (Node.js):**
 
 ```javascript
 // File: transactionMonitor.js
@@ -980,7 +980,7 @@ class TransactionMonitor {
     console.log(`[User ${userId}] Monitoring deposit: ${txHash}`);
 
     try {
-      // トランザクションがマイニングされるまで待つ
+      // Chờ transaction được mine
       const receipt = await this.provider.waitForTransaction(txHash);
 
       if (receipt.status === 0) {
@@ -993,15 +993,15 @@ class TransactionMonitor {
         `[User ${userId}] Transaction mined in block ${receipt.blockNumber}`
       );
 
-      // 十分な confirmations を待つ
+      // Chờ đủ confirmations
       await this.waitForConfirmations(txHash, this.requiredConfirmations);
 
       console.log(`[User ${userId}] ✓ Deposit confirmed! Updating balance...`);
 
-      // データベースを更新
+      // Cập nhật database
       await this.updateDatabase(userId, txHash, "CONFIRMED", amount);
 
-      // 通知メールを送信
+      // Gửi email thông báo
       await this.sendNotification(userId, amount);
 
       return true;
@@ -1031,7 +1031,7 @@ class TransactionMonitor {
   }
 
   async updateDatabase(userId, txHash, status, amount = null) {
-    // データベース更新をシミュレート
+    // Giả lập cập nhật database
     console.log(`Updating DB: User ${userId}, TX ${txHash}, Status ${status}`);
     // await db.query("UPDATE deposits SET status = ? WHERE tx_hash = ?", [status, txHash]);
   }
@@ -1044,15 +1044,15 @@ class TransactionMonitor {
   }
 }
 
-// 使用例
+// Sử dụng
 const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
 const monitor = new TransactionMonitor(provider, 12);
 
-// ユーザーが取引所に入金したとき
+// Khi user gửi tiền vào sàn
 app.post("/api/deposit/notify", async (req, res) => {
   const { userId, txHash, amount } = req.body;
 
-  // バックグラウンドで monitor を実行
+  // Chạy monitor trong background
   monitor.monitorDeposit(txHash, userId, amount);
 
   res.json({ message: "Deposit is being monitored" });
@@ -1061,70 +1061,70 @@ app.post("/api/deposit/notify", async (req, res) => {
 
 ---
 
-### 📝 パート 1 のまとめ
+### 📝 Tổng kết Phần 1
 
-**覚えておくべき重要なポイント:**
+**Những điều quan trọng cần nhớ:**
 
 1. **ETH vs ERC20:**
 
-   - ETH = Native token、送金が速い、手数料が低い
-   - ERC20 = Smart contract、送金が遅い、手数料が高い
+   - ETH = Native token, chuyển nhanh, phí thấp
+   - ERC20 = Smart contract, chuyển chậm, phí cao hơn
 
-2. **ERC20 の 3 つの関数:**
+2. **Bộ ba hàm ERC20:**
 
-   - `transfer()`: 自分で送金
-   - `approve()`: 権限を付与
-   - `transferFrom()`: 権限を付与された人が引き出し
+   - `transfer()`: Tự gửi tiền
+   - `approve()`: Cấp quyền
+   - `transferFrom()`: Người được cấp quyền rút tiền
 
 3. **Nonce:**
 
-   - トランザクションのシーケンス番号
-   - 順次実行: 0 → 1 → 2 → ...
-   - Replay attack を防ぐ
+   - Số thứ tự giao dịch
+   - Phải tuần tự: 0 → 1 → 2 → ...
+   - Chống replay attack
 
 4. **Gas:**
 
-   - 手数料 = Gas Used × Gas Price
-   - ETH 送金: ~21,000 gas
-   - ERC20 送金: ~50,000-80,000 gas
+   - Phí = Gas Used × Gas Price
+   - Chuyển ETH: ~21,000 gas
+   - Chuyển ERC20: ~50,000-80,000 gas
 
 5. **Confirmations:**
 
-   - 重要なトランザクションは 12+ confirmations を待つ
-   - Re-org attack を回避
-   - Backend は database を更新する前に confirmations を監視する必要がある
+   - Chờ 12+ confirmations cho giao dịch quan trọng
+   - Tránh re-org attack
+   - Backend phải monitor confirmations trước khi cập nhật database
 
-6. **自動 Gas:**
-   - Ethers.js が gas limit と gas price を自動見積もり
-   - 必要な場合のみ手動指定（transaction stuck、gas estimation エラー...）
-   - ベストプラクティス: 開発環境では自動、本番環境で優先が必要な場合は手動指定
+6. **Gas tự động:**
+   - Ethers.js tự động ước tính gas limit và gas price
+   - Chỉ cần chỉ định thủ công khi cần thiết (transaction stuck, gas estimation sai...)
+   - Best practice: Để tự động trong development, chỉ định thủ công trong production khi cần ưu tiên
 
 ---
 
-## パート 2: ウォレット、署名と認証 (Client-side)
+## Phần 2: Ví, Ký và Xác thực (Client-side)
 
-### 2.1. MetaMask 接続 (EIP-1193)
+### 2.1. Kết nối MetaMask (EIP-1193)
 
-**MetaMask** は最も人気のある Ethereum ウォレットで、**ブラウザ拡張機能**として動作します。`window.ethereum` オブジェクトを通じて、あなたのウェブサイトと blockchain の間の**橋渡し**役を果たします。
+**MetaMask** là ví Ethereum phổ biến nhất, hoạt động như một **extension trình duyệt**. Nó đóng vai trò là **cầu nối** giữa website của bạn và blockchain thông qua object `window.ethereum`.
 
-> 📖 **参考資料**:
+> 📖 **Tài liệu tham khảo**:
 >
 > - [MetaMask Documentation](https://docs.metamask.io/)
 > - [EIP-1193: Ethereum Provider JavaScript API](https://eips.ethereum.org/EIPS/eip-1193)
 
 #### 🔌 EIP-1193: Ethereum Provider JavaScript API
 
-**EIP-1193** は dApp とウォレット間の通信標準です。MetaMask はウェブページに `window.ethereum` オブジェクトを注入し、以下が可能になります：
+**EIP-1193** là chuẩn giao tiếp giữa dApp và ví. MetaMask inject một object `window.ethereum` vào trang web, cho phép bạn:
 
-- ウォレット接続をリクエスト
-- トランザクションを送信
-- メッセージに署名
-- Blockchain データを読み取る
+- Yêu cầu kết nối ví
+- Gửi transaction
+- Ký message
+- Đọc dữ liệu blockchain
 
-**MetaMask がインストールされているか確認:**
+**Kiểm tra MetaMask có được cài đặt không:**
 
 ```javascript
-// 方法1: シンプルなチェック
+// Cách 1: Kiểm tra đơn giản
 if (typeof window.ethereum !== "undefined") {
   console.log("✓ MetaMask is installed!");
 } else {
@@ -1132,16 +1132,16 @@ if (typeof window.ethereum !== "undefined") {
   alert("Please install MetaMask!");
 }
 
-// 方法2: より詳細なチェック
+// Cách 2: Kiểm tra chi tiết hơn
 function checkMetaMask() {
   if (typeof window.ethereum !== "undefined") {
-    // MetaMask かどうかを確認（他のウォレットの可能性もある）
+    // Kiểm tra có phải MetaMask không (có thể là ví khác)
     if (window.ethereum.isMetaMask) {
       console.log("✓ MetaMask detected");
       return true;
     } else {
       console.log("⚠ Another wallet detected:", window.ethereum);
-      return true; // それでも使用可能
+      return true; // Vẫn có thể dùng được
     }
   } else {
     console.log("❌ No Ethereum wallet detected");
@@ -1149,7 +1149,7 @@ function checkMetaMask() {
   }
 }
 
-// 方法3: 複数のウォレットをチェック（MetaMask、Coinbase Wallet、Trust Wallet...）
+// Cách 3: Kiểm tra nhiều ví (MetaMask, Coinbase Wallet, Trust Wallet...)
 function detectWallets() {
   const wallets = [];
 
@@ -1169,9 +1169,9 @@ function detectWallets() {
 }
 ```
 
-#### 🔗 ウォレット接続 (Request Accounts)
+#### 🔗 Kết nối ví (Request Accounts)
 
-**接続プロセス:**
+**Quy trình kết nối:**
 
 ```
 User clicks "Connect Wallet"
@@ -1187,20 +1187,20 @@ MetaMask returns wallet address list: ['0xABC...']
 Website saves address and displays "Connected" UI
 ```
 
-**基本的なコード例:**
+**Code ví dụ cơ bản:**
 
 ```javascript
-// シンプルなウォレット接続関数
+// Hàm kết nối ví đơn giản
 async function connectWallet() {
   try {
-    // MetaMask をチェック
+    // Kiểm tra MetaMask
     if (typeof window.ethereum === "undefined") {
       alert("Please install MetaMask!");
       window.open("https://metamask.io/download/", "_blank");
       return null;
     }
 
-    // 接続をリクエスト
+    // Yêu cầu kết nối
     const accounts = await window.ethereum.request({
       method: "eth_requestAccounts",
     });
@@ -1211,7 +1211,7 @@ async function connectWallet() {
     return userAddress;
   } catch (error) {
     if (error.code === 4001) {
-      // ユーザーがリクエストを拒否
+      // User rejected the request
       console.log("❌ User rejected connection");
       alert("You rejected the connection request");
     } else {
@@ -1222,14 +1222,14 @@ async function connectWallet() {
   }
 }
 
-// 使用例
+// Sử dụng
 const address = await connectWallet();
 if (address) {
   document.getElementById("wallet-address").innerText = address;
 }
 ```
 
-**高度なコード例 (Ethers.js を使用):**
+**Code ví dụ nâng cao (với Ethers.js):**
 
 ```javascript
 import { ethers } from "ethers";
@@ -1242,27 +1242,27 @@ class WalletManager {
     this.chainId = null;
   }
 
-  // ウォレット接続
+  // Kết nối ví
   async connect() {
     try {
-      // MetaMask をチェック
+      // Kiểm tra MetaMask
       if (typeof window.ethereum === "undefined") {
         throw new Error("MetaMask is not installed");
       }
 
-      // window.ethereum から provider を作成
+      // Tạo provider từ window.ethereum
       this.provider = new ethers.BrowserProvider(window.ethereum);
 
-      // 接続をリクエスト
+      // Yêu cầu kết nối
       await this.provider.send("eth_requestAccounts", []);
 
-      // signer を取得（トランザクション送信用）
+      // Lấy signer (để gửi transaction)
       this.signer = await this.provider.getSigner();
 
-      // ウォレットアドレスを取得
+      // Lấy địa chỉ ví
       this.address = await this.signer.getAddress();
 
-      // Chain ID を取得（1 = Ethereum Mainnet、56 = BSC、137 = Polygon...）
+      // Lấy chain ID (1 = Ethereum Mainnet, 56 = BSC, 137 = Polygon...)
       const network = await this.provider.getNetwork();
       this.chainId = Number(network.chainId);
 
@@ -1279,7 +1279,7 @@ class WalletManager {
     }
   }
 
-  // 切断（UI 側のみ、MetaMask から実際に切断するわけではない）
+  // Ngắt kết nối (chỉ ở phía UI, không thực sự disconnect khỏi MetaMask)
   disconnect() {
     this.provider = null;
     this.signer = null;
@@ -1288,12 +1288,12 @@ class WalletManager {
     console.log("✓ Disconnected");
   }
 
-  // 接続済みかチェック
+  // Kiểm tra đã kết nối chưa
   isConnected() {
     return this.address !== null;
   }
 
-  // ETH 残高を取得
+  // Lấy số dư ETH
   async getBalance() {
     if (!this.address) throw new Error("Not connected");
 
@@ -1301,7 +1301,7 @@ class WalletManager {
     return ethers.formatEther(balance);
   }
 
-  // ETH を送金
+  // Chuyển ETH
   async sendETH(to, amount) {
     if (!this.signer) throw new Error("Not connected");
 
@@ -1318,10 +1318,10 @@ class WalletManager {
   }
 }
 
-// 使用例
+// Sử dụng
 const wallet = new WalletManager();
 
-// 接続
+// Kết nối
 const connectButton = document.getElementById("connect-btn");
 connectButton.addEventListener("click", async () => {
   try {
@@ -1334,7 +1334,7 @@ connectButton.addEventListener("click", async () => {
   }
 });
 
-// 残高を表示
+// Hiển thị số dư
 const balanceButton = document.getElementById("balance-btn");
 balanceButton.addEventListener("click", async () => {
   try {
@@ -1346,53 +1346,53 @@ balanceButton.addEventListener("click", async () => {
 });
 ```
 
-#### 🔄 変更イベントをリッスン
+#### 🔄 Lắng nghe sự kiện thay đổi
 
-MetaMask は使用中に変更される可能性があります：
+MetaMask có thể thay đổi trong quá trình sử dụng:
 
-- ユーザーが別のアカウントに切り替える
-- ユーザーが別のネットワークに切り替える（Ethereum → BSC）
-- ユーザーが切断する
+- User chuyển sang tài khoản khác
+- User chuyển sang mạng khác (Ethereum → BSC)
+- User ngắt kết nối
 
-**イベントリスニングのコード:**
+**Code lắng nghe sự kiện:**
 
 ```javascript
-// ユーザーがアカウントを変更したときにリッスン
+// Lắng nghe khi user đổi tài khoản
 window.ethereum.on("accountsChanged", (accounts) => {
   if (accounts.length === 0) {
-    // ユーザーが切断
+    // User disconnected
     console.log("❌ User disconnected");
     wallet.disconnect();
     document.getElementById("address").innerText = "Not connected";
   } else {
-    // ユーザーがアカウントを切り替え
+    // User switched account
     const newAddress = accounts[0];
     console.log("🔄 Account changed:", newAddress);
     wallet.address = newAddress;
     document.getElementById("address").innerText = newAddress;
 
-    // データを再読み込み
+    // Reload lại dữ liệu
     loadUserData(newAddress);
   }
 });
 
-// ユーザーがネットワークを変更したときにリッスン
+// Lắng nghe khi user đổi mạng
 window.ethereum.on("chainChanged", (chainIdHex) => {
   const chainId = parseInt(chainIdHex, 16);
   console.log("🔄 Chain changed:", chainId);
 
-  // ベストプラクティス: ネットワーク変更時にページをリロード
+  // Best practice: Reload trang khi đổi mạng
   window.location.reload();
 });
 
-// MetaMask が切断されたときにリッスン
+// Lắng nghe khi MetaMask bị disconnect
 window.ethereum.on("disconnect", (error) => {
   console.log("❌ MetaMask disconnected:", error);
   wallet.disconnect();
   alert("MetaMask disconnected. Please reconnect.");
 });
 
-// コンポーネントのアンマウント時にクリーンアップ（React/Vue）
+// Cleanup khi component unmount (React/Vue)
 function cleanup() {
   window.ethereum.removeAllListeners("accountsChanged");
   window.ethereum.removeAllListeners("chainChanged");
@@ -1400,16 +1400,16 @@ function cleanup() {
 }
 ```
 
-#### 🌐 ネットワーク切り替え (Switch Chain)
+#### 🌐 Chuyển mạng (Switch Chain)
 
-特定のネットワークへの切り替えをユーザーにリクエストする必要がある場合があります（例: dApp が BSC でのみ動作する）。
+Đôi khi bạn cần yêu cầu user chuyển sang mạng cụ thể (ví dụ: dApp chỉ hoạt động trên BSC).
 
-> 📖 **参考資料**: [MetaMask - Add/Switch Network](https://docs.metamask.io/wallet/how-to/add-network/)
+> 📖 **Tài liệu tham khảo**: [MetaMask - Add/Switch Network](https://docs.metamask.io/wallet/how-to/add-network/)
 
-**ネットワーク切り替えのコード:**
+**Code chuyển mạng:**
 
 ```javascript
-// 一般的な Chain IDs
+// Chain IDs phổ biến
 const CHAIN_IDS = {
   ETHEREUM_MAINNET: 1,
   ETHEREUM_SEPOLIA: 11155111,
@@ -1419,7 +1419,7 @@ const CHAIN_IDS = {
   POLYGON_MUMBAI: 80001,
 };
 
-// ネットワーク情報
+// Thông tin mạng
 const NETWORKS = {
   56: {
     chainId: "0x38", // 56 in hex
@@ -1445,10 +1445,10 @@ const NETWORKS = {
   },
 };
 
-// ネットワーク切り替え関数
+// Hàm chuyển mạng
 async function switchNetwork(targetChainId) {
   try {
-    // MetaMask に既にあるネットワークに切り替えを試みる
+    // Thử chuyển sang mạng đã có trong MetaMask
     await window.ethereum.request({
       method: "wallet_switchEthereumChain",
       params: [{ chainId: `0x${targetChainId.toString(16)}` }],
@@ -1457,10 +1457,10 @@ async function switchNetwork(targetChainId) {
     console.log("✓ Switched to chain:", targetChainId);
     return true;
   } catch (error) {
-    // ネットワークが MetaMask に追加されていない場合
+    // Nếu mạng chưa được thêm vào MetaMask
     if (error.code === 4902) {
       try {
-        // 新しいネットワークを追加
+        // Thêm mạng mới
         await window.ethereum.request({
           method: "wallet_addEthereumChain",
           params: [NETWORKS[targetChainId]],
@@ -1473,7 +1473,7 @@ async function switchNetwork(targetChainId) {
         throw addError;
       }
     } else if (error.code === 4001) {
-      // ユーザーが拒否
+      // User rejected
       console.log("❌ User rejected network switch");
       return false;
     } else {
@@ -1483,7 +1483,7 @@ async function switchNetwork(targetChainId) {
   }
 }
 
-// 使用例
+// Sử dụng
 async function ensureBSCNetwork() {
   const provider = new ethers.BrowserProvider(window.ethereum);
   const network = await provider.getNetwork();
@@ -1501,11 +1501,11 @@ async function ensureBSCNetwork() {
   console.log("✓ On correct network (BSC)");
 }
 
-// トランザクション実行前に呼び出す
+// Gọi trước khi thực hiện transaction
 await ensureBSCNetwork();
 ```
 
-#### 🎨 完全な UI Component (React)
+#### 🎨 UI Component hoàn chỉnh (React)
 
 ```jsx
 import { useState, useEffect } from "react";
@@ -1517,11 +1517,11 @@ function WalletConnect() {
   const [chainId, setChainId] = useState(null);
   const [isConnecting, setIsConnecting] = useState(false);
 
-  // 以前に接続していたかチェック
+  // Kiểm tra đã kết nối trước đó chưa
   useEffect(() => {
     checkIfWalletIsConnected();
 
-    // イベントをリッスン
+    // Lắng nghe sự kiện
     if (window.ethereum) {
       window.ethereum.on("accountsChanged", handleAccountsChanged);
       window.ethereum.on("chainChanged", handleChainChanged);
@@ -1538,7 +1538,7 @@ function WalletConnect() {
     };
   }, []);
 
-  // 以前に接続していたかチェック
+  // Kiểm tra đã kết nối trước đó
   async function checkIfWalletIsConnected() {
     try {
       if (typeof window.ethereum === "undefined") return;
@@ -1561,7 +1561,7 @@ function WalletConnect() {
     }
   }
 
-  // ウォレット接続
+  // Kết nối ví
   async function connectWallet() {
     try {
       setIsConnecting(true);
@@ -1591,20 +1591,20 @@ function WalletConnect() {
     }
   }
 
-  // 切断
+  // Ngắt kết nối
   function disconnectWallet() {
     setAddress(null);
     setBalance(null);
     setChainId(null);
   }
 
-  // 残高を更新
+  // Cập nhật số dư
   async function updateBalance(provider, address) {
     const balance = await provider.getBalance(address);
     setBalance(ethers.formatEther(balance));
   }
 
-  // アカウント変更時の処理
+  // Xử lý khi đổi tài khoản
   function handleAccountsChanged(accounts) {
     if (accounts.length === 0) {
       disconnectWallet();
@@ -1614,17 +1614,17 @@ function WalletConnect() {
     }
   }
 
-  // ネットワーク変更時の処理
+  // Xử lý khi đổi mạng
   function handleChainChanged() {
     window.location.reload();
   }
 
-  // アドレスをフォーマット: 0x1234...5678
+  // Format địa chỉ: 0x1234...5678
   function formatAddress(addr) {
     return `${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`;
   }
 
-  // ネットワーク名
+  // Tên mạng
   function getChainName(id) {
     const names = {
       1: "Ethereum",
@@ -1663,81 +1663,81 @@ function WalletConnect() {
 export default WalletConnect;
 ```
 
-### 2.2. Provider vs Signer (Ethers.js ライブラリ)
+### 2.2. Provider vs Signer (Thư viện Ethers.js)
 
-Ethers.js には、**Provider** と **Signer** という 2 つの重要な概念があります。
+Trong Ethers.js, có 2 khái niệm quan trọng: **Provider** và **Signer**.
 
-> 📖 **参考資料**:
+> 📖 **Tài liệu tham khảo**:
 >
 > - [Ethers.js - Providers](https://docs.ethers.org/v6/api/providers/)
 > - [Ethers.js - Signers](https://docs.ethers.org/v6/api/providers/#Signer)
 
-#### 📖 Provider (読み取り専用)
+#### 📖 Provider (Chỉ đọc)
 
-**Provider** は**読み取り専用**（read-only）のオブジェクトで、以下の用途に使用されます：
+**Provider** là đối tượng **chỉ đọc** (read-only), dùng để:
 
-- Blockchain 情報を取得（block number、gas price...）
-- ウォレット残高を読み取る
-- Smart contract の `view`/`pure` 関数を呼び出す（gas 不要）
-- Transaction receipt を取得
+- Lấy thông tin blockchain (block number, gas price...)
+- Đọc số dư ví
+- Gọi hàm `view`/`pure` của smart contract (không cần gas)
+- Lấy transaction receipt
 
-Provider を使用する際、**ユーザー確認は不要**です。
+**Không cần user xác nhận** khi dùng Provider.
 
-**Provider の種類:**
+**Các loại Provider:**
 
 ```javascript
 import { ethers } from "ethers";
 
-// 1. BrowserProvider - MetaMask 経由で接続
+// 1. BrowserProvider - Kết nối qua MetaMask
 const provider = new ethers.BrowserProvider(window.ethereum);
 
-// 2. JsonRpcProvider - RPC URL 経由で接続（Backend）
+// 2. JsonRpcProvider - Kết nối qua RPC URL (Backend)
 const provider = new ethers.JsonRpcProvider(
   "https://api.zan.top/node/v1/eth/mainnet/7d5a7370dd004a1f913078deb248af07"
 );
 
-// 3. AlchemyProvider - Alchemy 経由で接続
+// 3. AlchemyProvider - Kết nối qua Alchemy
 const provider = new ethers.AlchemyProvider("mainnet", "YOUR_API_KEY");
 
-// 4. InfuraProvider - Infura 経由で接続
+// 4. InfuraProvider - Kết nối qua Infura
 const provider = new ethers.InfuraProvider("mainnet", "YOUR_API_KEY");
 ```
 
-**Provider の使用例:**
+**Ví dụ sử dụng Provider:**
 
 ```javascript
 const provider = new ethers.BrowserProvider(window.ethereum);
 
-// 現在の block number を取得
+// Lấy block number hiện tại
 const blockNumber = await provider.getBlockNumber();
 console.log("Current block:", blockNumber);
 
-// Gas price を取得
+// Lấy gas price
 const feeData = await provider.getFeeData();
 console.log("Gas price:", ethers.formatUnits(feeData.gasPrice, "gwei"), "Gwei");
 
-// アドレスの残高を取得
+// Lấy số dư của một địa chỉ
 const balance = await provider.getBalance(
   "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
 );
 console.log("Balance:", ethers.formatEther(balance), "ETH");
 
-// Transaction 情報を取得
+// Lấy thông tin transaction
 const tx = await provider.getTransaction(
   "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
 );
 console.log("Transaction:", tx);
 
-// Block 情報を取得
+// Lấy thông tin block
 const block = await provider.getBlock(blockNumber);
 console.log("Block:", block);
 
-// Smart contract を読み取る（view function）
+// Đọc smart contract (view function)
 const ERC20_ABI = ["function balanceOf(address) view returns (uint256)"];
 const usdtContract = new ethers.Contract(
   "0xdAC17F958D2ee523a2206206994597C13D831ec7",
   ERC20_ABI,
-  provider // 読み取りには provider のみ必要
+  provider // Chỉ cần provider để đọc
 );
 
 const balance = await usdtContract.balanceOf(
@@ -1746,34 +1746,34 @@ const balance = await usdtContract.balanceOf(
 console.log("USDT Balance:", ethers.formatUnits(balance, 6));
 ```
 
-#### ✍️ Signer (書き込み権限あり)
+#### ✍️ Signer (Có quyền ghi)
 
-**Signer** は**書き込み権限**（write）を持つオブジェクトで、以下の用途に使用されます：
+**Signer** là đối tượng **có quyền ghi** (write), dùng để:
 
-- Transaction を送信（ETH 送金、token 送金...）
-- Smart contract の state を変更する関数を呼び出す
-- メッセージに署名
+- Gửi transaction (chuyển ETH, chuyển token...)
+- Gọi hàm thay đổi state của smart contract
+- Ký message
 
-Signer を使用する際、**ユーザー確認が必要**（MetaMask で「Confirm」をクリック）です。
+**Cần user xác nhận** (click "Confirm" trên MetaMask) khi dùng Signer.
 
-**Provider から Signer を取得:**
+**Lấy Signer từ Provider:**
 
 ```javascript
 const provider = new ethers.BrowserProvider(window.ethereum);
 const signer = await provider.getSigner();
 
-// Signer のアドレスを取得
+// Lấy địa chỉ của signer
 const address = await signer.getAddress();
 console.log("Signer address:", address);
 ```
 
-**Signer の使用例:**
+**Ví dụ sử dụng Signer:**
 
 ```javascript
 const provider = new ethers.BrowserProvider(window.ethereum);
 const signer = await provider.getSigner();
 
-// 1. ETH を送金
+// 1. Gửi ETH
 const tx = await signer.sendTransaction({
   to: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
   value: ethers.parseEther("1.0"),
@@ -1782,14 +1782,14 @@ console.log("Transaction sent:", tx.hash);
 await tx.wait();
 console.log("Transaction confirmed!");
 
-// 2. Smart contract 関数を呼び出す（write function）
+// 2. Gọi hàm smart contract (write function)
 const ERC20_ABI = [
   "function transfer(address to, uint256 amount) returns (bool)",
 ];
 const usdtContract = new ethers.Contract(
   "0xdAC17F958D2ee523a2206206994597C13D831ec7",
   ERC20_ABI,
-  signer // 書き込みには signer が必要
+  signer // Cần signer để ghi
 );
 
 const tx2 = await usdtContract.transfer(
@@ -1800,66 +1800,66 @@ console.log("Transfer transaction:", tx2.hash);
 await tx2.wait();
 console.log("Transfer confirmed!");
 
-// 3. メッセージに署名
+// 3. Ký message
 const message = "Hello, Ethereum!";
 const signature = await signer.signMessage(message);
 console.log("Signature:", signature);
 ```
 
-#### 🔄 Provider と Signer の切り替え
+#### 🔄 Chuyển đổi giữa Provider và Signer
 
 ```javascript
-// Provider を使った Contract（読み取り専用）
+// Contract với Provider (chỉ đọc)
 const contractReadOnly = new ethers.Contract(address, abi, provider);
 const balance = await contractReadOnly.balanceOf(userAddress);
 
-// Signer を使った Contract（書き込み可能）
+// Contract với Signer (có thể ghi)
 const contractWithSigner = new ethers.Contract(address, abi, signer);
 const tx = await contractWithSigner.transfer(toAddress, amount);
 
-// または既存の contract から切り替え
+// Hoặc chuyển đổi từ contract có sẵn
 const contractWithSigner = contractReadOnly.connect(signer);
 ```
 
-#### 📊 Provider vs Signer の比較
+#### 📊 So sánh Provider vs Signer
 
-| 基準                 | Provider                               | Signer                                    |
-| -------------------- | -------------------------------------- | ----------------------------------------- |
-| **権限**             | 読み取り専用（read-only）              | 読み取り + 書き込み（read-write）         |
-| **ユーザー確認必要** | 不要                                   | 必要（MetaMask popup）                    |
-| **ユースケース**     | データ読み取り、view function 呼び出し | Transaction 送信、write function 呼び出し |
-| **例**               | 残高確認、contract 読み取り            | 送金、NFT mint                            |
-| **作成元**           | RPC URL、Alchemy、Infura、MetaMask     | Provider（`getSigner()` 経由）            |
-| **Gas 手数料**       | 不要                                   | 必要                                      |
+| Tiêu chí              | Provider                           | Signer                              |
+| --------------------- | ---------------------------------- | ----------------------------------- |
+| **Quyền**             | Chỉ đọc (read-only)                | Đọc + Ghi (read-write)              |
+| **Cần xác nhận user** | Không                              | Có (MetaMask popup)                 |
+| **Use case**          | Đọc dữ liệu, gọi view function     | Gửi transaction, gọi write function |
+| **Ví dụ**             | Xem số dư, đọc contract            | Chuyển tiền, mint NFT               |
+| **Tạo từ**            | RPC URL, Alchemy, Infura, MetaMask | Provider (qua `getSigner()`)        |
+| **Phí gas**           | Không tốn                          | Tốn gas                             |
 
 ---
 
 ### 2.3. SIWE (Sign-In With Ethereum)
 
-**SIWE**（Sign-In With Ethereum）は、従来の username/password の代わりに Ethereum ウォレットでログインする標準です。
+**SIWE** (Sign-In With Ethereum) là chuẩn đăng nhập bằng ví Ethereum, thay thế cho username/password truyền thống.
 
-> 📖 **参考資料**:
+> 📖 **Tài liệu tham khảo**:
 >
 > - [EIP-4361: Sign-In with Ethereum](https://eips.ethereum.org/EIPS/eip-4361)
 > - [SIWE Official Documentation](https://docs.login.xyz/)
 > - [SIWE NPM Package](https://www.npmjs.com/package/siwe)
 
-#### 🔐 なぜ SIWE を使うのか？
+#### 🔐 Tại sao dùng SIWE?
 
-**メリット:**
+**Ưu điểm:**
 
-- ✅ アカウント登録不要（email、password 不要）
-- ✅ パスワード漏洩の心配なし
-- ✅ 暗号署名（cryptographic signature）による認証
-- ✅ ユーザーが自分のアイデンティティを完全にコントロール
+- ✅ Không cần đăng ký tài khoản (email, password)
+- ✅ Không lo bị lộ password
+- ✅ Xác thực bằng chữ ký số (cryptographic signature)
+- ✅ User kiểm soát hoàn toàn danh tính của mình
 
-**デメリット:**
+**Nhược điểm:**
 
-- ❌ ユーザーはウォレット（MetaMask...）をインストールする必要がある
-- ❌ Private key を失うとアカウントを失う
-- ❌ 技術に詳しくないユーザーには不親切
+- ❌ User phải cài ví (MetaMask...)
+- ❌ Nếu mất private key = mất tài khoản
+- ❌ Không thân thiện với người dùng không tech
 
-#### 🔄 SIWE のワークフロー
+#### 🔄 Quy trình SIWE
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -1900,7 +1900,7 @@ Frontend                        Backend                    Blockchain
     │                              │                              │
 ```
 
-#### 💻 Frontend コード例
+#### 💻 Code ví dụ Frontend
 
 ```javascript
 // File: frontend/auth.js
@@ -1912,10 +1912,10 @@ class SIWEAuth {
     this.token = localStorage.getItem("auth_token");
   }
 
-  // ログイン
+  // Đăng nhập
   async signIn() {
     try {
-      // 1. ウォレット接続
+      // 1. Kết nối ví
       const provider = new ethers.BrowserProvider(window.ethereum);
       await provider.send("eth_requestAccounts", []);
       const signer = await provider.getSigner();
@@ -1923,7 +1923,7 @@ class SIWEAuth {
 
       console.log("Signing in with address:", address);
 
-      // 2. Backend から nonce を取得
+      // 2. Lấy nonce từ backend
       const nonceResponse = await fetch(`${this.backendUrl}/auth/nonce`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1933,15 +1933,15 @@ class SIWEAuth {
       const { nonce } = await nonceResponse.json();
       console.log("Received nonce:", nonce);
 
-      // 3. SIWE 標準に従って message を作成
+      // 3. Tạo message theo chuẩn SIWE
       const message = this.createSIWEMessage(address, nonce);
       console.log("Message to sign:", message);
 
-      // 4. Message に署名
+      // 4. Ký message
       const signature = await signer.signMessage(message);
       console.log("Signature:", signature);
 
-      // 5. Signature を backend に送信して検証
+      // 5. Gửi signature lên backend để verify
       const verifyResponse = await fetch(`${this.backendUrl}/auth/verify`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1958,7 +1958,7 @@ class SIWEAuth {
 
       const { token, user } = await verifyResponse.json();
 
-      // 6. Token を保存
+      // 6. Lưu token
       this.token = token;
       localStorage.setItem("auth_token", token);
 
@@ -1970,13 +1970,13 @@ class SIWEAuth {
     }
   }
 
-  // SIWE 標準（EIP-4361）に従って message を作成
+  // Tạo message theo chuẩn SIWE (EIP-4361)
   createSIWEMessage(address, nonce) {
     const domain = window.location.host;
     const origin = window.location.origin;
     const statement = "Sign in to MyApp";
 
-    // SIWE 標準フォーマット
+    // Format chuẩn SIWE
     return `${domain} wants you to sign in with your Ethereum account:
 ${address}
 
@@ -1989,19 +1989,19 @@ Nonce: ${nonce}
 Issued At: ${new Date().toISOString()}`;
   }
 
-  // ログアウト
+  // Đăng xuất
   signOut() {
     this.token = null;
     localStorage.removeItem("auth_token");
     console.log("✓ Signed out");
   }
 
-  // ログイン済みかチェック
+  // Kiểm tra đã đăng nhập chưa
   isAuthenticated() {
     return this.token !== null;
   }
 
-  // API 呼び出し用の token を取得
+  // Lấy token để gọi API
   getAuthHeader() {
     return {
       Authorization: `Bearer ${this.token}`,
@@ -2009,10 +2009,10 @@ Issued At: ${new Date().toISOString()}`;
   }
 }
 
-// 使用例
+// Sử dụng
 const auth = new SIWEAuth("http://localhost:3000");
 
-// ログイン
+// Đăng nhập
 document.getElementById("signin-btn").addEventListener("click", async () => {
   try {
     const user = await auth.signIn();
@@ -2023,13 +2023,13 @@ document.getElementById("signin-btn").addEventListener("click", async () => {
   }
 });
 
-// ログアウト
+// Đăng xuất
 document.getElementById("signout-btn").addEventListener("click", () => {
   auth.signOut();
   window.location.href = "/";
 });
 
-// Token を使って API を呼び出す
+// Gọi API với token
 async function getUserProfile() {
   const response = await fetch("http://localhost:3000/api/profile", {
     headers: auth.getAuthHeader(),
@@ -2039,7 +2039,7 @@ async function getUserProfile() {
 }
 ```
 
-#### 🖥️ Backend コード例（Node.js + Express）
+#### 🖥️ Code ví dụ Backend (Node.js + Express)
 
 ```javascript
 // File: backend/server.js
@@ -2053,11 +2053,11 @@ app.use(express.json());
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
-// Database シミュレーション（実際には MongoDB、PostgreSQL などを使用）
+// Database giả lập (trong thực tế dùng MongoDB, PostgreSQL...)
 const users = new Map(); // address -> user data
 const nonces = new Map(); // address -> nonce
 
-// 1. Nonce 取得 endpoint
+// 1. Endpoint lấy nonce
 app.post("/auth/nonce", (req, res) => {
   const { address } = req.body;
 
@@ -2065,10 +2065,10 @@ app.post("/auth/nonce", (req, res) => {
     return res.status(400).json({ error: "Invalid address" });
   }
 
-  // ランダムな nonce を生成
+  // Tạo nonce ngẫu nhiên
   const nonce = crypto.randomBytes(16).toString("hex");
 
-  // Nonce を保存（5 分後に期限切れ）
+  // Lưu nonce (expire sau 5 phút)
   nonces.set(address.toLowerCase(), {
     nonce,
     expiresAt: Date.now() + 5 * 60 * 1000,
@@ -2079,19 +2079,19 @@ app.post("/auth/nonce", (req, res) => {
   res.json({ nonce });
 });
 
-// 2. Signature 検証 endpoint
+// 2. Endpoint verify signature
 app.post("/auth/verify", async (req, res) => {
   try {
     const { address, message, signature } = req.body;
 
-    // Input をチェック
+    // Kiểm tra input
     if (!address || !message || !signature) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
     const addressLower = address.toLowerCase();
 
-    // Nonce をチェック
+    // Kiểm tra nonce
     const nonceData = nonces.get(addressLower);
     if (!nonceData) {
       return res.status(400).json({ error: "Nonce not found" });
@@ -2102,17 +2102,17 @@ app.post("/auth/verify", async (req, res) => {
       return res.status(400).json({ error: "Nonce expired" });
     }
 
-    // Signature を検証
+    // Verify signature
     const recoveredAddress = ethers.verifyMessage(message, signature);
 
     if (recoveredAddress.toLowerCase() !== addressLower) {
       return res.status(401).json({ error: "Invalid signature" });
     }
 
-    // 使用済み nonce を削除
+    // Xóa nonce đã dùng
     nonces.delete(addressLower);
 
-    // User を作成または更新
+    // Tạo hoặc cập nhật user
     let user = users.get(addressLower);
     if (!user) {
       user = {
@@ -2127,7 +2127,7 @@ app.post("/auth/verify", async (req, res) => {
       console.log(`User logged in: ${addressLower}`);
     }
 
-    // JWT token を作成
+    // Tạo JWT token
     const token = jwt.sign({ address: addressLower }, JWT_SECRET, {
       expiresIn: "7d",
     });
@@ -2145,7 +2145,7 @@ app.post("/auth/verify", async (req, res) => {
   }
 });
 
-// 3. JWT 認証 Middleware
+// 3. Middleware xác thực JWT
 function authenticateToken(req, res, next) {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1]; // Bearer TOKEN
@@ -2164,7 +2164,7 @@ function authenticateToken(req, res, next) {
   });
 }
 
-// 4. Protected API（ログイン必要）
+// 4. API protected (cần đăng nhập)
 app.get("/api/profile", authenticateToken, (req, res) => {
   const user = users.get(req.user.address);
 
@@ -2179,7 +2179,7 @@ app.get("/api/profile", authenticateToken, (req, res) => {
   });
 });
 
-// 5. Public API（ログイン不要）
+// 5. API public (không cần đăng nhập)
 app.get("/api/stats", (req, res) => {
   res.json({
     totalUsers: users.size,
@@ -2187,24 +2187,24 @@ app.get("/api/stats", (req, res) => {
   });
 });
 
-// Server を起動
+// Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 ```
 
-#### 📦 公式 SIWE ライブラリの使用
+#### 📦 Sử dụng thư viện SIWE chính thức
 
-自分で実装する代わりに、公式ライブラリを使用できます：
+Thay vì tự implement, bạn có thể dùng thư viện chính thức:
 
 ```bash
 npm install siwe
 ```
 
-> 📖 **参考資料**: [SIWE Library Documentation](https://docs.login.xyz/libraries/typescript)
+> 📖 **Tài liệu tham khảo**: [SIWE Library Documentation](https://docs.login.xyz/libraries/typescript)
 
-**SIWE ライブラリを使用した Backend:**
+**Backend với thư viện SIWE:**
 
 ```javascript
 const express = require("express");
@@ -2218,31 +2218,31 @@ app.use(
     secret: "your-secret",
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false }, // HTTPS を使用する場合は true
+    cookie: { secure: false }, // true nếu dùng HTTPS
   })
 );
 
-// 1. Nonce を取得
+// 1. Lấy nonce
 app.get("/auth/nonce", (req, res) => {
   req.session.nonce = crypto.randomBytes(16).toString("hex");
   res.json({ nonce: req.session.nonce });
 });
 
-// 2. 検証
+// 2. Verify
 app.post("/auth/verify", async (req, res) => {
   try {
     const { message, signature } = req.body;
 
-    // SIWE 標準に従って message を parse
+    // Parse message theo chuẩn SIWE
     const siweMessage = new SiweMessage(message);
 
-    // Signature と nonce を検証
+    // Verify signature và nonce
     const fields = await siweMessage.verify({
       signature,
       nonce: req.session.nonce,
     });
 
-    // User を session に保存
+    // Lưu user vào session
     req.session.user = {
       address: fields.data.address,
     };
@@ -2272,86 +2272,88 @@ app.get("/api/profile", (req, res) => {
 
 ---
 
-### 📝 パート 2 のまとめ
+### 📝 Tổng kết Phần 2
 
-**覚えておくべき重要なポイント:**
+**Những điều quan trọng cần nhớ:**
 
-1. **MetaMask 接続:**
+1. **Kết nối MetaMask:**
 
-   - `window.ethereum` が存在するか確認
-   - `eth_requestAccounts` で接続をリクエスト
-   - `accountsChanged`、`chainChanged` イベントをリッスン
-   - `wallet_switchEthereumChain` でネットワークを切り替え可能
+   - Kiểm tra `window.ethereum` có tồn tại không
+   - Dùng `eth_requestAccounts` để yêu cầu kết nối
+   - Lắng nghe sự kiện `accountsChanged`, `chainChanged`
+   - Có thể chuyển mạng bằng `wallet_switchEthereumChain`
 
 2. **Provider vs Signer:**
 
-   - **Provider**: 読み取り専用、ユーザー確認不要
-   - **Signer**: 書き込み可能、ユーザー確認必要（MetaMask popup）
-   - Provider はデータ読み取り用、Signer は transaction 送信用
+   - **Provider**: Chỉ đọc, không cần xác nhận user
+   - **Signer**: Có thể ghi, cần xác nhận user (MetaMask popup)
+   - Provider dùng để đọc dữ liệu, Signer dùng để gửi transaction
 
 3. **SIWE (Sign-In With Ethereum):**
 
-   - Username/password の代わりにウォレットでログイン
-   - ワークフロー: Nonce 取得 → メッセージ署名 → Signature 検証 → JWT 発行
-   - Backend は `ethers.verifyMessage()` で検証
-   - 公式 `siwe` ライブラリを使用可能
+   - Đăng nhập bằng ví thay vì username/password
+   - Quy trình: Lấy nonce → Ký message → Verify signature → Cấp JWT
+   - Backend verify bằng `ethers.verifyMessage()`
+   - Có thể dùng thư viện `siwe` chính thức
 
-4. **ベストプラクティス:**
-   - MetaMask がインストールされているか常に確認
-   - ユーザーが接続を拒否した場合のエラー処理
-   - ユーザーがネットワークを変更したらページをリロード
-   - Token を localStorage（または cookie）に保存
-   - Backend で signature を検証、frontend を信頼しない
+4. **Best Practices:**
+   - Luôn kiểm tra MetaMask có được cài đặt không
+   - Xử lý lỗi khi user từ chối kết nối
+   - Reload trang khi user đổi mạng
+   - Lưu token vào localStorage (hoặc cookie)
+   - Verify signature ở backend, không tin tưởng frontend
 
 ---
 
-## パート 3: イベント処理
+---
 
-Events（イベント）は Smart contract の重要なメカニズムで、contract が重要な活動を**記録**し、外部アプリケーションに**通知**することを可能にします。
+## Phần 3: Xử lý sự kiện (Event)
 
-> 📖 **参考資料**:
+Events (sự kiện) là cơ chế quan trọng trong smart contract, cho phép contract **ghi lại** các hoạt động quan trọng và **thông báo** cho các ứng dụng bên ngoài.
+
+> 📖 **Tài liệu tham khảo**:
 >
 > - [Solidity Events](https://docs.soliditylang.org/en/latest/contracts.html#events)
 > - [Ethers.js - Contract Events](https://docs.ethers.org/v6/api/contract/#ContractEvent)
 
-### 3.1. ERC20 の Transfer イベント
+### 3.1. Sự kiện Transfer trong ERC20
 
-#### 📢 なぜ Events が必要？
+#### 📢 Tại sao cần Events?
 
-**Events** は 3 つの主要な問題を解決します：
+**Events** giải quyết 3 vấn đề chính:
 
-1. **Logging**: Contract の活動履歴を記録（変更不可）
-2. **Notification**: 変更があった際に frontend に通知
-3. **Gas 節約**: Events にデータを保存する方が storage より遥かに安い
+1. **Logging**: Ghi lại lịch sử hoạt động của contract (không thể sửa đổi)
+2. **Notification**: Thông báo cho frontend khi có thay đổi
+3. **Tiết kiệm gas**: Lưu trữ data trong events rẻ hơn nhiều so với storage
 
-**コスト比較:**
+**So sánh chi phí:**
 
 ```
-1 uint256 を storage に保存:     ~20,000 gas
-1 uint256 を event に保存:        ~375 gas
-→ 50 倍安い！
+Lưu 1 uint256 vào storage:     ~20,000 gas
+Lưu 1 uint256 vào event:        ~375 gas
+→ Rẻ hơn 50 lần!
 ```
 
-#### 🔔 ERC20 の Transfer イベント
+#### 🔔 Event Transfer trong ERC20
 
-`Transfer` イベントは ERC20 標準で最も重要なイベントで、トークン送金のたびに発行されます。
+Event `Transfer` là event quan trọng nhất trong chuẩn ERC20, được phát ra mỗi khi có chuyển token.
 
-**Solidity での定義:**
+**Định nghĩa trong Solidity:**
 
 ```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 contract ERC20 {
-    // 3 つのパラメータを持つ Transfer イベント
-    // indexed: このパラメータでフィルタリング可能
+    // Event Transfer với 3 tham số
+    // indexed: Cho phép filter theo tham số này
     event Transfer(
-        address indexed from,    // 送信者
-        address indexed to,      // 受信者
-        uint256 value            // 数量
+        address indexed from,    // Người gửi
+        address indexed to,      // Người nhận
+        uint256 value            // Số lượng
     );
 
-    // Approval イベント
+    // Event Approval
     event Approval(
         address indexed owner,
         address indexed spender,
@@ -2366,7 +2368,7 @@ contract ERC20 {
         balanceOf[msg.sender] -= amount;
         balanceOf[to] += amount;
 
-        // Transfer イベントを発行
+        // Phát sự kiện Transfer
         emit Transfer(msg.sender, to, amount);
 
         return true;
@@ -2375,7 +2377,7 @@ contract ERC20 {
     function mint(address to, uint256 amount) public {
         balanceOf[to] += amount;
 
-        // Mint の場合、from = address(0)
+        // Khi mint, from = address(0)
         emit Transfer(address(0), to, amount);
     }
 
@@ -2384,41 +2386,41 @@ contract ERC20 {
 
         balanceOf[msg.sender] -= amount;
 
-        // Burn の場合、to = address(0)
+        // Khi burn, to = address(0)
         emit Transfer(msg.sender, address(0), amount);
     }
 }
 ```
 
-#### 🔍 `indexed` パラメータ
+#### 🔍 Tham số `indexed`
 
-`indexed` とマークされたパラメータは、イベントをクエリする際に**フィルタリング**できます。
+Tham số được đánh dấu `indexed` có thể được **filter** khi query events.
 
-**ルール:**
+**Quy tắc:**
 
-- 1 つのイベントに最大 **3 つの indexed パラメータ**
-- `indexed` パラメータは **topics** に保存（検索しやすい）
-- `indexed` でないパラメータは **data** に保存（検索しにくい）
+- Tối đa **3 tham số indexed** trong 1 event
+- Tham số `indexed` được lưu trong **topics** (dễ search)
+- Tham số không `indexed` được lưu trong **data** (khó search hơn)
 
-**例:**
+**Ví dụ:**
 
 ```solidity
 event Transfer(
-    address indexed from,    // Topic 1: フィルタリング可能
-    address indexed to,      // Topic 2: フィルタリング可能
-    uint256 value            // Data: 直接フィルタリング不可
+    address indexed from,    // Topic 1: Có thể filter
+    address indexed to,      // Topic 2: Có thể filter
+    uint256 value            // Data: Không thể filter trực tiếp
 );
 
-// クエリ可能:
-// - アドレス A からのすべてのトランザクション
-// - アドレス B へのすべてのトランザクション
-// - A から B へのすべてのトランザクション
-// 直接クエリ不可: value > 1000 のすべてのトランザクション
+// Có thể query:
+// - Tất cả giao dịch FROM địa chỉ A
+// - Tất cả giao dịch TO địa chỉ B
+// - Tất cả giao dịch FROM A TO B
+// Không thể query trực tiếp: Tất cả giao dịch có value > 1000
 ```
 
-#### 📊 Event Log の構造
+#### 📊 Cấu trúc Event Log
 
-イベントが発行されると、**transaction receipt** に以下の構造で保存されます：
+Khi event được phát ra, nó được lưu trong **transaction receipt** với cấu trúc:
 
 ```javascript
 {
@@ -2437,18 +2439,18 @@ event Transfer(
 
 ---
 
-### 3.2. 過去のイベント取得 (Past Events)
+### 3.2. Lấy sự kiện quá khứ (Past Events)
 
-過去に発生したイベントをクエリして、トランザクション履歴を構築できます。
+Bạn có thể query các events đã xảy ra trong quá khứ để xây dựng lịch sử giao dịch.
 
-#### 📜 Ethers.js で Past Events をクエリ
+#### 📜 Query Past Events với Ethers.js
 
-**例 1: すべての Transfer トランザクションを取得**
+**Ví dụ 1: Lấy tất cả giao dịch Transfer**
 
 ```javascript
 import { ethers } from "ethers";
 
-// Contract に接続
+// Kết nối với contract
 const provider = new ethers.JsonRpcProvider(
   "https://api.zan.top/node/v1/eth/mainnet/7d5a7370dd004a1f913078deb248af07"
 );
@@ -2461,36 +2463,36 @@ const ERC20_ABI = [
 const USDT_ADDRESS = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
 const contract = new ethers.Contract(USDT_ADDRESS, ERC20_ABI, provider);
 
-// 最近の 1000 ブロックのすべての Transfer events を取得
+// Lấy tất cả Transfer events trong 1000 blocks gần nhất
 const currentBlock = await provider.getBlockNumber();
 const fromBlock = currentBlock - 1000;
 
 const events = await contract.queryFilter(
-  contract.filters.Transfer(), // Filter: すべての Transfer events
+  contract.filters.Transfer(), // Filter: tất cả Transfer events
   fromBlock,
   currentBlock
 );
 
 console.log(`Found ${events.length} Transfer events`);
 
-// 各イベントを処理
+// Xử lý từng event
 events.forEach((event) => {
   console.log({
     from: event.args.from,
     to: event.args.to,
-    value: ethers.formatUnits(event.args.value, 6), // USDT は 6 decimals
+    value: ethers.formatUnits(event.args.value, 6), // USDT có 6 decimals
     blockNumber: event.blockNumber,
     transactionHash: event.transactionHash,
   });
 });
 ```
 
-**例 2: 特定のアドレスへの送金を取得**
+**Ví dụ 2: Lấy giao dịch GỬI ĐẾN một địa chỉ cụ thể**
 
 ```javascript
 const USER_ADDRESS = "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb";
 
-// Filter: TO = USER_ADDRESS のイベントのみ取得
+// Filter: Chỉ lấy events mà TO = USER_ADDRESS
 const filter = contract.filters.Transfer(null, USER_ADDRESS);
 
 const events = await contract.queryFilter(filter, fromBlock, currentBlock);
@@ -2512,12 +2514,12 @@ events.forEach((event) => {
 console.log("Total received:", ethers.formatUnits(totalReceived, 6), "USDT");
 ```
 
-**例 3: 特定のアドレスからの送金を取得**
+**Ví dụ 3: Lấy giao dịch GỬI ĐI từ một địa chỉ cụ thể**
 
 ```javascript
 const USER_ADDRESS = "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb";
 
-// Filter: FROM = USER_ADDRESS のイベントのみ取得
+// Filter: Chỉ lấy events mà FROM = USER_ADDRESS
 const filter = contract.filters.Transfer(USER_ADDRESS, null);
 
 const events = await contract.queryFilter(filter, fromBlock, currentBlock);
@@ -2539,7 +2541,7 @@ events.forEach((event) => {
 console.log("Total sent:", ethers.formatUnits(totalSent, 6), "USDT");
 ```
 
-**例 4: 2 つの特定のアドレス間のトランザクションを取得**
+**Ví dụ 4: Lấy giao dịch giữa 2 địa chỉ cụ thể**
 
 ```javascript
 const ADDRESS_A = "0xAAA...";
@@ -2553,9 +2555,9 @@ const events = await contract.queryFilter(filter, fromBlock, currentBlock);
 console.log(`Found ${events.length} transfers from A to B`);
 ```
 
-#### 🔧 Transaction History の構築
+#### 🔧 Xây dựng Transaction History
 
-**例: ユーザーの完全なトランザクション履歴を作成**
+**Ví dụ: Tạo lịch sử giao dịch đầy đủ cho một user**
 
 ```javascript
 async function getTransactionHistory(
@@ -2574,15 +2576,15 @@ async function getTransactionHistory(
 
   const contract = new ethers.Contract(contractAddress, ERC20_ABI, provider);
 
-  // Token 情報を取得
+  // Lấy thông tin token
   const decimals = await contract.decimals();
   const symbol = await contract.symbol();
 
-  // 送信イベントを取得
+  // Lấy events gửi đi
   const sentFilter = contract.filters.Transfer(userAddress, null);
   const sentEvents = await contract.queryFilter(sentFilter, fromBlock, toBlock);
 
-  // 受信イベントを取得
+  // Lấy events nhận vào
   const receivedFilter = contract.filters.Transfer(null, userAddress);
   const receivedEvents = await contract.queryFilter(
     receivedFilter,
@@ -2590,12 +2592,12 @@ async function getTransactionHistory(
     toBlock
   );
 
-  // 結合して block number でソート
+  // Gộp và sắp xếp theo block number
   const allEvents = [...sentEvents, ...receivedEvents].sort(
     (a, b) => a.blockNumber - b.blockNumber
   );
 
-  // 結果をフォーマット
+  // Format kết quả
   const history = await Promise.all(
     allEvents.map(async (event) => {
       const block = await provider.getBlock(event.blockNumber);
@@ -2618,7 +2620,7 @@ async function getTransactionHistory(
   return history;
 }
 
-// 使用例
+// Sử dụng
 const history = await getTransactionHistory(
   "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
   "0xdAC17F958D2ee523a2206206994597C13D831ec7", // USDT
@@ -2630,16 +2632,16 @@ console.log("Transaction History:");
 console.table(history);
 ```
 
-#### ⚠️ Past Events クエリ時の注意点
+#### ⚠️ Lưu ý khi query Past Events
 
-**1. Block range の制限:**
+**1. Giới hạn block range:**
 
 ```javascript
-// ❌ 間違い: Range が大きすぎるとエラー
+// ❌ SAI: Range quá lớn sẽ bị lỗi
 const events = await contract.queryFilter(filter, 0, currentBlock);
 // Error: query returned more than 10000 results
 
-// ✅ 正しい: 複数のチャンクに分割
+// ✅ ĐÚNG: Chia nhỏ thành nhiều chunks
 async function queryEventsInChunks(
   contract,
   filter,
@@ -2656,14 +2658,14 @@ async function queryEventsInChunks(
     const events = await contract.queryFilter(filter, start, end);
     allEvents.push(...events);
 
-    // Rate limit を避けるため遅延
+    // Delay để tránh rate limit
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
 
   return allEvents;
 }
 
-// 使用例
+// Sử dụng
 const events = await queryEventsInChunks(
   contract,
   contract.filters.Transfer(userAddress, null),
@@ -2675,7 +2677,7 @@ const events = await queryEventsInChunks(
 **2. Rate limiting:**
 
 ```javascript
-// 複数回クエリする場合は retry logic を実装
+// Nếu query nhiều lần, cần implement retry logic
 async function queryWithRetry(
   contract,
   filter,
@@ -2698,13 +2700,13 @@ async function queryWithRetry(
 
 ---
 
-### 3.3. リアルタイム登録 (Event Listeners)
+### 3.3. Đăng ký theo thời gian thực (Event Listeners)
 
-過去のイベントをクエリする代わりに、**リアルタイムでイベントをリッスン**して UI を即座に更新できます。
+Thay vì query events quá khứ, bạn có thể **lắng nghe events real-time** để cập nhật UI ngay lập tức.
 
-#### 🎧 Ethers.js でイベントをリッスン
+#### 🎧 Lắng nghe Events với Ethers.js
 
-**例 1: すべての Transfer イベントをリッスン**
+**Ví dụ 1: Lắng nghe tất cả Transfer events**
 
 ```javascript
 import { ethers } from "ethers";
@@ -2718,7 +2720,7 @@ const ERC20_ABI = [
 const USDT_ADDRESS = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
 const contract = new ethers.Contract(USDT_ADDRESS, ERC20_ABI, provider);
 
-// すべての Transfer イベントをリッスン
+// Lắng nghe tất cả Transfer events
 contract.on("Transfer", (from, to, value, event) => {
   console.log("🔔 New Transfer detected!");
   console.log({
@@ -2729,19 +2731,19 @@ contract.on("Transfer", (from, to, value, event) => {
     transactionHash: event.log.transactionHash,
   });
 
-  // UI を更新
+  // Cập nhật UI
   updateUI(from, to, value);
 });
 
 console.log("✓ Listening for Transfer events...");
 ```
 
-**例 2: 特定のアドレスへの Transfer をリッスン**
+**Ví dụ 2: Lắng nghe Transfer đến địa chỉ cụ thể**
 
 ```javascript
 const USER_ADDRESS = "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb";
 
-// Filter: TO = USER_ADDRESS のイベントのみリッスン
+// Filter: Chỉ lắng nghe events mà TO = USER_ADDRESS
 const filter = contract.filters.Transfer(null, USER_ADDRESS);
 
 contract.on(filter, (from, to, value, event) => {
@@ -2752,20 +2754,20 @@ contract.on(filter, (from, to, value, event) => {
     txHash: event.log.transactionHash,
   });
 
-  // 通知を表示
+  // Hiển thị notification
   showNotification(
     `Received ${ethers.formatUnits(value, 6)} USDT from ${from}`
   );
 
-  // 残高を更新
+  // Cập nhật số dư
   updateBalance();
 });
 ```
 
-**例 3: 複数のイベントをリッスン**
+**Ví dụ 3: Lắng nghe nhiều events**
 
 ```javascript
-// Transfer と Approval の両方をリッスン
+// Lắng nghe cả Transfer và Approval
 contract.on("Transfer", (from, to, value, event) => {
   console.log("Transfer:", { from, to, value: ethers.formatUnits(value, 6) });
 });
@@ -2779,27 +2781,27 @@ contract.on("Approval", (owner, spender, value, event) => {
 });
 ```
 
-#### 🛑 イベントリッスンを停止
+#### 🛑 Dừng lắng nghe Events
 
 ```javascript
-// 方法 1: 特定のイベントのリッスンを停止
+// Cách 1: Dừng lắng nghe một event cụ thể
 const listener = (from, to, value, event) => {
   console.log("Transfer:", { from, to, value });
 };
 
 contract.on("Transfer", listener);
 
-// 後で停止
+// Sau đó dừng
 contract.off("Transfer", listener);
 
-// 方法 2: 1 つのイベントのすべての listeners を停止
+// Cách 2: Dừng tất cả listeners của một event
 contract.removeAllListeners("Transfer");
 
-// 方法 3: Contract のすべての listeners を停止
+// Cách 3: Dừng tất cả listeners của contract
 contract.removeAllListeners();
 ```
 
-#### 🎨 実践例: Real-time Transaction Monitor（React）
+#### 🎨 Ví dụ thực tế: Real-time Transaction Monitor (React)
 
 ```jsx
 import { useState, useEffect } from "react";
@@ -2827,7 +2829,7 @@ function TransactionMonitor({ contractAddress, userAddress }) {
         const symbol = await contract.symbol();
         const decimals = await contract.decimals();
 
-        // User への Transfer イベントをリッスン
+        // Lắng nghe Transfer events đến user
         const filter = contract.filters.Transfer(null, userAddress);
 
         contract.on(filter, (from, to, value, event) => {
@@ -2843,7 +2845,7 @@ function TransactionMonitor({ contractAddress, userAddress }) {
 
           setTransactions((prev) => [newTx, ...prev]);
 
-          // Browser notification を表示
+          // Show browser notification
           if (Notification.permission === "granted") {
             new Notification("Received Tokens!", {
               body: `You received ${newTx.amount} ${symbol}`,
@@ -2860,7 +2862,7 @@ function TransactionMonitor({ contractAddress, userAddress }) {
 
     setupListener();
 
-    // Component unmount 時のクリーンアップ
+    // Cleanup khi component unmount
     return () => {
       if (contract) {
         contract.removeAllListeners();
@@ -2916,9 +2918,9 @@ function TransactionMonitor({ contractAddress, userAddress }) {
 export default TransactionMonitor;
 ```
 
-#### 🎯 Event Listeners のベストプラクティス
+#### 🎯 Best Practices cho Event Listeners
 
-**1. Component unmount 時のクリーンアップ（React/Vue）:**
+**1. Cleanup khi component unmount (React/Vue):**
 
 ```javascript
 useEffect(() => {
@@ -2930,28 +2932,28 @@ useEffect(() => {
 
   contract.on("Transfer", listener);
 
-  // クリーンアップ
+  // Cleanup
   return () => {
     contract.off("Transfer", listener);
   };
 }, []);
 ```
 
-**2. エラー処理:**
+**2. Xử lý lỗi:**
 
 ```javascript
 contract.on("Transfer", (from, to, value, event) => {
   try {
-    // イベント処理
+    // Xử lý event
     updateUI(from, to, value);
   } catch (error) {
     console.error("Error handling Transfer event:", error);
-    // Listener をクラッシュさせないため error を throw しない
+    // Không throw error để không crash listener
   }
 });
 ```
 
-**3. 複数のイベントに対する Debounce:**
+**3. Debounce cho nhiều events:**
 
 ```javascript
 let debounceTimer;
@@ -2960,7 +2962,7 @@ contract.on("Transfer", (from, to, value, event) => {
   clearTimeout(debounceTimer);
 
   debounceTimer = setTimeout(() => {
-    // 500ms 間新しいイベントがない場合に処理
+    // Xử lý sau 500ms không có event mới
     updateUI();
   }, 500);
 });
@@ -2968,11 +2970,11 @@ contract.on("Transfer", (from, to, value, event) => {
 
 ---
 
-### 3.4. Smart Contract での Custom Events
+### 3.4. Custom Events trong Smart Contract
 
-Smart contract の特別な活動に対して custom events を作成できます。
+Bạn có thể tạo custom events cho các hoạt động đặc biệt trong contract.
 
-#### 📝 例: NFT Marketplace
+#### 📝 Ví dụ: NFT Marketplace
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -3035,10 +3037,10 @@ contract NFTMarketplace {
 
         listings[tokenId].active = false;
 
-        // 売り手に支払いを送金
+        // Transfer payment to seller
         payable(listing.seller).transfer(listing.price);
 
-        // 超過支払いを返金
+        // Refund excess payment
         if (msg.value > listing.price) {
             payable(msg.sender).transfer(msg.value - listing.price);
         }
@@ -3076,7 +3078,7 @@ contract NFTMarketplace {
 }
 ```
 
-#### 🎧 Custom Events をリッスン
+#### 🎧 Lắng nghe Custom Events
 
 ```javascript
 const MARKETPLACE_ABI = [
@@ -3092,7 +3094,7 @@ const marketplace = new ethers.Contract(
   provider
 );
 
-// ItemListed をリッスン
+// Lắng nghe ItemListed
 marketplace.on("ItemListed", (tokenId, seller, price, timestamp, event) => {
   console.log("🆕 New item listed!");
   console.log({
@@ -3102,11 +3104,11 @@ marketplace.on("ItemListed", (tokenId, seller, price, timestamp, event) => {
     timestamp: new Date(Number(timestamp) * 1000).toISOString(),
   });
 
-  // UI を更新: リストにアイテムを追加
+  // Cập nhật UI: Thêm item vào danh sách
   addItemToList(tokenId, seller, price);
 });
 
-// ItemSold をリッスン
+// Lắng nghe ItemSold
 marketplace.on(
   "ItemSold",
   (tokenId, seller, buyer, price, timestamp, event) => {
@@ -3118,17 +3120,17 @@ marketplace.on(
       price: ethers.formatEther(price),
     });
 
-    // UI を更新: リストからアイテムを削除
+    // Cập nhật UI: Xóa item khỏi danh sách
     removeItemFromList(tokenId);
 
-    // Notification を表示
+    // Hiển thị notification
     showNotification(
       `NFT #${tokenId} sold for ${ethers.formatEther(price)} ETH`
     );
   }
 );
 
-// PriceUpdated をリッスン
+// Lắng nghe PriceUpdated
 marketplace.on(
   "PriceUpdated",
   (tokenId, oldPrice, newPrice, timestamp, event) => {
@@ -3139,7 +3141,7 @@ marketplace.on(
       newPrice: ethers.formatEther(newPrice),
     });
 
-    // UI を更新: 価格を更新
+    // Cập nhật UI: Cập nhật giá
     updateItemPrice(tokenId, newPrice);
   }
 );
@@ -3147,89 +3149,91 @@ marketplace.on(
 
 ---
 
-### 📝 パート 3 のまとめ
+### 📝 Tổng kết Phần 3
 
-**覚えておくべき重要なポイント:**
+**Những điều quan trọng cần nhớ:**
 
-1. **Events とは:**
+1. **Events là gì:**
 
-   - Smart contract の logging メカニズム
-   - Storage に保存するより遥かに安い
-   - 記録後は変更不可
-   - クエリとリアルタイムリッスンが可能
+   - Cơ chế logging trong smart contract
+   - Rẻ hơn nhiều so với lưu vào storage
+   - Không thể sửa đổi sau khi đã ghi
+   - Có thể query và lắng nghe real-time
 
-2. **`indexed` パラメータ:**
+2. **Tham số `indexed`:**
 
-   - 最大 3 つの indexed パラメータ
-   - クエリ時にフィルタリング可能
-   - Topics に保存（検索しやすい）
+   - Tối đa 3 tham số indexed
+   - Cho phép filter khi query
+   - Lưu trong topics (dễ search)
 
-3. **Past Events のクエリ:**
+3. **Query Past Events:**
 
-   - `queryFilter()` で過去のイベントを取得
-   - Block range を小さく分割（大量クエリを避ける）
-   - Rate limiting のため再試行ロジックを実装
-   - Transaction history を構築可能
+   - Dùng `queryFilter()` để lấy events quá khứ
+   - Cần chia nhỏ block range (tránh query quá nhiều)
+   - Implement retry logic cho rate limiting
+   - Có thể xây dựng transaction history
 
 4. **Event Listeners:**
 
-   - `contract.on()` でリアルタイムリッスン
-   - `contract.off()` または `removeAllListeners()` でクリーンアップを忘れずに
-   - Listener 内でエラー処理してクラッシュを防ぐ
-   - 特定のイベントをフィルタリング可能
+   - Dùng `contract.on()` để lắng nghe real-time
+   - Nhớ cleanup với `contract.off()` hoặc `removeAllListeners()`
+   - Xử lý lỗi trong listener để tránh crash
+   - Có thể filter events cụ thể
 
-5. **ベストプラクティス:**
-   - 重要な活動には常に events を発行
-   - フィルタリングが必要なパラメータには indexed を使用
-   - 使用しない場合は listeners をクリーンアップ
-   - Listeners 内にエラーハンドリングを実装
-   - イベントが多すぎる場合は debounce を使用
+5. **Best Practices:**
+   - Luôn emit events cho các hoạt động quan trọng
+   - Sử dụng indexed cho các tham số cần filter
+   - Cleanup listeners khi không dùng nữa
+   - Implement error handling trong listeners
+   - Debounce nếu có quá nhiều events
 
 ---
 
-## パート 4: Off-chain 統合 (Backend Node.js)
+---
 
-Backend は blockchain システムで重要な役割を果たし、frontend では実行できないタスクを処理します：
+## Phần 4: Tích hợp Off-chain (Backend Node.js)
 
-- 自動的に transaction を送信
-- Events を監視して database を更新
-- Webhook を処理
-- Private keys を安全に管理
+Backend đóng vai trò quan trọng trong hệ thống blockchain, xử lý các tác vụ không thể thực hiện trên frontend như:
 
-> 📖 **参考資料**:
+- Tự động gửi transaction
+- Monitor events và cập nhật database
+- Xử lý webhook
+- Quản lý private keys an toàn
+
+> 📖 **Tài liệu tham khảo**:
 >
 > - [Ethers.js - Wallets](https://docs.ethers.org/v6/api/wallet/)
 > - [Node.js Best Practices](https://github.com/goldbergyoni/nodebestpractices)
 
-### 4.1. Private Key で署名 (Backend Wallet)
+### 4.1. Ký bằng Private Key (Backend Wallet)
 
-Backend には MetaMask がないため、private key から wallet を作成する必要があります。
+Trên backend, không có MetaMask, ta phải tạo wallet từ private key.
 
-#### 🔐 Private Key から Wallet を作成
+#### 🔐 Tạo Wallet từ Private Key
 
-**⚠️ セキュリティ注意:**
+**⚠️ LƯU Ý BẢO MẬT:**
 
-- **絶対に** private key を Git にコミットしない
-- Private key を `.env` ファイルに保存
-- `.gitignore` を使用して `.env` を除外
-- Production では secret management service を使用（AWS Secrets Manager、HashiCorp Vault...）
+- **KHÔNG BAO GIỜ** commit private key lên Git
+- Lưu private key trong file `.env`
+- Sử dụng `.gitignore` để loại trừ `.env`
+- Trong production, dùng secret management service (AWS Secrets Manager, HashiCorp Vault...)
 
-**基本例:**
+**Ví dụ cơ bản:**
 
 ```javascript
 // File: backend/wallet.js
 require("dotenv").config();
 const { ethers } = require("ethers");
 
-// 1. RPC Provider 経由で接続
+// 1. Kết nối qua RPC Provider
 const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
 
-// 2. Private key から wallet を作成
+// 2. Tạo wallet từ private key
 const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
 
 console.log("Wallet address:", wallet.address);
 
-// 3. 残高を確認
+// 3. Kiểm tra số dư
 async function checkBalance() {
   const balance = await provider.getBalance(wallet.address);
   console.log("Balance:", ethers.formatEther(balance), "ETH");
@@ -3238,13 +3242,13 @@ async function checkBalance() {
 checkBalance();
 ```
 
-**`.env` ファイル:**
+**File `.env`:**
 
 ```bash
 # RPC Provider
 RPC_URL=https://eth-mainnet.g.alchemy.com/v2/YOUR_API_KEY
 
-# Wallet Private Key (このファイルをコミットしない！)
+# Wallet Private Key (KHÔNG COMMIT FILE NÀY!)
 PRIVATE_KEY=0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
 
 # Database
@@ -3255,7 +3259,7 @@ DB_USER=postgres
 DB_PASSWORD=secret123
 ```
 
-**`.gitignore` ファイル:**
+**File `.gitignore`:**
 
 ```
 # Environment variables
@@ -3270,7 +3274,7 @@ node_modules/
 *.log
 ```
 
-#### 💰 Backend から ETH を送金
+#### 💰 Gửi ETH từ Backend
 
 ```javascript
 // File: backend/sendETH.js
@@ -3279,7 +3283,7 @@ const { ethers } = require("ethers");
 
 async function sendETH(toAddress, amountInEther) {
   try {
-    // 1. Wallet をセットアップ
+    // 1. Setup wallet
     const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
     const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
 
@@ -3287,7 +3291,7 @@ async function sendETH(toAddress, amountInEther) {
     console.log("Sending to:", toAddress);
     console.log("Amount:", amountInEther, "ETH");
 
-    // 2. 残高を確認
+    // 2. Kiểm tra số dư
     const balance = await provider.getBalance(wallet.address);
     const amount = ethers.parseEther(amountInEther);
 
@@ -3295,7 +3299,7 @@ async function sendETH(toAddress, amountInEther) {
       throw new Error("Insufficient balance");
     }
 
-    // 3. Transaction を送信
+    // 3. Gửi transaction
     const tx = await wallet.sendTransaction({
       to: toAddress,
       value: amount,
@@ -3304,7 +3308,7 @@ async function sendETH(toAddress, amountInEther) {
     console.log("Transaction sent:", tx.hash);
     console.log("Waiting for confirmation...");
 
-    // 4. Confirmation を待つ
+    // 4. Chờ confirmation
     const receipt = await tx.wait();
 
     console.log("✓ Transaction confirmed!");
@@ -3318,11 +3322,11 @@ async function sendETH(toAddress, amountInEther) {
   }
 }
 
-// 使用例
+// Sử dụng
 sendETH("0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb", "0.1");
 ```
 
-#### 🪙 Backend から ERC20 Token を送金
+#### 🪙 Gửi ERC20 Token từ Backend
 
 ```javascript
 // File: backend/sendToken.js
@@ -3338,14 +3342,14 @@ const ERC20_ABI = [
 
 async function sendToken(tokenAddress, toAddress, amount) {
   try {
-    // 1. Wallet をセットアップ
+    // 1. Setup wallet
     const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
     const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
 
-    // 2. Token contract に接続
+    // 2. Kết nối với token contract
     const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, wallet);
 
-    // 3. Token 情報を取得
+    // 3. Lấy thông tin token
     const symbol = await tokenContract.symbol();
     const decimals = await tokenContract.decimals();
 
@@ -3353,7 +3357,7 @@ async function sendToken(tokenAddress, toAddress, amount) {
     console.log("From:", wallet.address);
     console.log("To:", toAddress);
 
-    // 4. 残高を確認
+    // 4. Kiểm tra số dư
     const balance = await tokenContract.balanceOf(wallet.address);
     const amountInWei = ethers.parseUnits(amount, decimals);
 
@@ -3361,7 +3365,7 @@ async function sendToken(tokenAddress, toAddress, amount) {
       throw new Error(`Insufficient ${symbol} balance`);
     }
 
-    // 5. Token を送金
+    // 5. Gửi token
     const tx = await tokenContract.transfer(toAddress, amountInWei);
 
     console.log("Transaction sent:", tx.hash);
@@ -3380,7 +3384,7 @@ async function sendToken(tokenAddress, toAddress, amount) {
   }
 }
 
-// 使用例
+// Sử dụng
 sendToken(
   "0xdAC17F958D2ee523a2206206994597C13D831ec7", // USDT
   "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
@@ -3388,7 +3392,7 @@ sendToken(
 );
 ```
 
-#### 🏭 Wallet Manager Class (Production 対応)
+#### 🏭 Wallet Manager Class (Production-ready)
 
 ```javascript
 // File: backend/WalletManager.js
@@ -3402,13 +3406,13 @@ class WalletManager {
     this.address = this.wallet.address;
   }
 
-  // ETH 残高を取得
+  // Lấy số dư ETH
   async getBalance() {
     const balance = await this.provider.getBalance(this.address);
     return ethers.formatEther(balance);
   }
 
-  // Token 残高を取得
+  // Lấy số dư token
   async getTokenBalance(tokenAddress) {
     const ERC20_ABI = [
       "function balanceOf(address) view returns (uint256)",
@@ -3435,17 +3439,17 @@ class WalletManager {
     };
   }
 
-  // ETH を送金
+  // Gửi ETH
   async sendETH(to, amountInEther, options = {}) {
     const amount = ethers.parseEther(amountInEther);
 
-    // 残高を確認
+    // Kiểm tra số dư
     const balance = await this.provider.getBalance(this.address);
     if (balance < amount) {
       throw new Error("Insufficient ETH balance");
     }
 
-    // Transaction を送信
+    // Gửi transaction
     const tx = await this.wallet.sendTransaction({
       to: to,
       value: amount,
@@ -3454,7 +3458,7 @@ class WalletManager {
 
     console.log(`[ETH Transfer] TX: ${tx.hash}`);
 
-    // Confirmation を待つ
+    // Chờ confirmation
     const receipt = await tx.wait();
 
     return {
@@ -3465,7 +3469,7 @@ class WalletManager {
     };
   }
 
-  // ERC20 token を送金
+  // Gửi ERC20 token
   async sendToken(tokenAddress, to, amount, options = {}) {
     const ERC20_ABI = [
       "function transfer(address to, uint256 amount) returns (bool)",
@@ -3476,7 +3480,7 @@ class WalletManager {
 
     const contract = new ethers.Contract(tokenAddress, ERC20_ABI, this.wallet);
 
-    // Token 情報を取得
+    // Lấy thông tin token
     const [decimals, symbol, balance] = await Promise.all([
       contract.decimals(),
       contract.symbol(),
@@ -3485,17 +3489,17 @@ class WalletManager {
 
     const amountInWei = ethers.parseUnits(amount, decimals);
 
-    // 残高を確認
+    // Kiểm tra số dư
     if (balance < amountInWei) {
       throw new Error(`Insufficient ${symbol} balance`);
     }
 
-    // Transaction を送信
+    // Gửi transaction
     const tx = await contract.transfer(to, amountInWei, options);
 
     console.log(`[${symbol} Transfer] TX: ${tx.hash}`);
 
-    // Confirmation を待つ
+    // Chờ confirmation
     const receipt = await tx.wait();
 
     return {
@@ -3508,7 +3512,7 @@ class WalletManager {
     };
   }
 
-  // Transaction の gas を見積もる
+  // Ước tính gas cho transaction
   async estimateGas(to, value, data = "0x") {
     const gasEstimate = await this.provider.estimateGas({
       from: this.address,
@@ -3527,7 +3531,7 @@ class WalletManager {
     };
   }
 
-  // Transaction 履歴を取得
+  // Lấy transaction history
   async getTransactionHistory(startBlock, endBlock) {
     const history = await this.provider.getHistory(
       this.address,
@@ -3541,18 +3545,18 @@ class WalletManager {
 // Export
 module.exports = WalletManager;
 
-// 使用例
+// Sử dụng
 const walletManager = new WalletManager(
   process.env.RPC_URL,
   process.env.PRIVATE_KEY
 );
 
-// 残高を確認
+// Kiểm tra số dư
 walletManager.getBalance().then((balance) => {
   console.log("ETH Balance:", balance);
 });
 
-// ETH を送金
+// Gửi ETH
 walletManager
   .sendETH("0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb", "0.1")
   .then((result) => {
@@ -3565,13 +3569,13 @@ walletManager
 
 ---
 
-### 4.2. RPC Provider の使用
+### 4.2. Sử dụng RPC Provider
 
-RPC Provider はアプリケーションと blockchain の間の橋渡しです。さまざまな種類の provider があります。
+RPC Provider là cầu nối giữa ứng dụng và blockchain. Có nhiều loại provider khác nhau.
 
-#### 🌐 RPC Provider の種類
+#### 🌐 Các loại RPC Provider
 
-**1. Public RPC（無料だが不安定）:**
+**1. Public RPC (Miễn phí nhưng không ổn định):**
 
 ```javascript
 // Ethereum Mainnet - Public RPC
@@ -3586,7 +3590,7 @@ const provider = new ethers.JsonRpcProvider("https://bsc-dataseed.binance.org");
 const provider = new ethers.JsonRpcProvider("https://polygon-rpc.com");
 ```
 
-**2. Alchemy（Production 推奨）:**
+**2. Alchemy (Khuyến nghị cho Production):**
 
 ```javascript
 require("dotenv").config();
@@ -3594,11 +3598,11 @@ const { ethers } = require("ethers");
 
 // Alchemy Provider
 const provider = new ethers.AlchemyProvider(
-  "mainnet", // または "sepolia", "polygon", "arbitrum"
+  "mainnet", // hoặc "sepolia", "polygon", "arbitrum"
   process.env.ALCHEMY_API_KEY
 );
 
-// または完全な URL で JsonRpcProvider を使用
+// Hoặc dùng JsonRpcProvider với URL đầy đủ
 const provider = new ethers.JsonRpcProvider(
   `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`
 );
@@ -3612,7 +3616,7 @@ const provider = new ethers.InfuraProvider(
   process.env.INFURA_API_KEY
 );
 
-// または
+// Hoặc
 const provider = new ethers.JsonRpcProvider(
   `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`
 );
@@ -3625,14 +3629,14 @@ const provider = new ethers.JsonRpcProvider(process.env.QUICKNODE_URL);
 // URL format: https://your-endpoint.quiknode.pro/YOUR_API_KEY/
 ```
 
-#### 🔄 Fallback Provider（信頼性向上）
+#### 🔄 Fallback Provider (Tăng độ tin cậy)
 
-複数の provider を使用して、1 つの provider でエラーが発生した場合に自動的に切り替え：
+Sử dụng nhiều provider để tự động chuyển đổi khi một provider gặp lỗi:
 
 ```javascript
 const { ethers } = require("ethers");
 
-// 複数の providers で FallbackProvider を作成
+// Tạo FallbackProvider với nhiều providers
 const providers = [
   new ethers.AlchemyProvider("mainnet", process.env.ALCHEMY_API_KEY),
   new ethers.InfuraProvider("mainnet", process.env.INFURA_API_KEY),
@@ -3643,12 +3647,12 @@ const providers = [
 
 const fallbackProvider = new ethers.FallbackProvider(providers);
 
-// 通常の provider として使用
+// Sử dụng như provider bình thường
 const blockNumber = await fallbackProvider.getBlockNumber();
 console.log("Current block:", blockNumber);
 ```
 
-#### 🔁 RPC Calls の Retry Logic
+#### 🔁 Retry Logic cho RPC Calls
 
 ```javascript
 // File: backend/utils/rpcHelper.js
@@ -3660,7 +3664,7 @@ async function callWithRetry(fn, maxRetries = 3, delay = 1000) {
       console.error(`Attempt ${i + 1} failed:`, error.message);
 
       if (i === maxRetries - 1) {
-        throw error; // Retry 回数を使い果たしたらエラーを throw
+        throw error; // Throw lỗi nếu hết số lần retry
       }
 
       // Exponential backoff: 1s, 2s, 4s...
@@ -3671,17 +3675,17 @@ async function callWithRetry(fn, maxRetries = 3, delay = 1000) {
   }
 }
 
-// 使用例
+// Sử dụng
 const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
 
-// Retry 付きで block number を取得
+// Lấy block number với retry
 const blockNumber = await callWithRetry(async () => {
   return await provider.getBlockNumber();
 });
 
 console.log("Block number:", blockNumber);
 
-// Retry 付きで transaction を送信
+// Gửi transaction với retry
 const tx = await callWithRetry(async () => {
   return await wallet.sendTransaction({
     to: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
@@ -3694,66 +3698,66 @@ console.log("Transaction sent:", tx.hash);
 
 ---
 
-### 📝 パート 4 のまとめ
+### 📝 Tổng kết Phần 4
 
-**覚えておくべき重要なポイント:**
+**Những điều quan trọng cần nhớ:**
 
 1. **Backend Wallet:**
 
-   - Private key から wallet を作成
-   - Private key を `.env` に保存（Git にコミットしない）
-   - WalletManager class を使用して管理
-   - エラーハンドリングと retry logic を実装
+   - Tạo wallet từ private key
+   - Lưu private key trong `.env` (KHÔNG commit lên Git)
+   - Sử dụng WalletManager class để quản lý
+   - Implement error handling và retry logic
 
 2. **RPC Provider:**
 
-   - Production では Alchemy/Infura を使用
-   - 高い信頼性のため FallbackProvider を実装
-   - Performance と latency を監視
-   - Exponential backoff で retry logic を実装
+   - Sử dụng Alchemy/Infura cho production
+   - Implement FallbackProvider cho độ tin cậy cao
+   - Monitor performance và latency
+   - Retry logic với exponential backoff
 
-3. **ベストプラクティス:**
-   - 常に input を検証
-   - Retry logic を実装
-   - RPC calls の rate limiting
+3. **Best Practices:**
+   - Luôn validate input
+   - Implement retry logic
+   - Rate limiting cho RPC calls
 
 ---
 
-## パート 5: セキュリティと監査入門
+## Phần 5: Nhập môn Bảo mật và Kiểm toán
 
-セキュリティは Smart contract で最も重要な要素です。小さなミスが数百万ドルの損失につながる可能性があります。
+Bảo mật là yếu tố quan trọng nhất trong smart contract. Một lỗi nhỏ có thể dẫn đến mất hàng triệu đô la.
 
-> 📖 **参考資料**:
+> 📖 **Tài liệu tham khảo**:
 >
 > - [Smart Contract Security Best Practices](https://consensys.github.io/smart-contract-best-practices/)
 > - [OpenZeppelin Security](https://docs.openzeppelin.com/contracts/security)
-> - [SWC Registry](https://swcregistry.io/) - 一般的な脆弱性のリスト
+> - [SWC Registry](https://swcregistry.io/) - Danh sách các lỗ hổng phổ biến
 
-### 5.1. Reentrancy Attack（再入攻撃）
+### 5.1. Reentrancy Attack (Tấn công tái nhập)
 
-**Reentrancy** は Smart contract で最も危険な脆弱性で、2016 年の The DAO ハックで 6000 万ドルの被害をもたらしました。
+**Reentrancy** là lỗ hổng nguy hiểm nhất trong smart contract, đã gây ra vụ hack The DAO năm 2016 với thiệt hại 60 triệu USD.
 
-#### 🔴 Reentrancy の脆弱性
+#### 🔴 Lỗ hổng Reentrancy
 
-**動作方法:**
+**Cách hoạt động:**
 
 ```
-1. User が Contract A の withdraw() を呼び出す
-2. Contract A が User（ハッカーの Contract B）に ETH を送金
-3. Contract B が ETH を受け取り、fallback function がトリガーされる
-4. Contract B が Contract A の withdraw() を再度呼び出す（REENTRANCY!）
-5. Contract A はまだ balance を更新していないため、チェックは通過
-6. Contract A が再び Contract B に ETH を送金
-7. Contract A の資金が尽きるまで繰り返す
+1. User gọi hàm withdraw() của Contract A
+2. Contract A chuyển ETH cho User (Contract B của hacker)
+3. Contract B nhận ETH, fallback function được kích hoạt
+4. Contract B gọi lại withdraw() của Contract A (REENTRANCY!)
+5. Contract A chưa kịp cập nhật balance, kiểm tra vẫn đủ tiền
+6. Contract A lại chuyển ETH cho Contract B
+7. Lặp lại cho đến khi Contract A hết tiền
 ```
 
-**脆弱性のあるコード:**
+**Code có lỗ hổng:**
 
 ```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-// ❌ 脆弱性のある CONTRACT - 使用しないでください！
+// ❌ CONTRACT CÓ LỖ HỔNG - KHÔNG SỬ DỤNG!
 contract VulnerableBank {
     mapping(address => uint256) public balances;
 
@@ -3761,16 +3765,16 @@ contract VulnerableBank {
         balances[msg.sender] += msg.value;
     }
 
-    // ❌ REENTRANCY 脆弱性のある関数
+    // ❌ HÀM CÓ LỖ HỔNG REENTRANCY
     function withdraw() public {
         uint256 balance = balances[msg.sender];
         require(balance > 0, "Insufficient balance");
 
-        // ❌ 間違い: balance を更新する前に送金
+        // ❌ SAI: Chuyển tiền TRƯỚC KHI cập nhật balance
         (bool success, ) = msg.sender.call{value: balance}("");
         require(success, "Transfer failed");
 
-        // この行は reentrancy 時に実行されない
+        // Dòng này chưa được thực thi khi bị reentrancy
         balances[msg.sender] = 0;
     }
 
@@ -3780,7 +3784,7 @@ contract VulnerableBank {
 }
 ```
 
-**攻撃 Contract:**
+**Contract tấn công:**
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -3791,7 +3795,7 @@ interface IVulnerableBank {
     function withdraw() external;
 }
 
-// ハッカーの Contract
+// Contract của hacker
 contract Attacker {
     IVulnerableBank public bank;
     uint256 public attackCount;
@@ -3800,22 +3804,22 @@ contract Attacker {
         bank = IVulnerableBank(_bankAddress);
     }
 
-    // 攻撃開始
+    // Bắt đầu tấn công
     function attack() external payable {
         require(msg.value >= 1 ether, "Need at least 1 ETH");
 
-        // Bank に deposit
+        // Deposit vào bank
         bank.deposit{value: msg.value}();
 
-        // 出金開始（reentrancy をトリガー）
+        // Bắt đầu rút tiền (sẽ trigger reentrancy)
         bank.withdraw();
     }
 
-    // Fallback function - ETH 受信時に呼ばれる
+    // Fallback function - được gọi khi nhận ETH
     receive() external payable {
         attackCount++;
 
-        // Bank にまだ資金があれば withdraw() を再度呼び出す
+        // Gọi lại withdraw() nếu bank còn tiền
         if (address(bank).balance >= 1 ether) {
             bank.withdraw();
         }
@@ -3827,7 +3831,7 @@ contract Attacker {
 }
 ```
 
-#### ✅ Reentrancy の防止方法
+#### ✅ Cách phòng tránh Reentrancy
 
 **1. Checks-Effects-Interactions Pattern:**
 
@@ -3835,7 +3839,7 @@ contract Attacker {
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-// ✅ 方法 1: Checks-Effects-Interactions Pattern
+// ✅ CÁCH 1: Checks-Effects-Interactions Pattern
 contract SafeBank {
     mapping(address => uint256) public balances;
 
@@ -3846,20 +3850,20 @@ contract SafeBank {
     function withdraw() public {
         uint256 balance = balances[msg.sender];
 
-        // 1. CHECKS: 条件をチェック
+        // 1. CHECKS: Kiểm tra điều kiện
         require(balance > 0, "Insufficient balance");
 
-        // 2. EFFECTS: 送金前に state を更新
+        // 2. EFFECTS: Cập nhật state TRƯỚC KHI chuyển tiền
         balances[msg.sender] = 0;
 
-        // 3. INTERACTIONS: 外部 contract と相互作用
+        // 3. INTERACTIONS: Tương tác với external contract
         (bool success, ) = msg.sender.call{value: balance}("");
         require(success, "Transfer failed");
     }
 }
 ```
 
-**2. OpenZeppelin の ReentrancyGuard:**
+**2. ReentrancyGuard của OpenZeppelin:**
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -3867,7 +3871,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-// ✅ 方法 2: ReentrancyGuard を使用
+// ✅ CÁCH 2: Sử dụng ReentrancyGuard
 contract SafeBankWithGuard is ReentrancyGuard {
     mapping(address => uint256) public balances;
 
@@ -3875,7 +3879,7 @@ contract SafeBankWithGuard is ReentrancyGuard {
         balances[msg.sender] += msg.value;
     }
 
-    // nonReentrant modifier が reentrancy を防ぐ
+    // nonReentrant modifier ngăn chặn reentrancy
     function withdraw() public nonReentrant {
         uint256 balance = balances[msg.sender];
         require(balance > 0, "Insufficient balance");
@@ -3888,7 +3892,7 @@ contract SafeBankWithGuard is ReentrancyGuard {
 }
 ```
 
-#### 🧪 Reentrancy Attack のテスト
+#### 🧪 Test Reentrancy Attack
 
 ```javascript
 // File: test/reentrancy.test.js
@@ -3902,22 +3906,22 @@ describe("Reentrancy Attack", function () {
   beforeEach(async function () {
     [owner, user1, hacker] = await ethers.getSigners();
 
-    // Vulnerable bank をデプロイ
+    // Deploy vulnerable bank
     const VulnerableBank = await ethers.getContractFactory("VulnerableBank");
     vulnerableBank = await VulnerableBank.deploy();
 
-    // Safe bank をデプロイ
+    // Deploy safe bank
     const SafeBank = await ethers.getContractFactory("SafeBank");
     safeBank = await SafeBank.deploy();
 
-    // Vulnerable bank に deposit
+    // Deposit vào vulnerable bank
     await vulnerableBank
       .connect(user1)
       .deposit({ value: ethers.parseEther("10") });
   });
 
   it("Should be vulnerable to reentrancy attack", async function () {
-    // Attacker contract をデプロイ
+    // Deploy attacker contract
     const Attacker = await ethers.getContractFactory("Attacker");
     attacker = await Attacker.deploy(await vulnerableBank.getAddress());
 
@@ -3926,7 +3930,7 @@ describe("Reentrancy Attack", function () {
     );
     console.log("Bank balance before:", ethers.formatEther(bankBalanceBefore));
 
-    // Attacker が 1 ETH を deposit して攻撃
+    // Attacker deposits 1 ETH và tấn công
     await attacker.connect(hacker).attack({ value: ethers.parseEther("1") });
 
     const bankBalanceAfter = await ethers.provider.getBalance(
@@ -3938,20 +3942,20 @@ describe("Reentrancy Attack", function () {
     console.log("Attacker balance:", ethers.formatEther(attackerBalance));
     console.log("Attack count:", await attacker.attackCount());
 
-    // Bank が空になった
+    // Bank đã bị rút cạn
     expect(bankBalanceAfter).to.equal(0);
     expect(attackerBalance).to.be.gt(ethers.parseEther("1"));
   });
 
   it("Should be safe from reentrancy attack", async function () {
-    // Safe bank に deposit
+    // Deposit vào safe bank
     await safeBank.connect(user1).deposit({ value: ethers.parseEther("10") });
 
-    // Safe bank を標的とする attacker contract をデプロイ
+    // Deploy attacker contract targeting safe bank
     const Attacker = await ethers.getContractFactory("Attacker");
     attacker = await Attacker.deploy(await safeBank.getAddress());
 
-    // 攻撃は失敗する
+    // Tấn công sẽ THẤT BẠI
     await expect(
       attacker.connect(hacker).attack({ value: ethers.parseEther("1") })
     ).to.be.reverted;
@@ -3959,57 +3963,57 @@ describe("Reentrancy Attack", function () {
 });
 ```
 
-#### 🔍 Reentrancy の詳細分析
+#### 🔍 Phân tích chi tiết Reentrancy
 
-**なぜ Reentrancy が危険なのか？**
+**Tại sao Reentrancy nguy hiểm?**
 
-1. **State が更新されていない:** Contract が送金前に balance を更新していない
-2. **External call がコードをトリガー:** `call()` が他の contract のコードをトリガーできる
-3. **Recursive calls:** Attacker が withdraw 関数を複数回呼び出す
-4. **Gas limit:** Gas が尽きるか contract の資金が尽きるまで続く
+1. **State chưa được cập nhật:** Contract chuyển tiền trước khi cập nhật balance
+2. **External call trigger code:** `call()` có thể trigger code của contract khác
+3. **Recursive calls:** Attacker gọi lại hàm withdraw nhiều lần
+4. **Gas limit:** Chỉ dừng khi hết gas hoặc contract hết tiền
 
-**攻撃のタイムライン:**
+**Timeline của cuộc tấn công:**
 
 ```
 Block 1:
-  Attacker.attack() が Bank.deposit(1 ETH) を呼び出す
+  Attacker.attack() gọi Bank.deposit(1 ETH)
   → Bank.balances[Attacker] = 1 ETH
 
 Block 2:
-  Attacker.attack() が Bank.withdraw() を呼び出す
+  Attacker.attack() gọi Bank.withdraw()
 
-  1 回目:
-    ├─ Bank がチェック: balances[Attacker] = 1 ETH ✓
-    ├─ Bank が Attacker に 1 ETH を送金
-    ├─ Attacker.receive() がトリガーされる
-    │   └─ Attacker が Bank.withdraw() を再度呼び出す（REENTRANCY!）
+  Lần 1:
+    ├─ Bank kiểm tra: balances[Attacker] = 1 ETH ✓
+    ├─ Bank gửi 1 ETH cho Attacker
+    ├─ Attacker.receive() được trigger
+    │   └─ Attacker gọi lại Bank.withdraw() (REENTRANCY!)
     │
-    │   2 回目（ネスト）:
-    │     ├─ Bank がチェック: balances[Attacker] = 1 ETH ✓（まだ更新されていない！）
-    │     ├─ Bank が Attacker に 1 ETH を送金
-    │     ├─ Attacker.receive() がトリガーされる
-    │     │   └─ Attacker が Bank.withdraw() を呼び出す
+    │   Lần 2 (nested):
+    │     ├─ Bank kiểm tra: balances[Attacker] = 1 ETH ✓ (chưa cập nhật!)
+    │     ├─ Bank gửi 1 ETH cho Attacker
+    │     ├─ Attacker.receive() được trigger
+    │     │   └─ Attacker gọi lại Bank.withdraw()
     │     │
-    │     │   3 回目（ネスト）:
-    │     │     ├─ Bank がチェック: balances[Attacker] = 1 ETH ✓
-    │     │     ├─ Bank が Attacker に 1 ETH を送金
-    │     │     └─ ...（Bank の資金が尽きるまで繰り返す）
+    │     │   Lần 3 (nested):
+    │     │     ├─ Bank kiểm tra: balances[Attacker] = 1 ETH ✓
+    │     │     ├─ Bank gửi 1 ETH cho Attacker
+    │     │     └─ ... (lặp lại cho đến khi Bank hết tiền)
     │     │
-    │     └─ Bank.balances[Attacker] = 0（遅すぎる！）
+    │     └─ Bank.balances[Attacker] = 0 (quá muộn!)
     │
-    └─ Bank.balances[Attacker] = 0（遅すぎる！）
+    └─ Bank.balances[Attacker] = 0 (quá muộn!)
 ```
 
-**Reentrancy の種類:**
+**Các dạng Reentrancy:**
 
-1. **Single-Function Reentrancy:** 同じ関数を再度呼び出す
-2. **Cross-Function Reentrancy:** 同じ contract の別の関数を呼び出す
-3. **Cross-Contract Reentrancy:** 別の contract の関数を呼び出す
+1. **Single-Function Reentrancy:** Gọi lại cùng 1 hàm
+2. **Cross-Function Reentrancy:** Gọi hàm khác trong cùng contract
+3. **Cross-Contract Reentrancy:** Gọi hàm của contract khác
 
-**Cross-Function Reentrancy の例:**
+**Ví dụ Cross-Function Reentrancy:**
 
 ```solidity
-// ❌ 脆弱性: Cross-Function Reentrancy
+// ❌ LỖ HỔNG: Cross-Function Reentrancy
 contract VulnerableBank {
     mapping(address => uint256) public balances;
 
@@ -4017,37 +4021,37 @@ contract VulnerableBank {
         uint256 balance = balances[msg.sender];
         require(balance > 0, "No balance");
 
-        // 送金が先
+        // Chuyển tiền trước
         (bool success, ) = msg.sender.call{value: balance}("");
         require(success);
 
-        // 更新が後（間違い！）
+        // Cập nhật sau (SAI!)
         balances[msg.sender] = 0;
     }
 
-    // 別の関数も exploit される可能性がある
+    // Hàm khác cũng có thể bị exploit
     function transfer(address to, uint256 amount) public {
         require(balances[msg.sender] >= amount, "Insufficient balance");
 
-        // Attacker はここから withdraw() を呼び出せる
+        // Attacker có thể gọi withdraw() từ đây
         balances[msg.sender] -= amount;
         balances[to] += amount;
     }
 }
 ```
 
-**Reentrancy を避けるベストプラクティス:**
+**Best Practices để tránh Reentrancy:**
 
-1. ✅ **Checks-Effects-Interactions Pattern**（最も推奨）
-2. ✅ OpenZeppelin の **ReentrancyGuard**
-3. ✅ **Pull over Push:** ユーザーが自分で引き出す方式
-4. ✅ **Mutex locks:** State variable を使用してロック
-5. ✅ **Gas limits:** `call()` の代わりに `transfer()` または `send()` を使用
+1. ✅ **Checks-Effects-Interactions Pattern** (Khuyến nghị nhất)
+2. ✅ **ReentrancyGuard** từ OpenZeppelin
+3. ✅ **Pull over Push:** Để user tự rút thay vì tự động gửi
+4. ✅ **Mutex locks:** Sử dụng state variable để lock
+5. ✅ **Gas limits:** Dùng `transfer()` hoặc `send()` thay vì `call()`
 
 **Pull over Push Pattern:**
 
 ```solidity
-// ✅ 安全: Pull Payment Pattern
+// ✅ AN TOÀN: Pull Payment Pattern
 contract SafeBank {
     mapping(address => uint256) public balances;
     mapping(address => uint256) public pendingWithdrawals;
@@ -4056,41 +4060,41 @@ contract SafeBank {
         balances[msg.sender] += msg.value;
     }
 
-    // Step 1: Withdrawal をリクエスト
+    // Bước 1: Request withdrawal
     function requestWithdraw(uint256 amount) public {
         require(balances[msg.sender] >= amount, "Insufficient balance");
 
-        // State を先に更新
+        // Cập nhật state trước
         balances[msg.sender] -= amount;
         pendingWithdrawals[msg.sender] += amount;
     }
 
-    // Step 2: User が自分で引き出す（pull）
+    // Bước 2: User tự rút (pull)
     function withdraw() public {
         uint256 amount = pendingWithdrawals[msg.sender];
         require(amount > 0, "No pending withdrawal");
 
-        // State を先に更新
+        // Cập nhật state trước
         pendingWithdrawals[msg.sender] = 0;
 
-        // 送金は後
+        // Chuyển tiền sau
         (bool success, ) = msg.sender.call{value: amount}("");
         require(success, "Transfer failed");
     }
 }
 ```
 
-**有名な Reentrancy によるハッキング事件:**
+**Các vụ hack nổi tiếng do Reentrancy:**
 
-1. **The DAO (2016):** $60 million - Ethereum のハードフォークにつながった
-2. **Lendf.Me (2020):** $25 million
-3. **Cream Finance (2021):** $130 million
+1. **The DAO (2016):** $60 triệu USD - Dẫn đến Ethereum hard fork
+2. **Lendf.Me (2020):** $25 triệu USD
+3. **Cream Finance (2021):** $130 triệu USD
 
 ---
 
-### 5.2. Access Control（アクセス制御）
+### 5.2. Access Control (Phân quyền)
 
-すべての人が機密関数を呼び出せるわけではありません。明確な権限管理メカニズムが必要です。
+Không phải ai cũng được gọi các hàm nhạy cảm. Cần có cơ chế phân quyền rõ ràng.
 
 #### 🔐 Ownable Pattern
 
@@ -4104,24 +4108,24 @@ contract MyToken is Ownable {
     mapping(address => uint256) public balances;
     uint256 public totalSupply;
 
-    // Constructor が自動的に deployer を owner に設定
+    // Constructor tự động set deployer làm owner
     constructor() Ownable(msg.sender) {}
 
-    // owner のみが token を mint できる
+    // Chỉ owner mới được mint token
     function mint(address to, uint256 amount) public onlyOwner {
         balances[to] += amount;
         totalSupply += amount;
     }
 
-    // owner のみが token を burn できる
+    // Chỉ owner mới được burn token
     function burn(address from, uint256 amount) public onlyOwner {
         require(balances[from] >= amount, "Insufficient balance");
         balances[from] -= amount;
         totalSupply -= amount;
     }
 
-    // owner のみが所有権を移転できる
-    // transferOwnership() 関数は Ownable に既に含まれている
+    // Chỉ owner mới được chuyển quyền sở hữu
+    // Hàm transferOwnership() đã có sẵn từ Ownable
 }
 ```
 
@@ -4134,7 +4138,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
 contract AdvancedToken is AccessControl {
-    // Roles を定義
+    // Định nghĩa các roles
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
@@ -4144,23 +4148,23 @@ contract AdvancedToken is AccessControl {
     bool public paused;
 
     constructor() {
-        // Deployer がデフォルトの admin
+        // Deployer là admin mặc định
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
 
-        // Admin は他の roles を付与できる
+        // Admin có thể cấp các roles khác
         _grantRole(MINTER_ROLE, msg.sender);
         _grantRole(BURNER_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
     }
 
-    // MINTER_ROLE のみが mint できる
+    // Chỉ MINTER_ROLE mới được mint
     function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) {
         require(!paused, "Contract is paused");
         balances[to] += amount;
         totalSupply += amount;
     }
 
-    // BURNER_ROLE のみが burn できる
+    // Chỉ BURNER_ROLE mới được burn
     function burn(address from, uint256 amount) public onlyRole(BURNER_ROLE) {
         require(!paused, "Contract is paused");
         require(balances[from] >= amount, "Insufficient balance");
@@ -4168,7 +4172,7 @@ contract AdvancedToken is AccessControl {
         totalSupply -= amount;
     }
 
-    // PAUSER_ROLE のみが pause/unpause できる
+    // Chỉ PAUSER_ROLE mới được pause/unpause
     function pause() public onlyRole(PAUSER_ROLE) {
         paused = true;
     }
@@ -4177,12 +4181,12 @@ contract AdvancedToken is AccessControl {
         paused = false;
     }
 
-    // Admin は他のアドレスに role を付与できる
+    // Admin có thể cấp role cho địa chỉ khác
     function grantMinterRole(address account) public onlyRole(DEFAULT_ADMIN_ROLE) {
         grantRole(MINTER_ROLE, account);
     }
 
-    // Admin は role を取り消せる
+    // Admin có thể thu hồi role
     function revokeMinterRole(address account) public onlyRole(DEFAULT_ADMIN_ROLE) {
         revokeRole(MINTER_ROLE, account);
     }
@@ -4253,24 +4257,24 @@ contract CustomAccessControl {
 }
 ```
 
-#### 🔍 Access Control の詳細分析
+#### 🔍 Phân tích chi tiết Access Control
 
-**なぜ Access Control が重要なのか？**
+**Tại sao Access Control quan trọng?**
 
-1. **機密関数の保護:** Mint, burn, pause, upgrade
-2. **明確な権限管理:** 誰が何をできるか
-3. **リスクの軽減:** 不正アクセスの防止
-4. **Compliance:** 法的要件への対応
+1. **Bảo vệ hàm nhạy cảm:** Mint, burn, pause, upgrade
+2. **Phân quyền rõ ràng:** Ai được làm gì
+3. **Giảm rủi ro:** Ngăn chặn unauthorized access
+4. **Compliance:** Đáp ứng yêu cầu pháp lý
 
-**Access Control パターンの比較:**
+**So sánh các pattern Access Control:**
 
-| Pattern           | Use Case                    | 利点                   | 欠点                                         |
-| ----------------- | --------------------------- | ---------------------- | -------------------------------------------- |
-| **Ownable**       | Simple contracts, 1 admin   | シンプル、gas が安い   | 1 人の owner のみ、単一障害点                |
-| **AccessControl** | Complex systems, 複数 roles | 柔軟、拡張性が高い     | 複雑、gas が高い                             |
-| **Custom**        | Specific requirements       | 完全にカスタマイズ可能 | 自分で実装する必要がある、エラーが起きやすい |
+| Pattern           | Use Case                     | Ưu điểm                | Nhược điểm                           |
+| ----------------- | ---------------------------- | ---------------------- | ------------------------------------ |
+| **Ownable**       | Simple contracts, 1 admin    | Đơn giản, gas rẻ       | Chỉ 1 owner, single point of failure |
+| **AccessControl** | Complex systems, nhiều roles | Linh hoạt, mở rộng tốt | Phức tạp hơn, gas đắt hơn            |
+| **Custom**        | Specific requirements        | Tùy chỉnh hoàn toàn    | Phải tự implement, dễ lỗi            |
 
-**実例: Multi-Role を持つ DeFi Protocol:**
+**Ví dụ thực tế: DeFi Protocol với Multi-Role:**
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -4280,7 +4284,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
 contract DeFiProtocol is AccessControl, Pausable {
-    // Roles を定義
+    // Định nghĩa roles
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
     bytes32 public constant TREASURY_ROLE = keccak256("TREASURY_ROLE");
@@ -4302,12 +4306,12 @@ contract DeFiProtocol is AccessControl, Pausable {
         require(_treasury != address(0), "Invalid treasury");
         treasury = _treasury;
 
-        // Roles を設定
+        // Setup roles
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(ADMIN_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
 
-        // Admin がすべての roles を grant/revoke できる
+        // Admin có thể grant/revoke tất cả roles
         _setRoleAdmin(OPERATOR_ROLE, ADMIN_ROLE);
         _setRoleAdmin(TREASURY_ROLE, ADMIN_ROLE);
         _setRoleAdmin(PAUSER_ROLE, ADMIN_ROLE);
@@ -4370,7 +4374,7 @@ contract DeFiProtocol is AccessControl, Pausable {
         require(to != address(0), "Invalid address");
         require(balances[msg.sender] >= amount, "Insufficient balance");
 
-        // Fee を計算
+        // Tính phí
         uint256 feeAmount = (amount * fee) / 10000;
         uint256 transferAmount = amount - feeAmount;
 
@@ -4391,7 +4395,7 @@ contract DeFiProtocol is AccessControl, Pausable {
 }
 ```
 
-**Access Control のテスト:**
+**Test Access Control:**
 
 ```javascript
 // File: test/access-control.test.js
@@ -4409,7 +4413,7 @@ describe("Access Control", function () {
     const DeFiProtocol = await ethers.getContractFactory("DeFiProtocol");
     protocol = await DeFiProtocol.deploy(treasury.address);
 
-    // Roles を付与
+    // Grant roles
     const ADMIN_ROLE = await protocol.ADMIN_ROLE();
     const OPERATOR_ROLE = await protocol.OPERATOR_ROLE();
     const PAUSER_ROLE = await protocol.PAUSER_ROLE();
@@ -4422,18 +4426,18 @@ describe("Access Control", function () {
     it("Should grant and revoke roles correctly", async function () {
       const OPERATOR_ROLE = await protocol.OPERATOR_ROLE();
 
-      // Role をチェック
+      // Check role
       expect(await protocol.hasRole(OPERATOR_ROLE, operator.address)).to.be
         .true;
 
-      // Role を取り消す
+      // Revoke role
       await protocol.revokeRole(OPERATOR_ROLE, operator.address);
       expect(await protocol.hasRole(OPERATOR_ROLE, operator.address)).to.be
         .false;
     });
 
     it("Should prevent unauthorized access", async function () {
-      // User は OPERATOR_ROLE を持っていないので mint できない
+      // User không có OPERATOR_ROLE không thể mint
       await expect(
         protocol.connect(user).mint(user.address, 1000)
       ).to.be.revertedWith("AccessControl:");
@@ -4458,7 +4462,7 @@ describe("Access Control", function () {
       await protocol.connect(pauser).pause();
       expect(await protocol.paused()).to.be.true;
 
-      // Paused 時は mint がブロックされる
+      // Mint bị block khi paused
       await expect(
         protocol.connect(operator).mint(user.address, 1000)
       ).to.be.revertedWith("Pausable: paused");
@@ -4480,53 +4484,53 @@ describe("Access Control", function () {
 });
 ```
 
-**Access Control のベストプラクティス:**
+**Best Practices cho Access Control:**
 
-1. ✅ **Principle of Least Privilege:** 必要最小限の権限のみを付与
-2. ✅ **Role Separation:** Roles を明確に分離（admin ≠ operator）
-3. ✅ **Multi-sig for Admin:** Admin role には Gnosis Safe を使用
-4. ✅ **Timelock for Critical Functions:** 重要な変更には遅延を設定
-5. ✅ **Event Logging:** すべての権限変更をログに記録
-6. ✅ **Emergency Roles:** 緊急時用の role を用意（pause）
+1. ✅ **Principle of Least Privilege:** Chỉ cấp quyền tối thiểu cần thiết
+2. ✅ **Role Separation:** Tách biệt roles rõ ràng (admin ≠ operator)
+3. ✅ **Multi-sig cho Admin:** Dùng Gnosis Safe cho admin role
+4. ✅ **Timelock cho Critical Functions:** Delay khi thay đổi quan trọng
+5. ✅ **Event Logging:** Log tất cả thay đổi quyền
+6. ✅ **Emergency Roles:** Có role riêng cho emergency (pause)
 7. ✅ **Role Hierarchy:** Admin > Operator > User
-8. ✅ **Revoke Unused Roles:** 使用していない roles を取り消す
+8. ✅ **Revoke Unused Roles:** Thu hồi roles không dùng
 
-**よくある間違い:**
+**Common Mistakes:**
 
 ```solidity
-// ❌ 間違い: address(0) をチェックしない
+// ❌ SAI: Không check address(0)
 function transferOwnership(address newOwner) public onlyOwner {
-    owner = newOwner; // owner を address(0) に設定できてしまう！
+    owner = newOwner; // Có thể set owner = address(0)!
 }
 
-// ✅ 正しい: address(0) をチェック
+// ✅ ĐÚNG: Check address(0)
 function transferOwnership(address newOwner) public onlyOwner {
     require(newOwner != address(0), "Invalid address");
     owner = newOwner;
 }
 
-// ❌ 間違い: Event を emit しない
+// ❌ SAI: Không emit event
 function addAdmin(address account) public onlyOwner {
     admins[account] = true;
 }
 
-// ✅ 正しい: Event を emit
+// ✅ ĐÚNG: Emit event
 function addAdmin(address account) public onlyOwner {
     admins[account] = true;
     emit AdminAdded(account, msg.sender);
 }
 
-// ❌ 間違い: Hardcode addresses
+// ❌ SAI: Hardcode addresses
 address public admin = 0x123...;
 
-// ✅ 正しい: Constructor で設定
+// ✅ ĐÚNG: Set trong constructor
 constructor(address _admin) {
     require(_admin != address(0), "Invalid admin");
     admin = _admin;
 }
 ```
 
-**Timelock Pattern for Admin Functions:**
+**Timelock Pattern cho Admin Functions:**
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -4550,7 +4554,7 @@ contract TimelockAdmin {
         owner = msg.sender;
     }
 
-    // Step 1: Transfer をリクエスト（2 日待つ必要がある）
+    // Bước 1: Request transfer (phải đợi 2 ngày)
     function requestOwnershipTransfer(address newOwner) external onlyOwner {
         require(newOwner != address(0), "Invalid address");
         pendingOwner = newOwner;
@@ -4559,7 +4563,7 @@ contract TimelockAdmin {
         emit OwnershipTransferRequested(owner, newOwner, block.timestamp + transferDelay);
     }
 
-    // Step 2: Transfer を実行（2 日後）
+    // Bước 2: Execute transfer (sau 2 ngày)
     function executeOwnershipTransfer() external {
         require(pendingOwner != address(0), "No pending transfer");
         require(block.timestamp >= transferRequestTime + transferDelay, "Too early");
@@ -4573,7 +4577,7 @@ contract TimelockAdmin {
         emit OwnershipTransferred(oldOwner, owner);
     }
 
-    // Transfer をキャンセル
+    // Cancel transfer
     function cancelOwnershipTransfer() external onlyOwner {
         pendingOwner = address(0);
         transferRequestTime = 0;
@@ -4583,9 +4587,9 @@ contract TimelockAdmin {
 
 ---
 
-### 5.3. Pausable（一時停止メカニズム）
+### 5.3. Pausable (Cơ chế tạm dừng)
 
-エラーや攻撃を検出した場合、contract を即座に「凍結」する機能が必要です。
+Khi phát hiện lỗi hoặc bị tấn công, cần có khả năng "đóng băng" contract ngay lập tức.
 
 #### ⏸️ Pausable Pattern
 
@@ -4601,24 +4605,24 @@ contract PausableToken is Pausable, Ownable {
 
     constructor() Ownable(msg.sender) {}
 
-    // owner のみが pause できる
+    // Chỉ owner mới được pause
     function pause() public onlyOwner {
         _pause();
     }
 
-    // owner のみが unpause できる
+    // Chỉ owner mới được unpause
     function unpause() public onlyOwner {
         _unpause();
     }
 
-    // Transfer は paused 時にブロックされる
+    // Transfer bị block khi paused
     function transfer(address to, uint256 amount) public whenNotPaused {
         require(balances[msg.sender] >= amount, "Insufficient balance");
         balances[msg.sender] -= amount;
         balances[to] += amount;
     }
 
-    // Mint は paused 時でも動作（emergency mint）
+    // Mint vẫn hoạt động khi paused (emergency mint)
     function emergencyMint(address to, uint256 amount) public onlyOwner {
         balances[to] += amount;
     }
@@ -4659,20 +4663,20 @@ contract CircuitBreaker {
         owner = msg.sender;
     }
 
-    // Circuit breaker を起動
+    // Kích hoạt circuit breaker
     function toggleCircuitBreaker() public onlyOwner {
         stopped = !stopped;
     }
 
-    // 通常の関数 - emergency 時にブロック
+    // Hàm bình thường - bị block khi emergency
     function withdraw(uint256 amount) public stopInEmergency {
-        // 新しい日になったら daily counter をリセット
+        // Reset daily counter nếu sang ngày mới
         if (block.timestamp / 1 days > lastWithdrawDay) {
             withdrawnToday = 0;
             lastWithdrawDay = block.timestamp / 1 days;
         }
 
-        // Daily limit をチェック
+        // Kiểm tra daily limit
         require(withdrawnToday + amount <= dailyLimit, "Daily limit exceeded");
 
         withdrawnToday += amount;
@@ -4680,30 +4684,30 @@ contract CircuitBreaker {
         // Withdraw logic...
     }
 
-    // Emergency 関数 - stopped 時のみ動作
+    // Hàm emergency - chỉ hoạt động khi stopped
     function emergencyWithdraw() public onlyInEmergency {
         // Emergency withdraw logic...
     }
 }
 ```
 
-#### 🔍 Pausable Pattern の詳細分析
+#### 🔍 Phân tích chi tiết Pausable Pattern
 
-**なぜ Pausable が必要か？**
+**Tại sao cần Pausable?**
 
-1. **Emergency Response:** エラー/攻撃検出時に contract を停止
-2. **Maintenance:** Upgrade 時に一時停止
-3. **Compliance:** 法的要件への対応（assets の凍結）
-4. **Damage Control:** 問題発生時の被害を最小化
+1. **Emergency Response:** Dừng contract khi phát hiện lỗi/tấn công
+2. **Maintenance:** Tạm dừng khi upgrade
+3. **Compliance:** Đáp ứng yêu cầu pháp lý (freeze assets)
+4. **Damage Control:** Giảm thiểu thiệt hại khi có sự cố
 
-**Pause の種類:**
+**Các loại Pause:**
 
-1. **Full Pause:** すべての関数を停止
-2. **Partial Pause:** 特定の関数のみを停止
-3. **Selective Pause:** Role または address ごとに停止
-4. **Automatic Pause:** 異常検出時に自動停止
+1. **Full Pause:** Dừng tất cả functions
+2. **Partial Pause:** Chỉ dừng một số functions nhất định
+3. **Selective Pause:** Dừng theo role hoặc address
+4. **Automatic Pause:** Tự động pause khi phát hiện anomaly
 
-**Advanced Pausable の例:**
+**Ví dụ Advanced Pausable:**
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -4770,7 +4774,7 @@ contract AdvancedPausable is Pausable, AccessControl {
         emit Unpaused(msg.sender);
     }
 
-    // Emergency pause - min duration を待つ必要がない
+    // Emergency pause - không cần chờ min duration
     function emergencyPause() external onlyRole(EMERGENCY_ROLE) {
         _pause();
         currentPauseReason = PauseReason.Emergency;
@@ -4828,7 +4832,7 @@ contract AdvancedPausable is Pausable, AccessControl {
 
     mapping(address => uint256) public balances;
 
-    // Contract pause 時に停止
+    // Bị pause khi contract pause
     function transfer(address to, uint256 amount)
         external
         whenNotPaused
@@ -4840,7 +4844,7 @@ contract AdvancedPausable is Pausable, AccessControl {
         balances[to] += amount;
     }
 
-    // Pause されない（emergency function）
+    // Không bị pause (emergency function)
     function emergencyWithdraw() external {
         uint256 balance = balances[msg.sender];
         require(balance > 0, "No balance");
@@ -4850,14 +4854,14 @@ contract AdvancedPausable is Pausable, AccessControl {
         require(success, "Transfer failed");
     }
 
-    // View functions は pause されない
+    // View functions không bị pause
     function getBalance(address account) external view returns (uint256) {
         return balances[account];
     }
 }
 ```
 
-**Anomaly Detection 付き Automatic Circuit Breaker:**
+**Automatic Circuit Breaker với Anomaly Detection:**
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -4886,7 +4890,7 @@ contract AutoCircuitBreaker is Pausable, Ownable {
     }
 
     function withdraw(uint256 amount) external whenNotPaused {
-        // 新しい時間になったら counter をリセット
+        // Reset counters nếu sang giờ mới
         uint256 hour = block.timestamp / 1 hours;
         if (hour > currentHour) {
             withdrawnThisHour = 0;
@@ -4894,7 +4898,7 @@ contract AutoCircuitBreaker is Pausable, Ownable {
             currentHour = hour;
         }
 
-        // Anomalies をチェック
+        // Check anomalies
         if (amount > maxWithdrawPerTx) {
             emit AnomalyDetected("Large withdrawal", amount);
             _autoPause("Large withdrawal detected");
@@ -4955,7 +4959,7 @@ contract AutoCircuitBreaker is Pausable, Ownable {
 }
 ```
 
-**Pausable のテスト:**
+**Test Pausable:**
 
 ```javascript
 // File: test/pausable.test.js
@@ -4977,7 +4981,7 @@ describe("Pausable Pattern", function () {
     const PAUSER_ROLE = await contract.PAUSER_ROLE();
     await contract.grantRole(PAUSER_ROLE, pauser.address);
 
-    // Balances を設定
+    // Setup balances
     await contract
       .connect(owner)
       .emergencyWithdraw({ value: ethers.parseEther("10") });
@@ -4997,16 +5001,16 @@ describe("Pausable Pattern", function () {
     it("Should allow unpause after min duration", async function () {
       await contract.connect(pauser).pause(1);
 
-      // すぐには unpause できない
+      // Không thể unpause ngay
       await expect(contract.connect(pauser).unpause()).to.be.revertedWith(
         "Min pause duration not met"
       );
 
-      // 時間を進める
+      // Fast forward time
       await ethers.provider.send("evm_increaseTime", [3600]); // 1 hour
       await ethers.provider.send("evm_mine");
 
-      // 今は unpause できる
+      // Giờ có thể unpause
       await contract.connect(pauser).unpause();
       expect(await contract.paused()).to.be.false;
     });
@@ -5043,7 +5047,7 @@ describe("Pausable Pattern", function () {
       await contract.emergencyPause();
       expect(await contract.paused()).to.be.true;
 
-      // すぐに unpause できる
+      // Có thể unpause ngay
       await contract.emergencyUnpause();
       expect(await contract.paused()).to.be.false;
     });
@@ -5051,7 +5055,7 @@ describe("Pausable Pattern", function () {
     it("Should allow emergency withdraw even when paused", async function () {
       await contract.connect(pauser).pause(1);
 
-      // Emergency withdraw は動作する
+      // Emergency withdraw vẫn hoạt động
       await expect(contract.connect(user).emergencyWithdraw()).to.not.be
         .reverted;
     });
@@ -5059,82 +5063,82 @@ describe("Pausable Pattern", function () {
 });
 ```
 
-**Pausable のベストプラクティス:**
+**Best Practices cho Pausable:**
 
-1. ✅ **Pause/Unpause Roles を分離:** Pauser ≠ Unpauser
-2. ✅ **Min Pause Duration:** 連続した pause/unpause を防ぐ
-3. ✅ **Emergency Functions:** 一部の関数は pause されない
-4. ✅ **Pause Reasons:** Pause の理由をログに記録
-5. ✅ **Automatic Pause:** 異常検出時に自動 pause
-6. ✅ **Selective Pause:** 全体ではなく user/function ごとに pause
-7. ✅ **Multi-sig for Unpause:** 複数人の承認が必要
-8. ✅ **Notification:** Pause 時にユーザーに通知
+1. ✅ **Separate Pause/Unpause Roles:** Pauser ≠ Unpauser
+2. ✅ **Min Pause Duration:** Tránh pause/unpause liên tục
+3. ✅ **Emergency Functions:** Một số functions không bị pause
+4. ✅ **Pause Reasons:** Log lý do pause
+5. ✅ **Automatic Pause:** Tự động pause khi phát hiện anomaly
+6. ✅ **Selective Pause:** Pause theo user/function thay vì toàn bộ
+7. ✅ **Multi-sig cho Unpause:** Cần nhiều người approve
+8. ✅ **Notification:** Thông báo users khi pause
 
-**いつ Pause すべきか？**
+**Khi nào nên Pause?**
 
-- 🚨 セキュリティ脆弱性を検出
-- 🚨 進行中の攻撃
-- 🚨 Critical bug を検出
-- 🚨 Transaction patterns の異常
+- 🚨 Phát hiện lỗ hổng bảo mật
+- 🚨 Bị tấn công đang diễn ra
+- 🚨 Phát hiện bug critical
+- 🚨 Anomaly trong transaction patterns
 - 🔧 Maintenance/upgrade
-- ⚖️ 法的要件
+- ⚖️ Yêu cầu pháp lý
 
-**いつ Pause すべきでないか？**
+**Khi nào KHÔNG nên Pause?**
 
-- ❌ Market を操作するため
-- ❌ 正当な transaction を防ぐため
-- ❌ 個人的な理由
-- ❌ 明確な理由がない場合
+- ❌ Để manipulate market
+- ❌ Để prevent legitimate transactions
+- ❌ Vì lý do cá nhân
+- ❌ Không có lý do rõ ràng
 
 ---
 
 ### 5.4. Integer Overflow/Underflow
 
-Solidity 0.8.0 以前では、整数演算が overflow/underflow してもエラーが発生しませんでした。
+Trước Solidity 0.8.0, phép toán số nguyên có thể bị overflow/underflow mà không báo lỗi.
 
-#### ⚠️ Overflow/Underflow の脆弱性（Solidity < 0.8.0）
+#### ⚠️ Lỗ hổng Overflow/Underflow (Solidity < 0.8.0)
 
 ```solidity
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.7.0; // 古いバージョン
+pragma solidity ^0.7.0; // Version cũ
 
-// ❌ Solidity < 0.8.0 で脆弱性あり
+// ❌ CÓ LỖ HỔNG với Solidity < 0.8.0
 contract VulnerableCounter {
     uint8 public count = 255;
 
     function increment() public {
-        count++; // Overflow: 255 + 1 = 0（エラーなし！）
+        count++; // Overflow: 255 + 1 = 0 (không báo lỗi!)
     }
 
     function decrement() public {
-        count--; // Underflow: 0 - 1 = 255（エラーなし！）
+        count--; // Underflow: 0 - 1 = 255 (không báo lỗi!)
     }
 }
 ```
 
-#### ✅ 解決策
+#### ✅ Giải pháp
 
-**1. Solidity >= 0.8.0 を使用（自動チェック）:**
+**1. Sử dụng Solidity >= 0.8.0 (Tự động check):**
 
 ```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-// ✅ Solidity >= 0.8.0 で安全
+// ✅ AN TOÀN với Solidity >= 0.8.0
 contract SafeCounter {
     uint8 public count = 255;
 
     function increment() public {
-        count++; // Overflow 時に自動で revert
+        count++; // Tự động revert nếu overflow
     }
 
     function decrement() public {
-        count--; // Underflow 時に自動で revert
+        count--; // Tự động revert nếu underflow
     }
 }
 ```
 
-**2. SafeMath を使用（Solidity < 0.8.0）:**
+**2. Sử dụng SafeMath (Solidity < 0.8.0):**
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -5148,11 +5152,11 @@ contract SafeCounterOld {
     uint256 public count;
 
     function increment() public {
-        count = count.add(1); // Overflow 時に revert
+        count = count.add(1); // Revert nếu overflow
     }
 
     function decrement() public {
-        count = count.sub(1); // Underflow 時に revert
+        count = count.sub(1); // Revert nếu underflow
     }
 }
 ```
@@ -5161,15 +5165,15 @@ contract SafeCounterOld {
 
 ### 5.5. Front-Running Attack
 
-Front-running は、attacker が pending transaction を見て、より高い gas price で transaction を送信し、先に処理させる攻撃です。
+Front-running xảy ra khi attacker xem transaction pending và gửi transaction với gas price cao hơn để được xử lý trước.
 
-#### 🏃 Front-Running の例
+#### 🏃 Ví dụ Front-Running
 
 ```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-// ❌ Front-Running に脆弱
+// ❌ DỄ BỊ FRONT-RUNNING
 contract VulnerableAuction {
     address public highestBidder;
     uint256 public highestBid;
@@ -5177,7 +5181,7 @@ contract VulnerableAuction {
     function bid() public payable {
         require(msg.value > highestBid, "Bid too low");
 
-        // 前の bidder に返金
+        // Hoàn tiền cho bidder cũ
         if (highestBidder != address(0)) {
             payable(highestBidder).transfer(highestBid);
         }
@@ -5187,14 +5191,14 @@ contract VulnerableAuction {
     }
 }
 
-// Attacker ができること:
-// 1. Mempool で victim の bid transaction を確認
-// 2. より高い gas price で bid transaction を送信
-// 3. Attacker の transaction が先に処理される
-// 4. Victim が outbid される
+// Attacker có thể:
+// 1. Xem transaction bid của victim trong mempool
+// 2. Gửi transaction bid với gas price cao hơn
+// 3. Transaction của attacker được xử lý trước
+// 4. Victim bị outbid
 ```
 
-#### ✅ 解決策: Commit-Reveal Pattern
+#### ✅ Giải pháp: Commit-Reveal Pattern
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -5219,7 +5223,7 @@ contract SecureAuction {
         revealPhaseEnd = commitPhaseEnd + revealDuration;
     }
 
-    // Phase 1: Commit（bid の hash を送信）
+    // Phase 1: Commit (gửi hash của bid)
     function commitBid(bytes32 commitment) public payable {
         require(block.timestamp < commitPhaseEnd, "Commit phase ended");
         require(bids[msg.sender].commitment == bytes32(0), "Already committed");
@@ -5231,7 +5235,7 @@ contract SecureAuction {
         });
     }
 
-    // Phase 2: Reveal（実際の bid を公開）
+    // Phase 2: Reveal (tiết lộ bid thực)
     function revealBid(uint256 amount, bytes32 secret) public {
         require(block.timestamp >= commitPhaseEnd, "Commit phase not ended");
         require(block.timestamp < revealPhaseEnd, "Reveal phase ended");
@@ -5239,20 +5243,20 @@ contract SecureAuction {
         Bid storage bid = bids[msg.sender];
         require(!bid.revealed, "Already revealed");
 
-        // Commitment を検証
+        // Verify commitment
         bytes32 commitment = keccak256(abi.encodePacked(amount, secret));
         require(commitment == bid.commitment, "Invalid reveal");
 
         bid.revealed = true;
 
-        // Highest bid かチェック
+        // Check if highest bid
         if (amount > highestBid && bid.deposit >= amount) {
             highestBidder = msg.sender;
             highestBid = amount;
         }
     }
 
-    // Phase 3: Withdraw（資金を引き出す）
+    // Phase 3: Withdraw (rút tiền)
     function withdraw() public {
         require(block.timestamp >= revealPhaseEnd, "Auction not ended");
 
@@ -5261,10 +5265,10 @@ contract SecureAuction {
 
         uint256 refund;
         if (msg.sender == highestBidder) {
-            // Winner は余剰分を受け取る
+            // Winner nhận lại phần thừa
             refund = bid.deposit - highestBid;
         } else {
-            // Loser は全額返金
+            // Loser nhận lại toàn bộ
             refund = bid.deposit;
         }
 
@@ -5276,21 +5280,21 @@ contract SecureAuction {
 
 ---
 
-### 5.6. その他の一般的な脆弱性
+### 5.6. Các lỗ hổng phổ biến khác
 
 #### 🔓 Unprotected Functions
 
 ```solidity
-// ❌ 間違い: 機密関数に access control がない
+// ❌ SAI: Hàm nhạy cảm không có access control
 contract Vulnerable {
     address public owner;
 
     function setOwner(address newOwner) public {
-        owner = newOwner; // 誰でも owner を変更できる！
+        owner = newOwner; // Ai cũng có thể đổi owner!
     }
 }
 
-// ✅ 正しい: Access control を追加
+// ✅ ĐÚNG: Thêm access control
 contract Safe {
     address public owner;
 
@@ -5308,22 +5312,16 @@ contract Safe {
 #### 💸 Unchecked External Calls
 
 ```solidity
-// ❌ 間違い: External call の結果をチェックしない
+// ❌ SAI: Không check kết quả của external call
 contract Vulnerable {
     function sendEther(address payable recipient) public payable {
-        recipient.send(msg.value); // Return value をチェックしない！
+        recipient.send(msg.value); // Không check return value!
     }
 }
 
-// ✅ 正しい: 結果をチェック
+// ✅ ĐÚNG: Check kết quả
 contract Safe {
     function sendEther(address payable recipient) public payable {
-        bool success = recipient.send(msg.value);
-        require(success, "Transfer failed");
-    }
-
-    // または call を使用
-    function sendEtherWithCall(address payable recipient) public payable {
         (bool success, ) = recipient.call{value: msg.value}("");
         require(success, "Transfer failed");
     }
@@ -5333,31 +5331,20 @@ contract Safe {
 #### 🎲 Weak Randomness
 
 ```solidity
-// ❌ 間違い: Predictable randomness
-contract VulnerableLottery {
+// ❌ SAI: Sử dụng block data làm random (có thể predict)
+contract VulnerableRandom {
     function random() public view returns (uint256) {
-        // ❌ 予測可能！
         return uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty)));
     }
 }
 
-// ✅ 正しい: Chainlink VRF を使用
+// ✅ ĐÚNG: Sử dụng Chainlink VRF
 import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
 
-contract SafeLottery is VRFConsumerBase {
+contract SafeRandom is VRFConsumerBase {
     bytes32 internal keyHash;
     uint256 internal fee;
     uint256 public randomResult;
-
-    constructor()
-        VRFConsumerBase(
-            0x... // VRF Coordinator
-            0x... // LINK Token
-        )
-    {
-        keyHash = 0x...;
-        fee = 0.1 * 10 ** 18; // 0.1 LINK
-    }
 
     function getRandomNumber() public returns (bytes32 requestId) {
         require(LINK.balanceOf(address(this)) >= fee, "Not enough LINK");
@@ -5370,93 +5357,82 @@ contract SafeLottery is VRFConsumerBase {
 }
 ```
 
-### 📝 パート 5 のまとめ
+---
 
-**覚えておくべき重要なポイント:**
+### 📝 Tổng kết Phần 5
 
-1. **Reentrancy Attack:**
+**Những điều quan trọng cần nhớ:**
 
-   - Smart contract で最も危険な脆弱性
-   - Checks-Effects-Interactions Pattern を使用
-   - OpenZeppelin の ReentrancyGuard を使用
-   - State を更新してから外部呼び出し
+1. **Reentrancy:**
+
+   - Lỗ hổng nguy hiểm nhất
+   - Sử dụng Checks-Effects-Interactions pattern
+   - Dùng ReentrancyGuard của OpenZeppelin
+   - Cập nhật state TRƯỚC KHI gọi external contract
 
 2. **Access Control:**
 
-   - 機密関数を保護
-   - Ownable（シンプルな場合）または AccessControl（複雑な場合）
-   - Multi-sig と Timelock を使用
-   - すべての権限変更をログに記録
+   - Sử dụng Ownable cho quyền đơn giản
+   - Sử dụng AccessControl (RBAC) cho quyền phức tạp
+   - Luôn protect các hàm nhạy cảm
+   - Test kỹ access control logic
 
 3. **Pausable:**
 
-   - Emergency stop メカニズムを実装
-   - Owner/admin のみが pause できる
-   - どの関数を pause すべきか慎重に検討
-   - Pause/unpause ロジックをテスト
+   - Implement emergency stop mechanism
+   - Chỉ owner/admin mới được pause
+   - Cân nhắc kỹ hàm nào cần pause
+   - Test pause/unpause logic
 
 4. **Integer Overflow/Underflow:**
 
-   - Solidity >= 0.8.0 を使用（自動チェック）
-   - 古いバージョンでは SafeMath を使用
-   - Unchecked blocks に注意
+   - Sử dụng Solidity >= 0.8.0 (tự động check)
+   - Hoặc dùng SafeMath cho version cũ
+   - Cẩn thận với unchecked blocks
 
 5. **Front-Running:**
 
-   - Commit-Reveal pattern を使用
-   - Time-locks を実装
-   - Private transactions の使用を検討
+   - Sử dụng Commit-Reveal pattern
+   - Implement time-locks
+   - Cân nhắc sử dụng private transactions
 
-6. **ベストプラクティス:**
-
-   - 常に input を検証
-   - External calls の return values をチェック
-   - Block data を random として使用しない
-   - Deploy 前にコードを監査
-   - OpenZeppelin contracts を使用
+6. **Best Practices:**
+   - Luôn validate input
+   - Check return values của external calls
+   - Không dùng block data làm random
+   - Audit code trước khi deploy
+   - Sử dụng OpenZeppelin contracts
    - Test coverage > 90%
-   - Bug bounty program を実施
-
-7. **セキュリティチェックリスト:**
-   - ✅ Reentrancy 保護
-   - ✅ Access control 実装
-   - ✅ Input validation
-   - ✅ Integer overflow/underflow 対策（Solidity 0.8+ は自動）
-   - ✅ Gas optimization
-   - ✅ Emergency pause 機能
-   - ✅ Upgrade メカニズム（必要な場合）
-   - ✅ 監査とテスト
-   - ✅ External calls のチェック
-   - ✅ Weak randomness の回避
+   - Bug bounty program
 
 ---
 
-## パート 6: 総合演習
+## Phần 6: Bài tập tổng hợp
 
-このパートでは、最初から最後まで完全なアプリケーションを構築します：
+Trong phần này, chúng ta sẽ xây dựng một ứng dụng hoàn chỉnh từ đầu đến cuối, bao gồm:
 
-1. **ERC20 Smart Contract を作成**
-2. **Testnet にデプロイ**
-3. **対話用の Frontend を構築**
-4. **送金をテスト**
+1. **Tạo Smart Contract ERC20**
+2. **Deploy lên testnet**
+3. **Xây dựng Frontend để tương tác**
+4. **Test chuyển tiền**
 
 ---
 
-### 6.1. ERC20 Smart Contract の作成
+### 6.1. Tạo Smart Contract ERC20
 
-#### 📋 要件
+#### 📋 Yêu cầu
 
-**KaopizCoin (KPC)** という名前のトークンを作成し、以下の機能を実装：
+Tạo một token có tên **KaopizCoin (KPC)** với các tính năng:
 
-- ERC20 標準に準拠
-- Mint 可能（owner のみ）
-- Burn 可能（誰でも）
-- Pause/Unpause 可能（owner のみ）
-- 完全な event logging
+- Tuân thủ chuẩn ERC20
+- Có thể mint (chỉ owner)
+- Có thể burn (bất kỳ ai)
+- Có thể pause/unpause (chỉ owner)
+- Có event logging đầy đủ
 
-#### 🔧 ステップ 1: 環境セットアップ
+#### 🔧 Bước 1: Setup môi trường
 
-**Hardhat をインストール:**
+**Cài đặt Hardhat:**
 
 ```bash
 mkdir kaopiz-token
@@ -5466,17 +5442,17 @@ npm install --save-dev hardhat @nomicfoundation/hardhat-toolbox
 npx hardhat init
 ```
 
-選択: **Create a JavaScript project**
+Chọn: **Create a JavaScript project**
 
-**OpenZeppelin をインストール:**
+**Cài đặt OpenZeppelin:**
 
 ```bash
 npm install @openzeppelin/contracts
 ```
 
-#### 📝 ステップ 2: Smart Contract を作成
+#### 📝 Bước 2: Viết Smart Contract
 
-`contracts/KaopizCoin.sol` ファイルを作成:
+Tạo file `contracts/KaopizCoin.sol`:
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -5489,7 +5465,7 @@ import "@openzeppelin/contracts/utils/Pausable.sol";
 
 /**
  * @title KaopizCoin
- * @dev Mint、burn、pause 機能を持つ ERC20 Token
+ * @dev ERC20 Token với tính năng mint, burn và pause
  */
 contract KaopizCoin is ERC20, ERC20Burnable, Ownable, Pausable {
     // Events
@@ -5499,25 +5475,25 @@ contract KaopizCoin is ERC20, ERC20Burnable, Ownable, Pausable {
     event ContractUnpaused(address indexed by, uint256 timestamp);
 
     // Constants
-    uint256 public constant MAX_SUPPLY = 1_000_000_000 * 10 ** 18; // 10 億 token
-    uint256 public constant INITIAL_SUPPLY = 100_000_000 * 10 ** 18; // 1 億 token
+    uint256 public constant MAX_SUPPLY = 1_000_000_000 * 10 ** 18; // 1 tỷ token
+    uint256 public constant INITIAL_SUPPLY = 100_000_000 * 10 ** 18; // 100 triệu token
 
     /**
      * @dev Constructor
-     * @param initialOwner 初期 owner のアドレス
+     * @param initialOwner Địa chỉ owner ban đầu
      */
     constructor(
         address initialOwner
     ) ERC20("KaopizCoin", "KPC") Ownable(initialOwner) {
-        // Owner に initial supply を mint
+        // Mint initial supply cho owner
         _mint(initialOwner, INITIAL_SUPPLY);
         emit TokensMinted(initialOwner, INITIAL_SUPPLY, block.timestamp);
     }
 
     /**
-     * @dev 新しい token を mint（owner のみ）
-     * @param to Token を受け取るアドレス
-     * @param amount Token の数量
+     * @dev Mint token mới (chỉ owner)
+     * @param to Địa chỉ nhận token
+     * @param amount Số lượng token
      */
     function mint(address to, uint256 amount) public onlyOwner {
         require(to != address(0), "Cannot mint to zero address");
@@ -5528,8 +5504,8 @@ contract KaopizCoin is ERC20, ERC20Burnable, Ownable, Pausable {
     }
 
     /**
-     * @dev Token を burn（誰でも自分の token を burn できる）
-     * @param amount Burn する token の数量
+     * @dev Burn token (bất kỳ ai có thể burn token của mình)
+     * @param amount Số lượng token cần burn
      */
     function burn(uint256 amount) public override {
         super.burn(amount);
@@ -5537,9 +5513,9 @@ contract KaopizCoin is ERC20, ERC20Burnable, Ownable, Pausable {
     }
 
     /**
-     * @dev 他のアドレスから token を burn（事前に approve が必要）
-     * @param account Burn する token のアドレス
-     * @param amount Token の数量
+     * @dev Burn token từ địa chỉ khác (cần approve trước)
+     * @param account Địa chỉ cần burn token
+     * @param amount Số lượng token
      */
     function burnFrom(address account, uint256 amount) public override {
         super.burnFrom(account, amount);
@@ -5547,7 +5523,7 @@ contract KaopizCoin is ERC20, ERC20Burnable, Ownable, Pausable {
     }
 
     /**
-     * @dev Contract を pause（owner のみ）
+     * @dev Pause contract (chỉ owner)
      */
     function pause() public onlyOwner {
         _pause();
@@ -5555,7 +5531,7 @@ contract KaopizCoin is ERC20, ERC20Burnable, Ownable, Pausable {
     }
 
     /**
-     * @dev Contract を unpause（owner のみ）
+     * @dev Unpause contract (chỉ owner)
      */
     function unpause() public onlyOwner {
         _unpause();
@@ -5563,7 +5539,7 @@ contract KaopizCoin is ERC20, ERC20Burnable, Ownable, Pausable {
     }
 
     /**
-     * @dev Pausable logic を追加するため _update を override
+     * @dev Override _update để thêm pausable logic
      */
     function _update(
         address from,
@@ -5574,7 +5550,7 @@ contract KaopizCoin is ERC20, ERC20Burnable, Ownable, Pausable {
     }
 
     /**
-     * @dev Token の詳細情報を取得
+     * @dev Lấy thông tin chi tiết của token
      */
     function getTokenInfo()
         public
@@ -5600,18 +5576,18 @@ contract KaopizCoin is ERC20, ERC20Burnable, Ownable, Pausable {
 }
 ```
 
-#### 🔍 コードの解説:
+#### 🔍 Giải thích code:
 
-**1. OpenZeppelin からの継承:**
+**1. Kế thừa từ OpenZeppelin:**
 
 ```solidity
 contract KaopizCoin is ERC20, ERC20Burnable, Ownable, Pausable
 ```
 
-- `ERC20`: 基本的な関数を提供（transfer、approve、transferFrom）
-- `ERC20Burnable`: burn と burnFrom 関数を追加
-- `Ownable`: Owner 管理
-- `Pausable`: Contract の pause/unpause を可能にする
+- `ERC20`: Cung cấp các hàm cơ bản (transfer, approve, transferFrom)
+- `ERC20Burnable`: Thêm hàm burn và burnFrom
+- `Ownable`: Quản lý owner
+- `Pausable`: Cho phép pause/unpause contract
 
 **2. Constants:**
 
@@ -5620,9 +5596,9 @@ uint256 public constant MAX_SUPPLY = 1_000_000_000 * 10**18;
 uint256 public constant INITIAL_SUPPLY = 100_000_000 * 10**18;
 ```
 
-- `MAX_SUPPLY`: 総供給量の上限（10 億 token）
-- `INITIAL_SUPPLY`: 初期供給量（1 億 token）
-- `10**18` を掛けるのは、ERC20 がデフォルトで 18 decimals を持つため
+- `MAX_SUPPLY`: Giới hạn tổng supply (1 tỷ token)
+- `INITIAL_SUPPLY`: Supply ban đầu (100 triệu token)
+- Nhân với `10**18` vì ERC20 mặc định có 18 decimals
 
 **3. Constructor:**
 
@@ -5632,11 +5608,11 @@ constructor(address initialOwner)
     Ownable(initialOwner)
 ```
 
-- "KaopizCoin" という名前と "KPC" という symbol で token を初期化
-- 初期 owner を設定
-- Owner に initial supply を mint
+- Khởi tạo token với tên "KaopizCoin" và symbol "KPC"
+- Set owner ban đầu
+- Mint initial supply cho owner
 
-**4. Mint 関数:**
+**4. Hàm mint:**
 
 ```solidity
 function mint(address to, uint256 amount) public onlyOwner {
@@ -5645,11 +5621,11 @@ function mint(address to, uint256 amount) public onlyOwner {
 }
 ```
 
-- Owner のみが呼び出せる（`onlyOwner`）
-- MAX_SUPPLY を超えないかチェック
-- Mint 後に event を emit
+- Chỉ owner mới được gọi (`onlyOwner`)
+- Kiểm tra không vượt quá MAX_SUPPLY
+- Emit event sau khi mint
 
-**5. \_update の Override:**
+**5. Override \_update:**
 
 ```solidity
 function _update(address from, address to, uint256 value)
@@ -5661,12 +5637,12 @@ function _update(address from, address to, uint256 value)
 }
 ```
 
-- `whenNotPaused` を追加して、contract が pause されているときに transfer をブロック
-- `_update` は transfer のたびに呼ばれる internal 関数
+- Thêm `whenNotPaused` để block transfer khi contract bị pause
+- `_update` là hàm internal được gọi mỗi khi có transfer
 
-#### 🧪 ステップ 3: テストを作成
+#### 🧪 Bước 3: Viết Test
 
-`test/KaopizCoin.test.js` ファイルを作成:
+Tạo file `test/KaopizCoin.test.js`:
 
 ```javascript
 const { expect } = require("chai");
@@ -5818,13 +5794,13 @@ describe("KaopizCoin", function () {
 });
 ```
 
-**テストを実行:**
+**Chạy test:**
 
 ```bash
 npx hardhat test
 ```
 
-期待される結果:
+Kết quả mong đợi:
 
 ```
   KaopizCoin
@@ -5852,9 +5828,9 @@ npx hardhat test
   15 passing (2s)
 ```
 
-#### 🚀 ステップ 4: Testnet にデプロイ
+#### 🚀 Bước 4: Deploy lên Testnet
 
-**1. hardhat.config.js を設定:**
+**1. Cấu hình hardhat.config.js:**
 
 ```javascript
 require("@nomicfoundation/hardhat-toolbox");
@@ -5945,7 +5921,7 @@ module.exports = {
 };
 ```
 
-**2. `.env` ファイルを作成:**
+**2. Tạo file `.env`:**
 
 ```bash
 PRIVATE_KEY=your_private_key_here
@@ -5954,15 +5930,15 @@ ETHERSCAN_API_KEY=your_etherscan_api_key
 BSCSCAN_API_KEY=your_bscscan_api_key
 ```
 
-**⚠️ 重要:** `.env` を `.gitignore` に追加:
+**⚠️ Quan trọng:** Thêm `.env` vào `.gitignore`:
 
 ```bash
 echo ".env" >> .gitignore
 ```
 
-**3. Deploy script を作成:**
+**3. Tạo script deploy:**
 
-`scripts/deploy.js` ファイルを作成:
+Tạo file `scripts/deploy.js`:
 
 ```javascript
 const hre = require("hardhat");
@@ -5970,15 +5946,15 @@ const hre = require("hardhat");
 async function main() {
   console.log("🚀 Deploying KaopizCoin...");
 
-  // Deployer account を取得
+  // Get deployer account
   const [deployer] = await ethers.getSigners();
   console.log("📝 Deploying with account:", deployer.address);
 
-  // Balance をチェック
+  // Check balance
   const balance = await ethers.provider.getBalance(deployer.address);
   console.log("💰 Account balance:", ethers.formatEther(balance), "ETH");
 
-  // Contract をデプロイ
+  // Deploy contract
   const KaopizCoin = await ethers.getContractFactory("KaopizCoin");
   const kaopizCoin = await KaopizCoin.deploy(deployer.address);
 
@@ -5987,7 +5963,7 @@ async function main() {
   const contractAddress = await kaopizCoin.getAddress();
   console.log("✅ KaopizCoin deployed to:", contractAddress);
 
-  // Token info を取得
+  // Get token info
   const tokenInfo = await kaopizCoin.getTokenInfo();
   console.log("\n📊 Token Information:");
   console.log("   Name:", tokenInfo.tokenName);
@@ -6005,11 +5981,11 @@ async function main() {
   );
   console.log("   Is Paused:", tokenInfo.isPaused);
 
-  // Block confirmations を待つ
+  // Wait for block confirmations
   console.log("\n⏳ Waiting for block confirmations...");
   await kaopizCoin.deploymentTransaction().wait(5);
 
-  // Etherscan で contract を検証
+  // Verify contract on Etherscan
   console.log("\n🔍 Verifying contract on Etherscan...");
   try {
     await hre.run("verify:verify", {
@@ -6042,28 +6018,28 @@ main()
   });
 ```
 
-**4. デプロイ:**
+**4. Deploy:**
 
 ```bash
-# Sepolia にデプロイ
+# Deploy lên Sepolia
 npx hardhat run scripts/deploy.js --network sepolia
 
-# または BSC Testnet にデプロイ
+# Hoặc deploy lên BSC Testnet
 npx hardhat run scripts/deploy.js --network bscTestnet
 ```
 
-**5. Testnet token を取得:**
+**5. Lấy testnet token:**
 
 - **Sepolia ETH:** https://sepoliafaucet.com/
 - **BSC Testnet BNB:** https://testnet.bnbchain.org/faucet-smart
 
 ---
 
-### 6.2. Frontend の構築
+### 6.2. Xây dựng Frontend
 
-次に、KaopizCoin と対話するための Web インターフェースを作成します。
+Giờ chúng ta sẽ tạo một giao diện web để tương tác với KaopizCoin.
 
-#### 🎨 ステップ 1: React App のセットアップ
+#### 🎨 Bước 1: Setup React App
 
 ```bash
 npx create-react-app kaopiz-dapp
@@ -6071,7 +6047,7 @@ cd kaopiz-dapp
 npm install ethers
 ```
 
-#### 📁 ステップ 2: ディレクトリ構造
+#### 📁 Bước 2: Cấu trúc thư mục
 
 ```
 kaopiz-dapp/
@@ -6082,88 +6058,146 @@ kaopiz-dapp/
 │   │   ├── TransferForm.jsx
 │   │   └── TransactionHistory.jsx
 │   ├── contracts/
-│   │   └── KaopizCoin.json  (artifacts からコピー)
+│   │   └── KaopizCoin.json  (Copy from artifacts)
 │   ├── App.js
 │   └── App.css
 ```
 
-#### 📝 ステップ 3: Contract ABI をコピー
+#### 📝 Bước 3: Copy Contract ABI
 
 ```bash
-# Hardhat project から ABI をコピー
+# Copy ABI từ Hardhat project
 cp ../kaopiz-token/artifacts/contracts/KaopizCoin.sol/KaopizCoin.json src/contracts/
 ```
 
-#### 💻 ステップ 4: Components を作成
+#### 💻 Bước 4: Viết Components
 
 **1. WalletConnect.jsx:**
 
 ```javascript
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ethers } from "ethers";
+import "./WalletConnect.css";
 
-function WalletConnect({ onConnect }) {
+function WalletConnect({ onConnect, onDisconnect, currentWallet }) {
   const [account, setAccount] = useState(null);
   const [chainId, setChainId] = useState(null);
   const [error, setError] = useState("");
 
-  const connectWallet = async () => {
+  useEffect(() => {
+    // Check if already connected
+    if (window.ethereum) {
+      checkConnection();
+
+      // Listen for account changes
+      window.ethereum.on("accountsChanged", handleAccountsChanged);
+      window.ethereum.on("chainChanged", handleChainChanged);
+
+      return () => {
+        if (window.ethereum.removeListener) {
+          window.ethereum.removeListener(
+            "accountsChanged",
+            handleAccountsChanged
+          );
+          window.ethereum.removeListener("chainChanged", handleChainChanged);
+        }
+      };
+    }
+  }, []);
+
+  const checkConnection = async () => {
     try {
-      if (!window.ethereum) {
-        setError("MetaMask をインストールしてください！");
-        return;
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const accounts = await provider.listAccounts();
+
+      if (accounts.length > 0) {
+        const signer = await provider.getSigner();
+        const address = await signer.getAddress();
+        const network = await provider.getNetwork();
+
+        setAccount(address);
+        setChainId(Number(network.chainId));
+
+        onConnect({
+          account: address,
+          signer: signer,
+          provider: provider,
+          chainId: Number(network.chainId),
+        });
+      }
+    } catch (err) {
+      console.error("Error checking connection:", err);
+    }
+  };
+
+  const handleAccountsChanged = (accounts) => {
+    if (accounts.length === 0) {
+      // User disconnected
+      setAccount(null);
+      setChainId(null);
+      onDisconnect();
+    } else {
+      // Account changed
+      window.location.reload();
+    }
+  };
+
+  const handleChainChanged = () => {
+    // Reload page when chain changes
+    window.location.reload();
+  };
+
+  const connectWallet = async () => {
+    setError("");
+
+    if (!window.ethereum) {
+      setError("Please install MetaMask!");
+      return;
+    }
+
+    try {
+      // Request account access
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+
+      const signer = await provider.getSigner();
+      const address = await signer.getAddress();
+      const network = await provider.getNetwork();
+      const networkChainId = Number(network.chainId);
+
+      setAccount(address);
+      setChainId(networkChainId);
+
+      // Check if on correct network (Sepolia = 11155111)
+      if (networkChainId !== 11155111) {
+        setError("⚠️ Please switch to Sepolia Testnet");
+        try {
+          await window.ethereum.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: "0xaa36a7" }], // Sepolia chainId in hex
+          });
+        } catch (switchError) {
+          console.error("Error switching network:", switchError);
+        }
       }
 
-      // Account access をリクエスト
-      const accounts = await window.ethereum.request({
-        method: "eth_requestAccounts",
-      });
-
-      // Chain ID を取得
-      const chainId = await window.ethereum.request({
-        method: "eth_chainId",
-      });
-
-      setAccount(accounts[0]);
-      setChainId(parseInt(chainId, 16));
-      setError("");
-
-      // Provider と signer を作成
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-
       onConnect({
-        account: accounts[0],
-        provider,
-        signer,
-        chainId: parseInt(chainId, 16),
+        account: address,
+        signer: signer,
+        provider: provider,
+        chainId: networkChainId,
       });
-
-      // Account 変更をリッスン
-      window.ethereum.on("accountsChanged", (accounts) => {
-        if (accounts.length === 0) {
-          setAccount(null);
-          onConnect(null);
-        } else {
-          setAccount(accounts[0]);
-          connectWallet();
-        }
-      });
-
-      // Chain 変更をリッスン
-      window.ethereum.on("chainChanged", () => {
-        window.location.reload();
-      });
-    } catch (error) {
-      console.error("Connection error:", error);
-      setError(error.message);
+    } catch (err) {
+      console.error("Error connecting wallet:", err);
+      setError(err.message || "Failed to connect wallet");
     }
   };
 
   const disconnectWallet = () => {
     setAccount(null);
     setChainId(null);
-    onConnect(null);
+    setError("");
+    onDisconnect();
   };
 
   const getNetworkName = (chainId) => {
@@ -6171,7 +6205,7 @@ function WalletConnect({ onConnect }) {
       1: "Ethereum Mainnet",
       11155111: "Sepolia Testnet",
       97: "BSC Testnet",
-      56: "BSC Mainnet",
+      31337: "Localhost",
     };
     return networks[chainId] || `Chain ID: ${chainId}`;
   };
@@ -6179,27 +6213,40 @@ function WalletConnect({ onConnect }) {
   return (
     <div className="wallet-connect">
       {!account ? (
-        <button onClick={connectWallet} className="connect-btn">
-          🦊 Connect Wallet
-        </button>
+        <div className="connect-section">
+          <button onClick={connectWallet} className="connect-btn">
+            🦊 Connect Wallet
+          </button>
+          {error && <div className="error-message">{error}</div>}
+        </div>
       ) : (
         <div className="wallet-info">
-          <div className="account">
-            <span className="label">Account:</span>
-            <span className="address">
-              {account.slice(0, 6)}...{account.slice(-4)}
-            </span>
-          </div>
-          <div className="network">
-            <span className="label">Network:</span>
-            <span className="network-name">{getNetworkName(chainId)}</span>
+          <div className="info-row">
+            <div className="account-info">
+              <span className="label">Account:</span>
+              <span className="address">
+                {account.slice(0, 6)}...{account.slice(-4)}
+              </span>
+            </div>
+            <div className="network-info">
+              <span className="label">Network:</span>
+              <span
+                className={`network ${
+                  chainId === 11155111 ? "correct" : "wrong"
+                }`}
+              >
+                {getNetworkName(chainId)}
+              </span>
+            </div>
           </div>
           <button onClick={disconnectWallet} className="disconnect-btn">
             Disconnect
           </button>
+          {chainId !== 11155111 && (
+            <div className="warning">⚠️ Please switch to Sepolia Testnet</div>
+          )}
         </div>
       )}
-      {error && <div className="error">{error}</div>}
     </div>
   );
 }
@@ -6212,12 +6259,24 @@ export default WalletConnect;
 ```javascript
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import KaopizCoinABI from "../contracts/KaopizCoin.json";
+import "./TokenInfo.css";
+
+// ABI tối thiểu để đọc thông tin token
+const TOKEN_ABI = [
+  "function name() view returns (string)",
+  "function symbol() view returns (string)",
+  "function decimals() view returns (uint8)",
+  "function totalSupply() view returns (uint256)",
+  "function balanceOf(address) view returns (uint256)",
+  "function MAX_SUPPLY() view returns (uint256)",
+  "function paused() view returns (bool)",
+  "function getTokenInfo() view returns (string, string, uint8, uint256, uint256, bool)",
+];
 
 function TokenInfo({ wallet, contractAddress }) {
-  const [tokenInfo, setTokenInfo] = useState(null);
-  const [balance, setBalance] = useState("0");
-  const [loading, setLoading] = useState(true);
+  const [tokenData, setTokenData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (wallet && contractAddress) {
@@ -6226,87 +6285,135 @@ function TokenInfo({ wallet, contractAddress }) {
   }, [wallet, contractAddress]);
 
   const loadTokenInfo = async () => {
-    try {
-      setLoading(true);
+    setLoading(true);
+    setError("");
 
-      // Contract instance を作成
+    try {
       const contract = new ethers.Contract(
         contractAddress,
-        KaopizCoinABI.abi,
+        TOKEN_ABI,
         wallet.provider
       );
 
-      // Token info を取得
-      const info = await contract.getTokenInfo();
-      setTokenInfo({
-        name: info.tokenName,
-        symbol: info.tokenSymbol,
-        decimals: info.tokenDecimals,
-        totalSupply: ethers.formatEther(info.tokenTotalSupply),
-        maxSupply: ethers.formatEther(info.tokenMaxSupply),
-        isPaused: info.isPaused,
-      });
+      // Load token info
+      const [name, symbol, decimals, totalSupply, maxSupply, isPaused] =
+        await contract.getTokenInfo();
 
-      // User balance を取得
-      const userBalance = await contract.balanceOf(wallet.account);
-      setBalance(ethers.formatEther(userBalance));
-    } catch (error) {
-      console.error("Error loading token info:", error);
+      // Load user balance
+      const balance = await contract.balanceOf(wallet.account);
+
+      setTokenData({
+        name,
+        symbol,
+        decimals,
+        totalSupply: ethers.formatUnits(totalSupply, decimals),
+        maxSupply: ethers.formatUnits(maxSupply, decimals),
+        userBalance: ethers.formatUnits(balance, decimals),
+        isPaused,
+      });
+    } catch (err) {
+      console.error("Error loading token info:", err);
+      setError("Failed to load token information");
     } finally {
       setLoading(false);
     }
   };
 
   if (loading) {
-    return <div className="loading">Loading token info...</div>;
+    return (
+      <div className="token-info">
+        <h2>📊 Token Information</h2>
+        <div className="loading">Loading...</div>
+      </div>
+    );
   }
 
-  if (!tokenInfo) {
+  if (error) {
+    return (
+      <div className="token-info">
+        <h2>📊 Token Information</h2>
+        <div className="error-message">{error}</div>
+        <button onClick={loadTokenInfo} className="refresh-btn">
+          🔄 Retry
+        </button>
+      </div>
+    );
+  }
+
+  if (!tokenData) {
     return null;
   }
 
   return (
     <div className="token-info">
-      <h2>📊 Token Information</h2>
+      <div className="header">
+        <h2>📊 Token Information</h2>
+        <button onClick={loadTokenInfo} className="refresh-btn" title="Refresh">
+          🔄
+        </button>
+      </div>
+
       <div className="info-grid">
-        <div className="info-item">
-          <span className="label">Name:</span>
-          <span className="value">{tokenInfo.name}</span>
+        <div className="info-card">
+          <div className="label">Token Name</div>
+          <div className="value">{tokenData.name}</div>
         </div>
-        <div className="info-item">
-          <span className="label">Symbol:</span>
-          <span className="value">{tokenInfo.symbol}</span>
+
+        <div className="info-card">
+          <div className="label">Symbol</div>
+          <div className="value">{tokenData.symbol}</div>
         </div>
-        <div className="info-item">
-          <span className="label">Total Supply:</span>
-          <span className="value">
-            {parseFloat(tokenInfo.totalSupply).toLocaleString()}{" "}
-            {tokenInfo.symbol}
-          </span>
+
+        <div className="info-card">
+          <div className="label">Decimals</div>
+          <div className="value">
+            {parseFloat(tokenData.decimals).toLocaleString()}
+          </div>
         </div>
-        <div className="info-item">
-          <span className="label">Max Supply:</span>
-          <span className="value">
-            {parseFloat(tokenInfo.maxSupply).toLocaleString()}{" "}
-            {tokenInfo.symbol}
-          </span>
+
+        <div className="info-card highlight">
+          <div className="label">Your Balance</div>
+          <div className="value big">
+            {parseFloat(tokenData.userBalance).toLocaleString()}{" "}
+            {tokenData.symbol}
+          </div>
         </div>
-        <div className="info-item">
-          <span className="label">Your Balance:</span>
-          <span className="value highlight">
-            {parseFloat(balance).toLocaleString()} {tokenInfo.symbol}
-          </span>
+
+        <div className="info-card">
+          <div className="label">Total Supply</div>
+          <div className="value">
+            {parseFloat(tokenData.totalSupply).toLocaleString()}{" "}
+            {tokenData.symbol}
+          </div>
         </div>
-        <div className="info-item">
-          <span className="label">Status:</span>
-          <span className={`value ${tokenInfo.isPaused ? "paused" : "active"}`}>
-            {tokenInfo.isPaused ? "⏸️ Paused" : "✅ Active"}
-          </span>
+
+        <div className="info-card">
+          <div className="label">Max Supply</div>
+          <div className="value">
+            {parseFloat(tokenData.maxSupply).toLocaleString()}{" "}
+            {tokenData.symbol}
+          </div>
+        </div>
+
+        <div className="info-card">
+          <div className="label">Contract Status</div>
+          <div className={`value ${tokenData.isPaused ? "paused" : "active"}`}>
+            {tokenData.isPaused ? "⏸️ Paused" : "✅ Active"}
+          </div>
+        </div>
+
+        <div className="info-card">
+          <div className="label">Supply Percentage</div>
+          <div className="value">
+            {(
+              (parseFloat(tokenData.totalSupply) /
+                parseFloat(tokenData.maxSupply)) *
+              100
+            ).toFixed(2)}
+            %
+          </div>
         </div>
       </div>
-      <button onClick={loadTokenInfo} className="refresh-btn">
-        🔄 Refresh
-      </button>
     </div>
   );
 }
@@ -6319,7 +6426,13 @@ export default TokenInfo;
 ```javascript
 import { useState } from "react";
 import { ethers } from "ethers";
-import KaopizCoinABI from "../contracts/KaopizCoin.json";
+import "./TransferForm.css";
+
+const TOKEN_ABI = [
+  "function transfer(address to, uint256 amount) returns (bool)",
+  "function balanceOf(address) view returns (uint256)",
+  "function decimals() view returns (uint8)",
+];
 
 function TransferForm({ wallet, contractAddress, onTransferComplete }) {
   const [recipient, setRecipient] = useState("");
@@ -6332,80 +6445,79 @@ function TransferForm({ wallet, contractAddress, onTransferComplete }) {
     e.preventDefault();
     setError("");
     setSuccess("");
-
-    // Validation
-    if (!ethers.isAddress(recipient)) {
-      setError("Invalid recipient address");
-      return;
-    }
-
-    if (parseFloat(amount) <= 0) {
-      setError("Amount must be greater than 0");
-      return;
-    }
+    setLoading(true);
 
     try {
-      setLoading(true);
+      // Validation
+      if (!ethers.isAddress(recipient)) {
+        throw new Error("Invalid recipient address");
+      }
 
-      // Contract instance を signer 付きで作成
+      if (!amount || parseFloat(amount) <= 0) {
+        throw new Error("Invalid amount");
+      }
+
+      // Create contract instance with signer
       const contract = new ethers.Contract(
         contractAddress,
-        KaopizCoinABI.abi,
+        TOKEN_ABI,
         wallet.signer
       );
 
-      // Balance をチェック
-      const balance = await contract.balanceOf(wallet.account);
-      const amountWei = ethers.parseEther(amount);
+      // Get decimals
+      const decimals = await contract.decimals();
 
+      // Convert amount to wei
+      const amountWei = ethers.parseUnits(amount, decimals);
+
+      // Check balance
+      const balance = await contract.balanceOf(wallet.account);
       if (balance < amountWei) {
-        setError("Insufficient balance");
-        setLoading(false);
-        return;
+        throw new Error("Insufficient balance");
       }
 
-      // Gas を見積もる
-      const gasEstimate = await contract.transfer.estimateGas(
-        recipient,
-        amountWei
-      );
-      console.log("Gas estimate:", gasEstimate.toString());
+      console.log("Sending transaction...");
+      console.log("To:", recipient);
+      console.log("Amount:", amount);
 
-      // Transaction を送信
-      const tx = await contract.transfer(recipient, amountWei, {
-        gasLimit: (gasEstimate * 120n) / 100n, // 20% buffer を追加
-      });
+      // Send transaction
+      const tx = await contract.transfer(recipient, amountWei);
 
-      setSuccess(`Transaction sent! Hash: ${tx.hash}`);
+      setSuccess(`Transaction sent! Hash: ${tx.hash.slice(0, 10)}...`);
       console.log("Transaction hash:", tx.hash);
 
-      // Confirmation を待つ
+      // Wait for confirmation
+      console.log("Waiting for confirmation...");
       const receipt = await tx.wait();
-      console.log("Transaction confirmed:", receipt);
 
+      console.log("Transaction confirmed!", receipt);
       setSuccess(
         `✅ Transfer successful! ${amount} KPC sent to ${recipient.slice(
           0,
           6
         )}...${recipient.slice(-4)}`
       );
+
+      // Reset form
       setRecipient("");
       setAmount("");
 
-      // Balance を更新するための callback
+      // Notify parent to refresh
       if (onTransferComplete) {
         onTransferComplete();
       }
-    } catch (error) {
-      console.error("Transfer error:", error);
+    } catch (err) {
+      console.error("Transfer error:", err);
 
-      // Error message を解析
-      if (error.code === "ACTION_REJECTED") {
+      // Handle specific errors
+      if (err.code === "ACTION_REJECTED") {
         setError("Transaction rejected by user");
-      } else if (error.message.includes("insufficient funds")) {
+      } else if (err.message.includes("insufficient funds")) {
         setError("Insufficient ETH for gas fee");
+      } else if (err.message.includes("Pausable: paused")) {
+        setError("Contract is paused");
       } else {
-        setError(error.reason || error.message || "Transfer failed");
+        setError(err.reason || err.message || "Transfer failed");
       }
     } finally {
       setLoading(false);
@@ -6461,11 +6573,17 @@ export default TransferForm;
 ```javascript
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import KaopizCoinABI from "../contracts/KaopizCoin.json";
+import "./TransactionHistory.css";
+
+const TOKEN_ABI = [
+  "event Transfer(address indexed from, address indexed to, uint256 value)",
+  "function decimals() view returns (uint8)",
+];
 
 function TransactionHistory({ wallet, contractAddress }) {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (wallet && contractAddress) {
@@ -6474,20 +6592,26 @@ function TransactionHistory({ wallet, contractAddress }) {
   }, [wallet, contractAddress]);
 
   const loadTransactions = async () => {
-    try {
-      setLoading(true);
+    setLoading(true);
+    setError("");
 
+    try {
       const contract = new ethers.Contract(
         contractAddress,
-        KaopizCoinABI.abi,
+        TOKEN_ABI,
         wallet.provider
       );
 
-      // 現在の block を取得
-      const currentBlock = await wallet.provider.getBlockNumber();
-      const fromBlock = Math.max(0, currentBlock - 10000); // 直近 ~10000 blocks
+      // Get decimals
+      const decimals = await contract.decimals();
 
-      // Transfer events を取得
+      // Get current block
+      const currentBlock = await wallet.provider.getBlockNumber();
+      const fromBlock = Math.max(0, currentBlock - 10000); // Last ~10000 blocks
+
+      console.log(`Querying events from block ${fromBlock} to ${currentBlock}`);
+
+      // Get Transfer events
       const filterFrom = contract.filters.Transfer(wallet.account, null);
       const filterTo = contract.filters.Transfer(null, wallet.account);
 
@@ -6496,33 +6620,42 @@ function TransactionHistory({ wallet, contractAddress }) {
         contract.queryFilter(filterTo, fromBlock, currentBlock),
       ]);
 
-      // Events を結合してソート
+      console.log("Events from:", eventsFrom.length);
+      console.log("Events to:", eventsTo.length);
+
+      // Combine and sort events
       const allEvents = [...eventsFrom, ...eventsTo]
         .sort((a, b) => b.blockNumber - a.blockNumber)
-        .slice(0, 20); // 直近 20 transactions を表示
+        .slice(0, 20); // Show last 20 transactions
 
-      // Transactions を整形
+      // Format transactions
       const formattedTxs = await Promise.all(
         allEvents.map(async (event) => {
-          const block = await event.getBlock();
-          return {
-            hash: event.transactionHash,
-            from: event.args.from,
-            to: event.args.to,
-            value: ethers.formatEther(event.args.value),
-            timestamp: new Date(block.timestamp * 1000).toLocaleString(),
-            blockNumber: event.blockNumber,
-            type:
-              event.args.from.toLowerCase() === wallet.account.toLowerCase()
-                ? "sent"
-                : "received",
-          };
+          try {
+            const block = await event.getBlock();
+            return {
+              hash: event.transactionHash,
+              from: event.args.from,
+              to: event.args.to,
+              value: ethers.formatUnits(event.args.value, decimals),
+              timestamp: new Date(block.timestamp * 1000).toLocaleString(),
+              blockNumber: event.blockNumber,
+              type:
+                event.args.from.toLowerCase() === wallet.account.toLowerCase()
+                  ? "sent"
+                  : "received",
+            };
+          } catch (err) {
+            console.error("Error formatting tx:", err);
+            return null;
+          }
         })
       );
 
-      setTransactions(formattedTxs);
-    } catch (error) {
-      console.error("Error loading transactions:", error);
+      setTransactions(formattedTxs.filter((tx) => tx !== null));
+    } catch (err) {
+      console.error("Error loading transactions:", err);
+      setError("Failed to load transaction history");
     } finally {
       setLoading(false);
     }
@@ -6539,21 +6672,38 @@ function TransactionHistory({ wallet, contractAddress }) {
 
   return (
     <div className="transaction-history">
-      <h2>📜 Transaction History</h2>
-      <button
-        onClick={loadTransactions}
-        disabled={loading}
-        className="refresh-btn"
-      >
-        {loading ? "⏳ Loading..." : "🔄 Refresh"}
-      </button>
+      <div className="header">
+        <h2>📜 Transaction History</h2>
+        <button
+          onClick={loadTransactions}
+          disabled={loading}
+          className="refresh-btn"
+          title="Refresh"
+        >
+          {loading ? "⏳" : "🔄"}
+        </button>
+      </div>
 
-      {transactions.length === 0 ? (
+      {error && (
+        <div className="error-message">
+          {error}
+          <button onClick={loadTransactions} className="retry-btn">
+            Retry
+          </button>
+        </div>
+      )}
+
+      {loading && transactions.length === 0 ? (
+        <div className="loading">Loading transactions...</div>
+      ) : transactions.length === 0 ? (
         <p className="no-transactions">No transactions found</p>
       ) : (
         <div className="transactions-list">
           {transactions.map((tx, index) => (
-            <div key={index} className={`transaction-item ${tx.type}`}>
+            <div
+              key={`${tx.hash}-${index}`}
+              className={`transaction-item ${tx.type}`}
+            >
               <div className="tx-header">
                 <span className={`tx-type ${tx.type}`}>
                   {tx.type === "sent" ? "📤 Sent" : "📥 Received"}
@@ -6574,6 +6724,7 @@ function TransactionHistory({ wallet, contractAddress }) {
                   </span>
                 </div>
                 <div className="tx-time">{tx.timestamp}</div>
+                <div className="tx-block">Block: {tx.blockNumber}</div>
                 <a
                   href={getExplorerUrl(tx.hash)}
                   target="_blank"
@@ -6604,8 +6755,9 @@ import TokenInfo from "./components/TokenInfo";
 import TransferForm from "./components/TransferForm";
 import TransactionHistory from "./components/TransactionHistory";
 
-// ⚠️ YOUR_CONTRACT_ADDRESS を実際の contract address に置き換えてください
-const CONTRACT_ADDRESS = "YOUR_CONTRACT_ADDRESS";
+// ⚠️ IMPORTANT: Thay YOUR_CONTRACT_ADDRESS bằng địa chỉ contract thực tế
+// Lấy từ deployment: 0xE4e0429D16f174E36D966806569aD800eD6F5B12
+const CONTRACT_ADDRESS = "0xE4e0429D16f174E36D966806569aD800eD6F5B12";
 
 function App() {
   const [wallet, setWallet] = useState(null);
@@ -6613,10 +6765,16 @@ function App() {
 
   const handleConnect = (walletData) => {
     setWallet(walletData);
+    console.log("Wallet connected:", walletData);
+  };
+
+  const handleDisconnect = () => {
+    setWallet(null);
+    console.log("Wallet disconnected");
   };
 
   const handleTransferComplete = () => {
-    // Token info と transaction history を更新
+    // Refresh token info and transaction history
     setRefreshKey((prev) => prev + 1);
   };
 
@@ -6628,7 +6786,11 @@ function App() {
       </header>
 
       <main className="App-main">
-        <WalletConnect onConnect={handleConnect} />
+        <WalletConnect
+          onConnect={handleConnect}
+          onDisconnect={handleDisconnect}
+          currentWallet={wallet}
+        />
 
         {wallet ? (
           <>
@@ -6653,12 +6815,40 @@ function App() {
         ) : (
           <div className="connect-prompt">
             <p>👆 Please connect your wallet to continue</p>
+            <div className="instructions">
+              <h3>📝 Instructions:</h3>
+              <ol>
+                <li>Install MetaMask extension</li>
+                <li>Switch to Sepolia Testnet</li>
+                <li>
+                  Get testnet ETH from{" "}
+                  <a
+                    href="https://sepoliafaucet.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    faucet
+                  </a>
+                </li>
+                <li>Click "Connect Wallet" button above</li>
+              </ol>
+            </div>
           </div>
         )}
       </main>
 
       <footer className="App-footer">
         <p>Built with ❤️ by Kaopiz Team</p>
+        <p className="contract-info">
+          Contract:{" "}
+          <a
+            href={`https://sepolia.etherscan.io/address/${CONTRACT_ADDRESS}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {CONTRACT_ADDRESS.slice(0, 6)}...{CONTRACT_ADDRESS.slice(-4)}
+          </a>
+        </p>
       </footer>
     </div>
   );
@@ -6667,217 +6857,357 @@ function App() {
 export default App;
 ```
 
-**6. App.js:**
-
-```javascript
-import { useState } from "react";
-import "./App.css";
-import WalletConnect from "./components/WalletConnect";
-import TokenInfo from "./components/TokenInfo";
-import TransferForm from "./components/TransferForm";
-import TransactionHistory from "./components/TransactionHistory";
-
-// Contract address を更新してください
-const CONTRACT_ADDRESS = "0x..."; // Deploy 後のアドレス
-
-function App() {
-  const [wallet, setWallet] = useState(null);
-  const [refreshKey, setRefreshKey] = useState(0);
-
-  const handleConnect = (walletData) => {
-    setWallet(walletData);
-  };
-
-  const handleTransferComplete = () => {
-    // Balance を更新するため refresh
-    setRefreshKey((prev) => prev + 1);
-  };
-
-  return (
-    <div className="App">
-      <header className="App-header">
-        <h1>🪙 KaopizCoin DApp</h1>
-        <WalletConnect onConnect={handleConnect} />
-      </header>
-
-      {wallet && (
-        <main className="App-main">
-          <div className="top-section">
-            <TokenInfo
-              wallet={wallet}
-              contractAddress={CONTRACT_ADDRESS}
-              key={refreshKey}
-            />
-            <TransferForm
-              wallet={wallet}
-              contractAddress={CONTRACT_ADDRESS}
-              onTransferComplete={handleTransferComplete}
-            />
-          </div>
-
-          <div className="bottom-section">
-            <TransactionHistory
-              wallet={wallet}
-              contractAddress={CONTRACT_ADDRESS}
-            />
-          </div>
-        </main>
-      )}
-
-      {!wallet && (
-        <div className="connect-prompt">
-          <p>👆 Connect your wallet to get started</p>
-        </div>
-      )}
-    </div>
-  );
-}
-
-export default App;
-```
-
-**7. App.css:**
+**6. App.css:**
 
 ```css
 .App {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  flex-direction: column;
 }
 
 .App-header {
-  padding: 2rem;
   text-align: center;
   color: white;
+  margin-bottom: 2rem;
+  padding: 2rem 0;
 }
 
 .App-header h1 {
-  margin-bottom: 2rem;
-  font-size: 2.5rem;
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.App-header p {
+  font-size: 1.2rem;
+  opacity: 0.9;
 }
 
 .App-main {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
-.top-section {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 2rem;
+.connect-prompt {
+  background: white;
+  padding: 3rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.connect-prompt > p {
+  font-size: 1.5rem;
+  color: #333;
   margin-bottom: 2rem;
 }
 
-.bottom-section {
-  width: 100%;
+.instructions {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: left;
+  background: #f8f9fa;
+  padding: 2rem;
+  border-radius: 8px;
+}
+
+.instructions h3 {
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.instructions ol {
+  padding-left: 1.5rem;
+}
+
+.instructions li {
+  color: #555;
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+}
+
+.instructions a {
+  color: #646cff;
+  text-decoration: underline;
+}
+
+.App-footer {
+  text-align: center;
+  color: white;
+  padding: 2rem 0;
+  margin-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.App-footer p {
+  margin: 0.5rem 0;
+  opacity: 0.9;
+}
+
+.contract-info {
+  font-size: 0.9rem;
+  font-family: monospace;
+}
+
+.contract-info a {
+  color: white;
+  text-decoration: underline;
+}
+
+.contract-info a:hover {
+  opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  .App {
+    padding: 10px;
+  }
+
+  .App-header h1 {
+    font-size: 2rem;
+  }
+
+  .App-header p {
+    font-size: 1rem;
+  }
+
+  .connect-prompt {
+    padding: 2rem 1rem;
+  }
+
+  .instructions {
+    padding: 1.5rem;
+  }
 }
 
 /* Wallet Connect */
 .wallet-connect {
-  text-align: center;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.connect-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
 }
 
 .connect-btn {
-  background: white;
-  color: #667eea;
-  border: none;
+  width: 100%;
+  max-width: 300px;
   padding: 1rem 2rem;
-  font-size: 1.1rem;
-  border-radius: 10px;
+  font-size: 1.2rem;
+  background: #646cff;
+  color: white;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: bold;
-  transition: transform 0.2s;
+  transition: all 0.3s;
 }
 
 .connect-btn:hover {
-  transform: scale(1.05);
+  background: #535bf2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .wallet-info {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  padding: 1rem 2rem;
-  border-radius: 10px;
-  display: inline-block;
-}
-
-.wallet-info .account,
-.wallet-info .network {
-  margin: 0.5rem 0;
-  color: white;
-}
-
-.wallet-info .label {
-  font-weight: bold;
-  margin-right: 0.5rem;
-}
-
-.disconnect-btn {
-  margin-top: 1rem;
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-/* Token Info */
-.token-info,
-.transfer-form {
-  background: white;
-  padding: 2rem;
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-}
-
-.token-info h2,
-.transfer-form h2 {
-  margin-top: 0;
-  color: #667eea;
-}
-
-.info-grid {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
-  margin: 1.5rem 0;
 }
 
-.info-item {
+.info-row {
   display: flex;
   justify-content: space-between;
-  padding: 1rem;
-  background: #f5f5f5;
-  border-radius: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
-.info-item .label {
+.account-info,
+.network-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.label {
   font-weight: bold;
   color: #666;
 }
 
-.info-item .value {
+.address {
+  font-family: "Courier New", monospace;
+  background: #f0f0f0;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
   color: #333;
-  font-weight: 600;
+}
+
+.network {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.network.correct {
+  background: #d4edda;
+  color: #155724;
+}
+
+.network.wrong {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.disconnect-btn {
+  padding: 0.75rem 1.5rem;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.disconnect-btn:hover {
+  background: #c82333;
+}
+
+@media (max-width: 768px) {
+  .info-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .account-info,
+  .network-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* Token Info */
+.token-info {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.token-info .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.token-info h2 {
+  color: #333;
+  margin: 0;
 }
 
 .refresh-btn {
-  width: 100%;
-  padding: 0.8rem;
-  background: #667eea;
+  padding: 0.5rem 1rem;
+  background: #6c757d;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 1rem;
-  font-weight: bold;
+  transition: all 0.3s;
 }
 
 .refresh-btn:hover {
-  background: #5568d3;
+  background: #5a6268;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.info-card {
+  background: #f8f9fa;
+  padding: 1.25rem;
+  border-radius: 8px;
+  border-left: 4px solid #dee2e6;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.info-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.info-card.highlight {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-left: 4px solid #4c5fd5;
+}
+
+.info-card.highlight .label,
+.info-card.highlight .value {
+  color: white;
+}
+
+.info-card .label {
+  font-size: 0.875rem;
+  color: #6c757d;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.info-card .value {
+  font-size: 1.25rem;
+  color: #333;
+  font-weight: bold;
+}
+
+.info-card .value.big {
+  font-size: 1.5rem;
+}
+
+.info-card .value.active {
+  color: #28a745;
+}
+
+.info-card .value.paused {
+  color: #dc3545;
+}
+
+@media (max-width: 768px) {
+  .token-info {
+    padding: 1.5rem;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Transfer Form */
+.transfer-form {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.transfer-form h2 {
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
 .transfer-form form {
   display: flex;
   flex-direction: column;
@@ -6891,389 +7221,438 @@ export default App;
 }
 
 .form-group label {
-  font-weight: bold;
-  color: #666;
+  font-weight: 600;
+  color: #495057;
 }
 
 .form-group input {
-  padding: 0.8rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
+  padding: 0.875rem;
   font-size: 1rem;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
   transition: border-color 0.3s;
 }
 
 .form-group input:focus {
+  border-color: #646cff;
   outline: none;
-  border-color: #667eea;
 }
 
 .form-group input:disabled {
-  background: #f5f5f5;
+  background-color: #e9ecef;
   cursor: not-allowed;
 }
 
 .submit-btn {
-  padding: 1rem;
-  background: #667eea;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 1.1rem;
-  font-weight: bold;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all 0.3s;
+  font-weight: 600;
 }
 
 .submit-btn:hover:not(:disabled) {
-  background: #5568d3;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
 }
 
 .submit-btn:disabled {
-  background: #ccc;
+  opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 
-/* Messages */
-.error {
-  margin-top: 1rem;
-  padding: 1rem;
-  background: #fee;
-  color: #c33;
-  border-radius: 8px;
-  border-left: 4px solid #c33;
-}
-
-.success {
-  margin-top: 1rem;
-  padding: 1rem;
-  background: #efe;
-  color: #3c3;
-  border-radius: 8px;
-  border-left: 4px solid #3c3;
-}
-
-.success a {
-  color: #3c3;
-  font-weight: bold;
-}
-
-.loading {
-  text-align: center;
-  padding: 2rem;
-  color: #666;
-}
-
-.connect-prompt {
-  text-align: center;
-  padding: 4rem 2rem;
-  color: white;
-  font-size: 1.5rem;
+@media (max-width: 768px) {
+  .transfer-form {
+    padding: 1.5rem;
+  }
 }
 
 /* Transaction History */
 .transaction-history {
   background: white;
-  border-radius: 16px;
   padding: 2rem;
+  border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.transaction-history h2 {
+.transaction-history .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 1.5rem;
+}
+
+.transaction-history h2 {
   color: #333;
+  margin: 0;
 }
 
 .no-transactions {
   text-align: center;
-  padding: 3rem;
-  color: #999;
-  font-size: 1.1rem;
+  padding: 2rem;
+  color: #6c757d;
+  font-style: italic;
 }
 
 .transactions-list {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  margin-bottom: 1.5rem;
 }
 
 .transaction-item {
-  background: #f9f9f9;
-  border-radius: 12px;
-  padding: 1.5rem;
-  border-left: 4px solid #667eea;
+  background: #f8f9fa;
+  padding: 1.25rem;
+  border-radius: 8px;
+  border-left: 4px solid #dee2e6;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .transaction-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateX(4px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .transaction-item.sent {
-  border-left-color: #f56565;
+  border-left-color: #dc3545;
 }
 
 .transaction-item.received {
-  border-left-color: #48bb78;
+  border-left-color: #28a745;
 }
 
 .tx-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 0.75rem;
 }
 
 .tx-type {
-  font-weight: bold;
-  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 0.375rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
 }
 
 .tx-type.sent {
-  color: #f56565;
+  background: #f8d7da;
+  color: #721c24;
 }
 
 .tx-type.received {
-  color: #48bb78;
+  background: #d4edda;
+  color: #155724;
 }
 
 .tx-amount {
-  font-size: 1.2rem;
+  font-size: 1.125rem;
   font-weight: bold;
   color: #333;
+  font-family: "Courier New", monospace;
 }
 
 .tx-details {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 0.8rem;
-  margin-bottom: 1rem;
-}
-
-.tx-detail {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #6c757d;
 }
 
-.tx-detail .label {
-  font-size: 0.85rem;
-  color: #999;
-  font-weight: 600;
+.tx-address {
+  display: flex;
+  gap: 0.5rem;
 }
 
-.tx-detail .value {
-  font-size: 0.95rem;
+.tx-address .address {
+  font-family: "Courier New", monospace;
   color: #333;
-  font-family: monospace;
 }
 
-.view-link {
-  display: inline-block;
-  color: #667eea;
+.tx-time,
+.tx-block {
+  color: #6c757d;
+}
+
+.tx-link {
+  color: #646cff;
   text-decoration: none;
-  font-weight: 600;
-  font-size: 0.9rem;
+  font-weight: 500;
   transition: color 0.2s;
 }
 
-.view-link:hover {
-  color: #5568d3;
+.tx-link:hover {
+  color: #535bf2;
   text-decoration: underline;
+}
+
+.retry-btn {
+  margin-left: 1rem;
+  padding: 0.5rem 1rem;
+  background: #646cff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.retry-btn:hover {
+  background: #535bf2;
+}
+
+@media (max-width: 768px) {
+  .transaction-history {
+    padding: 1.5rem;
+  }
+
+  .tx-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .tx-details {
+    font-size: 0.8125rem;
+  }
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+.connect-prompt {
+  background: white;
+  padding: 60px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.connect-prompt p {
+  font-size: 1.2rem;
+  color: #666;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .top-section {
-    grid-template-columns: 1fr;
-    padding: 1rem;
-  }
-
   .App-header h1 {
     font-size: 2rem;
   }
 
-  .wallet-info {
-    font-size: 0.9rem;
-  }
-
-  .tx-details {
+  .info-grid {
     grid-template-columns: 1fr;
   }
 
-  .transaction-item {
-    padding: 1rem;
+  .wallet-info {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .disconnect-btn {
+    width: 100%;
   }
 }
 ```
 
-#### 🚀 ステップ 5: アプリケーションを実行
+#### 🚀 Bước 5: Chạy ứng dụng
 
-**1. CONTRACT_ADDRESS を App.js で更新:**
+**1. Cập nhật CONTRACT_ADDRESS trong App.js:**
 
 ```javascript
-const CONTRACT_ADDRESS = "0x..."; // Deploy 後の contract address
+const CONTRACT_ADDRESS = "0x..."; // Địa chỉ contract sau khi deploy
 ```
 
-**2. Development server を起動:**
+**2. Start development server:**
 
 ```bash
 npm start
 ```
 
-**3. ブラウザを開く:**
+**3. Mở trình duyệt:**
 
 ```
 http://localhost:3000
 ```
 
-#### 🎯 ステップ 6: 送金をテスト
+#### 🎯 Bước 6: Test chuyển tiền
 
-**1. MetaMask を接続:**
+**1. Connect MetaMask:**
 
-- "Connect Wallet" をクリック
-- MetaMask で account を選択
-- Connection を approve
+- Click "Connect Wallet"
+- Chọn account trong MetaMask
+- Approve connection
 
-**2. Token 情報を確認:**
+**2. Kiểm tra thông tin token:**
 
-- 現在の balance を確認
-- Total supply を確認
-- Token status を確認
+- Xem balance hiện tại
+- Xem total supply
+- Xem token status
 
-**3. Transfer を実行:**
+**3. Thực hiện transfer:**
 
-- 受信者のアドレスを入力
-- KPC の数量を入力
-- "Send Transfer" をクリック
-- MetaMask で transaction を confirm
-- Transaction の confirmation を待つ
+- Nhập địa chỉ người nhận
+- Nhập số lượng KPC
+- Click "Send Transfer"
+- Confirm transaction trong MetaMask
+- Đợi transaction confirmed
 
-**4. Transaction 履歴を確認:**
+**4. Xem lịch sử giao dịch:**
 
-- "View on Etherscan" をクリックして詳細を確認
+- Scroll xuống Transaction History
+- Xem các giao dịch đã thực hiện
+- Click "View on Explorer" để xem chi tiết
 
 ---
 
-### 📊 6.3. 完了チェックリスト
+### 📊 6.3. Checklist hoàn thành
 
 **Smart Contract:**
 
-- ✅ OpenZeppelin で ERC20 token を作成
-- ✅ Mint、burn、pause functions を実装
-- ✅ 完全な test cases を作成
-- ✅ Testnet にデプロイ
-- ✅ Explorer で contract を検証
+- ✅ Tạo ERC20 token với OpenZeppelin
+- ✅ Implement mint, burn, pause functions
+- ✅ Viết test cases đầy đủ
+- ✅ Deploy lên testnet
+- ✅ Verify contract trên Explorer
 
 **Frontend:**
 
-- ✅ React app をセットアップ
-- ✅ MetaMask を接続
-- ✅ Token 情報を表示
-- ✅ 送金フォーム
-- ✅ Errors と loading states を処理
-- ✅ Transaction 履歴を表示
+- ✅ Setup React app
+- ✅ Kết nối MetaMask
+- ✅ Hiển thị thông tin token
+- ✅ Form chuyển tiền
+- ✅ Xử lý errors và loading states
+- ✅ Hiển thị lịch sử giao dịch
 - ✅ Responsive design
 
 **Testing:**
 
-- ✅ Wallet の connect/disconnect をテスト
-- ✅ 成功した transfer をテスト
-- ✅ 残高不足での transfer をテスト
-- ✅ 無効なアドレスでの transfer をテスト
-- ✅ Pause/unpause をテスト
-- ✅ Event listeners をテスト
+- ✅ Test connect/disconnect wallet
+- ✅ Test transfer thành công
+- ✅ Test transfer với số dư không đủ
+- ✅ Test transfer với địa chỉ không hợp lệ
+- ✅ Test pause/unpause
+- ✅ Test event listeners
 
 ---
 
-### 🎓 6.4. 上級課題（オプション）
+### 🎓 6.4. Bài tập nâng cao (Optional)
 
-**1. Approve & TransferFrom 機能を追加:**
+**1. Thêm tính năng Approve & TransferFrom:**
 
-- Approve フォームを作成
-- TransferFrom フォームを作成
-- Allowance を表示
+- Tạo form approve
+- Tạo form transferFrom
+- Hiển thị allowance
 
-**2. Admin 機能を追加:**
+**2. Thêm tính năng Admin:**
 
-- Token を mint するフォーム（owner のみ）
-- Pause/unpause ボタン（owner のみ）
-- Owner address を表示
+- Form mint token (chỉ owner)
+- Button pause/unpause (chỉ owner)
+- Hiển thị owner address
 
-**3. Real-time 通知を追加:**
+**3. Thêm thông báo real-time:**
 
-- Transfer events をリッスン
-- 新しい transaction があったら toast notification を表示
-- Balance を自動更新
+- Listen Transfer events
+- Hiển thị toast notification khi có giao dịch mới
+- Update balance tự động
 
-**4. UX を最適化:**
+**4. Tối ưu UX:**
 
-- Loading skeleton を追加
-- Animation を追加
-- Dark mode を追加
-- Multi-language support を追加
+- Thêm loading skeleton
+- Thêm animation
+- Thêm dark mode
+- Thêm multi-language support
 
-**5. Production にデプロイ:**
+**5. Deploy Production:**
 
-- Frontend を Vercel/Netlify にデプロイ
-- Contract を mainnet にデプロイ
-- Custom domain をセットアップ
-- Google Analytics を追加
-
----
-
-### 📝 パート 6 のまとめ
-
-**学んだこと:**
-
-1. **Smart Contract 開発:**
-
-   - OpenZeppelin ライブラリの使用
-   - ERC20、Ownable、Pausable、Burnable の実装
-   - Custom events の追加
-   - Modifier の使用
-
-2. **テストとデプロイ:**
-
-   - Hardhat でのテスト作成
-   - Deploy scripts の作成
-   - Testnet へのデプロイ
-   - Contract の検証
-
-3. **ベストプラクティス:**
-   - コードの再利用（OpenZeppelin）
-   - 包括的なテスト
-   - Event logging
-   - Access control
-   - Emergency mechanisms（pause）
+- Deploy frontend lên Vercel/Netlify
+- Deploy contract lên mainnet
+- Setup custom domain
+- Add Google Analytics
 
 ---
 
-## パート 7: Ethereum vs Hyperledger Fabric の比較
+### 📝 Tổng kết Phần 6
 
-企業向け blockchain ソリューションを構築する際、適切なプラットフォームを選択することは非常に重要です。現在最も人気のある 2 つのプラットフォームは **Ethereum (Public/Private)** と **Hyperledger Fabric (Enterprise)** です。各プラットフォームには独自の利点があり、異なる use case に適しています。
+**Những điều đã học:**
+
+1. **Smart Contract Development:**
+
+   - Sử dụng OpenZeppelin libraries
+   - Implement ERC20 standard
+   - Access control với Ownable
+   - Pausable mechanism
+   - Custom events
+
+2. **Testing:**
+
+   - Viết test cases với Hardhat
+   - Test coverage
+   - Edge cases handling
+
+3. **Deployment:**
+
+   - Deploy lên testnet
+   - Verify contract
+   - Use faucets để lấy test tokens
+
+4. **Frontend Integration:**
+
+   - Connect MetaMask
+   - Read contract data
+   - Send transactions
+   - Handle errors
+   - Query events
+   - Build responsive UI
+
+5. **Best Practices:**
+   - Input validation
+   - Error handling
+   - Loading states
+   - Gas estimation
+   - Transaction confirmation
+   - User feedback
+
+**Next Steps:**
+
+- Học về advanced patterns (Proxy, Upgradeable)
+- Tích hợp với Backend (Phần 4)
+- Implement security best practices (Phần 5)
+- Deploy lên mainnet
+- Marketing và community building
 
 ---
 
-### 7.1. 概要と役割
+## Phần 7: So sánh Ethereum vs Hyperledger Fabric
+
+Khi xây dựng giải pháp blockchain cho doanh nghiệp, việc lựa chọn nền tảng phù hợp là cực kỳ quan trọng. Hai nền tảng phổ biến nhất hiện nay là **Ethereum (Public/Private)** và **Hyperledger Fabric (Enterprise)**. Mỗi nền tảng có ưu điểm riêng và phù hợp với các use case khác nhau.
+
+---
+
+### 7.1. Tổng quan và Vai trò
 
 #### 🌐 Ethereum
 
-**役割:** 分散型アプリケーション（DApps）のための公開 blockchain プラットフォーム
+**Vai trò:** Nền tảng blockchain công khai (public) cho ứng dụng phi tập trung (DApps)
 
-**主な特徴:**
+**Đặc điểm chính:**
 
-- **Permissionless**: 誰でもネットワークに参加できる
-- **Decentralized**: 中央管理組織が存在しない
-- **Transparent**: すべてのデータが公開
-- **Trustless**: 第三者を信頼する必要がない
-- **Global**: 数千の nodes を持つグローバルネットワーク
+- **Permissionless**: Bất kỳ ai cũng có thể tham gia mạng lưới
+- **Decentralized**: Không có tổ chức trung tâm kiểm soát
+- **Transparent**: Tất cả dữ liệu đều công khai
+- **Trustless**: Không cần tin tưởng bên thứ ba
+- **Global**: Mạng lưới toàn cầu với hàng nghìn nodes
 
-**使用目的:**
+**Mục đích sử dụng:**
 
 ```
 ✅ Token & Cryptocurrency
@@ -7285,11 +7664,11 @@ http://localhost:3000
 ✅ Cross-border Payments
 ```
 
-**実例:**
+**Ví dụ thực tế:**
 
-- **Uniswap**: 分散型取引所
+- **Uniswap**: Sàn giao dịch phi tập trung
 - **USDT/USDC**: Stablecoin
-- **Axie Infinity**: NFT Game
+- **Axie Infinity**: Game NFT
 - **OpenSea**: NFT Marketplace
 - **MakerDAO**: Lending protocol
 
@@ -7297,17 +7676,17 @@ http://localhost:3000
 
 #### 🏢 Hyperledger Fabric
 
-**役割:** 組織向けの企業 blockchain プラットフォーム
+**Vai trò:** Nền tảng blockchain doanh nghiệp (enterprise) cho các tổ chức
 
-**主な特徴:**
+**Đặc điểm chính:**
 
-- **Permissioned**: 承認されたメンバーのみが参加
-- **Modular**: 柔軟でカスタマイズ可能なアーキテクチャ
-- **Private**: データをプライベートに保つことができる
-- **Scalable**: 企業向けの高性能
-- **Consortium**: 組織間のコンソーシアムネットワーク
+- **Permissioned**: Chỉ thành viên được phê duyệt mới tham gia
+- **Modular**: Kiến trúc linh hoạt, có thể tùy chỉnh
+- **Private**: Dữ liệu có thể được giữ riêng tư
+- **Scalable**: Hiệu suất cao cho doanh nghiệp
+- **Consortium**: Mạng lưới liên minh giữa các tổ chức
 
-**使用目的:**
+**Mục đích sử dụng:**
 
 ```
 ✅ Supply Chain Management
@@ -7319,45 +7698,45 @@ http://localhost:3000
 ✅ Insurance Claims
 ```
 
-**実例:**
+**Ví dụ thực tế:**
 
-- **IBM Food Trust**: 食品の出所追跡（Walmart、Carrefour）
-- **TradeLens**: 物流と海運（Maersk、IBM）
-- **we.trade**: 貿易金融（14 の欧州銀行）
-- **MediLedger**: 医薬品と医療
-- **Everledger**: ダイヤモンドと資産の追跡
-
----
-
-### 7.2. 詳細比較
-
-#### 📊 総合比較表
-
-| **基準**               | **Ethereum**                     | **Hyperledger Fabric**          |
-| ---------------------- | -------------------------------- | ------------------------------- |
-| **ネットワークタイプ** | Public（Private オプションあり） | Private (Permissioned)          |
-| **対象**               | B2C、DApps、Crypto               | B2B、Enterprise、Consortium     |
-| **アクセス権**         | Permissionless                   | Permissioned                    |
-| **ID 管理**            | Wallet address (pseudonymous)    | PKI/MSP (Certificate Authority) |
-| **データ**             | 完全に公開                       | Private、channel ごとに共有可能 |
-| **Smart Contract**     | Solidity (EVM)                   | Chaincode (Go, Node.js, Java)   |
-| **Consensus**          | PoS (Proof of Stake)             | Pluggable (Raft, Kafka, PBFT)   |
-| **Transaction Speed**  | 15-30 TPS                        | 3,000-20,000 TPS                |
-| **Finality**           | Probabilistic (~12 blocks)       | Immediate (1 block)             |
-| **Gas Fee**            | あり (ETH/Gwei)                  | なし                            |
-| **Cryptocurrency**     | あり (ETH)                       | Native token なし               |
-| **Governance**         | Community-driven                 | Consortium-driven               |
-| **Scalability**        | 低い（Layer 2 が必要）           | 高い（native）                  |
-| **Privacy**            | 低い（public ledger）            | 高い（private channels）        |
-| **Compliance**         | 困難（pseudonymous）             | 容易（KYC/AML built-in）        |
-| **Cost**               | 高い（gas fees）                 | 低い（infrastructure のみ）     |
-| **Maturity**           | 非常に高い（2015）               | 高い（2017）                    |
+- **IBM Food Trust**: Theo dõi nguồn gốc thực phẩm (Walmart, Carrefour)
+- **TradeLens**: Logistics và vận tải biển (Maersk, IBM)
+- **we.trade**: Tài chính thương mại (14 ngân hàng châu Âu)
+- **MediLedger**: Dược phẩm và y tế
+- **Everledger**: Theo dõi kim cương và tài sản
 
 ---
 
-### 7.3. アーキテクチャの違い
+### 7.2. So sánh chi tiết
 
-#### 🔐 1. ID 管理 (Identity Management)
+#### 📊 Bảng so sánh tổng quan
+
+| **Tiêu chí**          | **Ethereum**               | **Hyperledger Fabric**               |
+| --------------------- | -------------------------- | ------------------------------------ |
+| **Loại mạng**         | Public (có Private option) | Private (Permissioned)               |
+| **Đối tượng**         | B2C, DApps, Crypto         | B2B, Enterprise, Consortium          |
+| **Quyền truy cập**    | Permissionless             | Permissioned                         |
+| **Quản lý danh tính** | Địa chỉ ví (pseudonymous)  | PKI/MSP (Certificate Authority)      |
+| **Dữ liệu**           | Hoàn toàn công khai        | Private, có thể chia sẻ theo channel |
+| **Smart Contract**    | Solidity (EVM)             | Chaincode (Go, Node.js, Java)        |
+| **Consensus**         | PoS (Proof of Stake)       | Pluggable (Raft, Kafka, PBFT)        |
+| **Transaction Speed** | 15-30 TPS                  | 3,000-20,000 TPS                     |
+| **Finality**          | Probabilistic (~12 blocks) | Immediate (1 block)                  |
+| **Gas Fee**           | Có (ETH/Gwei)              | Không có                             |
+| **Cryptocurrency**    | Có (ETH)                   | Không có native token                |
+| **Governance**        | Community-driven           | Consortium-driven                    |
+| **Scalability**       | Thấp (Layer 2 cần thiết)   | Cao (native)                         |
+| **Privacy**           | Thấp (public ledger)       | Cao (private channels)               |
+| **Compliance**        | Khó (pseudonymous)         | Dễ (KYC/AML built-in)                |
+| **Cost**              | Cao (gas fees)             | Thấp (infrastructure only)           |
+| **Maturity**          | Rất cao (2015)             | Cao (2017)                           |
+
+---
+
+### 7.3. Khác biệt về Kiến trúc
+
+#### 🔐 1. Quản lý Danh tính (Identity Management)
 
 **Ethereum:**
 
@@ -7369,18 +7748,18 @@ http://localhost:3000
 │  │ 0x1a │  │ 0x2b │  │ 0x3c │       │
 │  └──────┘  └──────┘  └──────┘       │
 │   Anonymous addresses               │
-│   (誰がいるかわからない)             │
+│   (Don't know who's behind)         │
 └─────────────────────────────────────┘
 
-✅ 利点:
+✅ Advantages:
    - Privacy (pseudonymous)
-   - KYC 不要
-   - 自由に参加
+   - No KYC required
+   - Free to join
 
-❌ 欠点:
-   - Compliance が困難
-   - 権限を revoke できない
-   - 責任追及が難しい
+❌ Disadvantages:
+   - Hard to comply
+   - Cannot revoke permissions
+   - Hard to hold accountable
 ```
 
 **Hyperledger Fabric:**
@@ -7398,36 +7777,36 @@ http://localhost:3000
 │  │User│   │User│  │User│  │User│            │
 │  └────┘   └────┘  └────┘  └────┘            │
 │  (X.509 Certificates)                       │
-│  (実際の ID がわかる)                        │
+│  (Known real identities)                    │
 └─────────────────────────────────────────────┘
 
-✅ 利点:
+✅ Advantages:
    - KYC/AML compliance
-   - Certificate を revoke できる
-   - 明確な責任追及
-   - 詳細な権限管理
+   - Can revoke certificates
+   - Clear accountability
+   - Granular permissions
 
-❌ 欠点:
-   - より複雑
-   - CA インフラが必要
-   - Privacy が低い
+❌ Disadvantages:
+   - More complex
+   - Requires CA infrastructure
+   - Ít privacy hơn
 ```
 
-**Code 例 - Ethereum (Anonymous):**
+**Code ví dụ - Ethereum (Anonymous):**
 
 ```javascript
-// Ethereum: Private key のみ必要
+// Ethereum: Chỉ cần private key
 const wallet = new ethers.Wallet(privateKey);
 console.log("Address:", wallet.address); // 0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb
 
-// 誰もこれが誰かわからない
-// 無限に wallet を作成できる
+// Không ai biết đây là ai
+// Có thể tạo vô số ví
 ```
 
-**Code 例 - Fabric (Identity):**
+**Code ví dụ - Fabric (Identity):**
 
 ```javascript
-// Hyperledger Fabric: CA からの certificate が必要
+// Hyperledger Fabric: Cần certificate từ CA
 const identity = {
   credentials: {
     certificate: "-----BEGIN CERTIFICATE-----\n...",
@@ -7437,7 +7816,7 @@ const identity = {
   type: "X.509",
 };
 
-// Certificate には以下の情報が含まれる:
+// Certificate chứa thông tin:
 // - Organization: Kaopiz Corp
 // - Common Name: admin@kaopiz.com
 // - Issued by: CA.kaopiz.com
@@ -7446,7 +7825,7 @@ const identity = {
 
 ---
 
-#### 🔒 2. データの公開範囲 (Data Visibility)
+#### 🔒 2. Phạm vi Công khai (Data Visibility)
 
 **Ethereum:**
 
@@ -7458,20 +7837,20 @@ const identity = {
 │  Block #2: Bob → Charlie: 5 ETH             │
 │  Block #3: Charlie → David: 2 ETH           │
 │                                             │
-│  👁️ 誰でも閲覧可能                          │
-│  👁️ すべての node が完全なコピーを持つ      │
-│  👁️ 削除や非表示にできない                  │
+│  👁️ Everyone can see                        │
+│  👁️ Every node has full copy                │
+│  👁️ Cannot delete or hide                   │
 └─────────────────────────────────────────────┘
 
-✅ 利点:
-   - 絶対的な透明性
-   - 監査が容易
-   - 不正ができない
+✅ Advantages:
+   - Absolute transparency
+   - Easy to audit
+   - Cannot cheat
 
-❌ 欠点:
-   - Privacy なし
-   - 競合他社がデータを閲覧できる
-   - 機密データには不適切
+❌ Disadvantages:
+   - No privacy
+   - Competitors can see data
+   - Not suitable for sensitive data
 ```
 
 **Hyperledger Fabric:**
@@ -7482,38 +7861,38 @@ const identity = {
 │                                                     │
 │  Channel 1: [Org1, Org2]                           │
 │    - Contract A: Supply chain data                  │
-│    - Org1 & Org2 のみ閲覧可能                       │
+│    - Only Org1 & Org2 can see                      │
 │                                                     │
 │  Channel 2: [Org2, Org3]                           │
 │    - Contract B: Payment data                       │
-│    - Org2 & Org3 のみ閲覧可能                       │
+│    - Only Org2 & Org3 can see                      │
 │                                                     │
 │  Private Data Collection:                           │
-│    - Org1 ←→ Org2: 価格交渉（秘密）                │
-│    - Hash は chain 上、data は off-chain            │
+│    - Org1 ←→ Org2: Price negotiation (secret)     │
+│    - Hash on chain, data off-chain                 │
 └─────────────────────────────────────────────────────┘
 
-✅ 利点:
-   - 優れた Privacy
-   - 機密データが保護される
-   - GDPR に準拠
-   - 競合他社がデータを閲覧できない
+✅ Ưu điểm:
+   - Privacy tốt
+   - Dữ liệu nhạy cảm được bảo vệ
+   - Tuân thủ GDPR
+   - Cạnh tranh không thấy dữ liệu
 
-❌ 欠点:
-   - より複雑
-   - Channel の設計を慎重に行う必要がある
+❌ Nhược điểm:
+   - Phức tạp hơn
+   - Cần thiết kế channel cẩn thận
 ```
 
-**実例:**
+**Ví dụ thực tế:**
 
 **Ethereum - Supply Chain (Public):**
 
 ```solidity
-// ❌ すべての人が価格を閲覧できる
+// ❌ Tất cả đều thấy giá
 contract PublicSupplyChain {
     struct Product {
         string name;
-        uint256 price;        // 競合他社が価格を閲覧できる！
+        uint256 price;        // Đối thủ có thể thấy giá!
         address manufacturer;
         address currentOwner;
     }
@@ -7525,9 +7904,9 @@ contract PublicSupplyChain {
 **Fabric - Supply Chain (Private):**
 
 ```javascript
-// ✅ 関係者のみが価格を閲覧できる
+// ✅ Chỉ các bên liên quan mới thấy giá
 async function createProduct(ctx, productId, name, price) {
-  // Public data (channel ledger 上)
+  // Public data (on channel ledger)
   const product = {
     productId: productId,
     name: name,
@@ -7535,7 +7914,7 @@ async function createProduct(ctx, productId, name, price) {
   };
   await ctx.stub.putState(productId, Buffer.from(JSON.stringify(product)));
 
-  // Private data (特定の orgs 間のみ)
+  // Private data (only between specific orgs)
   const privateData = {
     price: price,
     cost: cost,
@@ -7551,11 +7930,11 @@ async function createProduct(ctx, productId, name, price) {
 
 ---
 
-#### ⚙️ 3. Consensus Mechanism（コンセンサスメカニズム）
+#### ⚙️ 3. Cơ chế Đồng thuận (Consensus)
 
-> 💡 **Consensus Mechanism とは？**
+> 💡 **Cơ chế đồng thuận là gì?**
 >
-> Consensus Mechanism（コンセンサスメカニズム）は、blockchain ネットワーク内の nodes が ledger の現在の状態について合意するプロセスです。「お互いに信頼していない複数のコンピュータが、どうやって共通の真実について合意できるのか？」という問題を解決します。
+> Cơ chế đồng thuận (Consensus Mechanism) là quy trình mà các nodes trong mạng blockchain đồng ý về trạng thái hiện tại của ledger. Nó giải quyết vấn đề: "Làm sao để nhiều máy tính không tin tưởng nhau có thể đồng ý về một sự thật chung?"
 
 **Ethereum (Proof of Stake - PoS):**
 
@@ -7563,26 +7942,26 @@ async function createProduct(ctx, productId, name, price) {
 ┌─────────────────────────────────────────────┐
 │         Ethereum PoS Consensus              │
 │                                             │
-│  Step 1: Validators が 32 ETH を stake      │
-│  Step 2: Random に validator を選択         │
-│  Step 3: Block を propose                   │
-│  Step 4: 他の validators が attest          │
-│  Step 5: 約 12 blocks 後に block finalized  │
+│  Step 1: Validators stake 32 ETH            │
+│  Step 2: Random validator selected          │
+│  Step 3: Propose block                      │
+│  Step 4: Other validators attest            │
+│  Step 5: Block finalized after ~12 blocks   │
 │                                             │
-│  ⏱️ Block time: 約 12 秒                    │
-│  ⏱️ Finality: 約 12 分                      │
+│  ⏱️ Block time: ~12 seconds                 │
+│  ⏱️ Finality: ~12 minutes                   │
 │  💰 Reward: ETH                             │
 └─────────────────────────────────────────────┘
 
-✅ 利点:
+✅ Advantages:
    - Decentralized
    - Secure (economic security)
    - Energy efficient (vs PoW)
 
-❌ 欠点:
+❌ Disadvantages:
    - Probabilistic finality
-   - 遅い
-   - Re-org の可能性
+   - Chậm
+   - Có thể re-org
 ```
 
 **Hyperledger Fabric (Raft/PBFT):**
@@ -7591,109 +7970,109 @@ async function createProduct(ctx, productId, name, price) {
 ┌─────────────────────────────────────────────┐
 │      Fabric Raft Consensus (CFT)            │
 │                                             │
-│  Step 1: Client が transaction を submit    │
-│  Step 2: Endorsing peers が execute         │
-│  Step 3: Ordering service が order          │
-│  Step 4: Committing peers が validate       │
-│  Step 5: Ledger を update                   │
+│  Step 1: Client submit transaction          │
+│  Step 2: Endorsing peers execute            │
+│  Step 3: Ordering service orders            │
+│  Step 4: Committing peers validate          │
+│  Step 5: Update ledger                      │
 │                                             │
-│  ⏱️ Transaction time: < 1 秒                │
+│  ⏱️ Transaction time: < 1 second            │
 │  ⏱️ Finality: Immediate                     │
-│  💰 Reward なし (mining なし)               │
+│  💰 No reward (no mining)                   │
 └─────────────────────────────────────────────┘
 
-✅ 利点:
+✅ Ưu điểm:
    - Immediate finality
-   - 非常に速い (3000+ TPS)
+   - Rất nhanh (3000+ TPS)
    - Deterministic
-   - Re-org なし
+   - Không có re-org
 
-❌ 欠点:
-   - より Centralized
-   - Consortium を信頼する必要がある
-   - より少ない nodes
+❌ Nhược điểm:
+   - Centralized hơn
+   - Cần trust consortium
+   - Ít nodes hơn
 ```
 
 ---
 
-#### 🎓 実例で Consensus Mechanism を理解する
+#### 🎓 Hiểu Cơ chế Đồng thuận qua Ví dụ Thực tế
 
-> **なぜ Consensus Mechanism が必要なのか？**
+> **Tại sao cần Cơ chế Đồng thuận?**
 >
-> あなたと 9 人の友人が共通の帳簿（ledger）を記録していると想像してください。各自がコピーを持っています。新しい取引があった場合、全員がその取引の順序と有効性について合意するにはどうすればよいでしょうか？これが Consensus Mechanism が解決する問題です！
+> Tưởng tượng bạn và 9 người bạn cùng ghi chép sổ sách chung (ledger). Mỗi người có một bản copy. Khi có giao dịch mới, làm sao để tất cả mọi người đồng ý về thứ tự và tính hợp lệ của giao dịch đó? Đó chính là vấn đề mà Cơ chế Đồng thuận giải quyết!
 
-### 📚 日常の例で比較
+### 📚 So sánh bằng Ví dụ Đời thường
 
-#### **Ethereum PoS = 資金を担保にした民主的選挙**
+#### **Ethereum PoS = Bầu cử Dân chủ có Cọc tiền**
 
 ```
-状況: 1000 人が次に誰が帳簿に記録するかを決定したい
+Tình huống: 1000 người muốn quyết định ai sẽ ghi sổ tiếp theo
 
 ┌─────────────────────────────────────────────────────────────┐
 │                    ETHEREUM PoS                             │
 └─────────────────────────────────────────────────────────────┘
 
-ステップ 1: 担保を預ける
+Bước 1: Đặt cọc
 ─────────────────────────────────────────────────────────
-• 参加したい人は 32 ETH を stake する必要がある (~$64,000)
-• Stake した資金はロックされ、参加中は引き出せない
-• 不正行為 → 資金を失う
+• Mỗi người muốn tham gia phải đặt cọc 32 ETH (~$64,000)
+• Tiền cọc bị khóa, không thể rút trong thời gian tham gia
+• Nếu gian lận → MẤT TIỀN CỌC
 
-例:
-  - Alice が stake: 32 ETH
-  - Bob が stake: 64 ETH (2倍 = チャンス2倍)
-  - Charlie が stake: 32 ETH
+Ví dụ:
+  - Alice đặt cọc: 32 ETH
+  - Bob đặt cọc: 64 ETH (gấp đôi = cơ hội gấp đôi)
+  - Charlie đặt cọc: 32 ETH
 
-ステップ 2: ランダム抽選 (12秒ごと)
+Bước 2: Xổ số Random (mỗi 12 giây)
 ─────────────────────────────────────────────────────────
-• システムがランダムに 1 人を "Block Proposer" として選択
-• 選ばれる確率 = Stake 額 / 総 Stake 額
-• Bob は 64 ETH → Alice (32 ETH) の 2 倍のチャンス
+• Hệ thống random chọn 1 người làm "Block Proposer"
+• Xác suất được chọn = Số tiền cọc / Tổng tiền cọc
+• Bob có 64 ETH → Cơ hội gấp đôi Alice (32 ETH)
 
-仮定: Bob が選ばれた！
+Giả sử: Bob được chọn!
 
-ステップ 3: Bob が Block を作成
+Bước 3: Bob tạo Block
 ─────────────────────────────────────────────────────────
-• Bob が mempool から 200-300 transactions を集める
-• Bob が新しい block を作成
-• Bob が block を全員に broadcast
+• Bob gom 200-300 transactions từ mempool
+• Bob tạo block mới
+• Bob broadcast block cho mọi người
 
-ステップ 4: 投票 (Attestation)
+Bước 4: Bỏ phiếu (Attestation)
 ─────────────────────────────────────────────────────────
-• システムがランダムに 128 人を "Committee" として選択
-• 各人が Bob の block をチェック:
-  ✓ Transactions は有効か？
-  ✓ 署名は正しいか？
-  ✓ Bob は不正をしていないか？
+• Hệ thống random chọn 128 người khác làm "Committee"
+• Mỗi người kiểm tra block của Bob:
+  ✓ Transactions hợp lệ không?
+  ✓ Chữ ký đúng không?
+  ✓ Bob có gian lận không?
 
-• 各人が投票: "YES" または "NO"
-• 2/3 (85人) が "YES" を投票 → Block が承認される
+• Mỗi người vote: "YES" hoặc "NO"
+• Cần 2/3 (85 người) vote "YES" → Block được chấp nhận
 
-結果: 120/128 が "YES" を投票 → Bob の Block が chain に追加される！
+Kết quả: 120/128 vote "YES" → Block của Bob được thêm vào chain!
 
-ステップ 5: 報酬と罰則
+Bước 5: Thưởng & Phạt
 ─────────────────────────────────────────────────────────
-✅ Bob が報酬を受け取る: ~0.02 ETH
-✅ 正しく投票した 120 人: 各自 ~0.0001 ETH を受け取る
-❌ 誤って投票した 8 人: 報酬なし
-❌ Bob が不正をした場合: 32 ETH をすべて失う！
+✅ Bob nhận thưởng: ~0.02 ETH
+✅ 120 người vote đúng: Mỗi người nhận ~0.0001 ETH
+❌ 8 người vote sai: Không nhận thưởng
+❌ Nếu Bob gian lận: MẤT HẾT 32 ETH!
 
-ステップ 6: 繰り返し
+Bước 6: Lặp lại
 ─────────────────────────────────────────────────────────
-• 12 秒後 → 再度ランダム → 新しい人を選択
-• プロセスが永遠に繰り返される...
+• Sau 12 giây → Random lại → Chọn người mới
+• Quá trình lặp lại mãi mãi...
 ```
 
-**Hyperledger Fabric Raft = 会社の取締役会**
+#### **Hyperledger Fabric Raft = Hội đồng Quản trị Công ty**
 
 ```
-状況: 5 つの会社 (Org1-5) が共通の ledger を管理
+Tình huống: 5 công ty (Org1-5) cùng quản lý sổ sách chung
 
 ┌─────────────────────────────────────────────────────────────┐
 │                  HYPERLEDGER FABRIC RAFT                    │
 └─────────────────────────────────────────────────────────────┘
 
-セットアップ: 5 社、各社に 1 つの "Orderer Node"
+Setup: 5 công ty, mỗi công ty có 1 "Orderer Node"
 ─────────────────────────────────────────────────────────
 • Org1: Node A
 • Org2: Node B
@@ -7701,227 +8080,227 @@ async function createProduct(ctx, productId, name, price) {
 • Org4: Node D
 • Org5: Node E
 
-ステップ 1: リーダー選出 (Leader Election)
+Bước 1: Bầu Chủ tịch (Leader Election)
 ─────────────────────────────────────────────────────────
-• 最初、すべての nodes は対等
-• 数秒後、1 つの node が自己推薦: "私が Leader になりたい！"
-• 他の nodes が投票
-• 50% 以上の投票を得た Node → Leader になる
+• Lúc đầu, tất cả nodes bình đẳng
+• Sau vài giây, một node tự đề cử: "Tôi muốn làm Leader!"
+• Các node khác vote
+• Node có >50% votes → Trở thành Leader
 
-結果: Node A (Org1) が Leader になった！
+Kết quả: Node A (Org1) trở thành Leader!
 
-ステップ 2: 通常運用
+Bước 2: Hoạt động Bình thường
 ─────────────────────────────────────────────────────────
-新しい transaction がある場合:
+Khi có transaction mới:
 
-1. Client が Leader (Node A) に transaction を送信
+1. Client gửi transaction đến Leader (Node A)
 
-2. Node A が自分の log に記録:
+2. Node A ghi vào sổ của mình:
    Log: [tx1, tx2, tx3, NEW_TX]
 
-3. Node A が Followers にコピーを送信:
-   A → B: "[tx1, tx2, tx3, NEW_TX] を記録してください"
-   A → C: "[tx1, tx2, tx3, NEW_TX] を記録してください"
-   A → D: "[tx1, tx2, tx3, NEW_TX] を記録してください"
-   A → E: "[tx1, tx2, tx3, NEW_TX] を記録してください"
+3. Node A gửi copy cho các Followers:
+   A → B: "Hãy ghi [tx1, tx2, tx3, NEW_TX]"
+   A → C: "Hãy ghi [tx1, tx2, tx3, NEW_TX]"
+   A → D: "Hãy ghi [tx1, tx2, tx3, NEW_TX]"
+   A → E: "Hãy ghi [tx1, tx2, tx3, NEW_TX]"
 
-4. Followers が log に記録して応答: "OK、記録しました！"
+4. Followers ghi vào sổ và trả lời: "OK, đã ghi!"
 
-5. Node A が応答を受信:
+5. Node A nhận phản hồi:
    - B: "OK" ✓
    - C: "OK" ✓
    - D: "OK" ✓
-   - E: (応答なし - おそらく offline)
+   - E: (Không phản hồi - có thể offline)
 
-6. Node A がカウント: 3/4 followers が OK (>50%)
-   → 十分な数 → COMMIT！
+6. Node A đếm: 3/4 followers OK (>50%)
+   → Đủ số lượng → COMMIT!
 
-7. Node A が block を作成して全員に broadcast
-   → Transaction が FINALIZED！
+7. Node A tạo block và broadcast cho tất cả
+   → Transaction FINALIZED!
 
-⏱️ 合計時間: < 1 秒
+⏱️ Tổng thời gian: < 1 giây
 
-ステップ 3: Leader に障害が発生
+Bước 3: Leader Bị Sự cố
 ─────────────────────────────────────────────────────────
-Node A (Leader) がクラッシュした場合:
+Nếu Node A (Leader) crash:
 
-1. Followers が A からの heartbeat を受信しない
-2. Timeout 後 (数秒) → 新しい Leader を選出
-3. Node B が新しい Leader として選出される
-4. システムは通常通り動作を続ける
+1. Followers không nhận được heartbeat từ A
+2. Sau timeout (vài giây) → Bầu Leader mới
+3. Node B được bầu làm Leader mới
+4. Hệ thống tiếp tục hoạt động bình thường
 
-→ システムは最大 2/5 nodes の障害に耐えられる (40%)
+→ Hệ thống chịu được tối đa 2/5 nodes fail (40%)
 ```
 
-### 🔑 核心的な違い
+### 🔑 Điểm Khác biệt Cốt lõi
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│              核心的な比較                                     │
+│              SO SÁNH CỐT LÕI                                 │
 └──────────────────────────────────────────────────────────────┘
 
-質問 1: 誰が参加できるか？
+Câu hỏi 1: Ai được quyền tham gia?
 ─────────────────────────────────────────────────────────────
 Ethereum PoS:
-  • 32 ETH を持っている人なら誰でも
-  • 許可不要
-  • KYC 不要
-  • 現在約 1,000,000 validators
+  • BẤT KỲ AI có 32 ETH
+  • Không cần xin phép
+  • Không cần KYC
+  • Hiện có ~1,000,000 validators
 
 Fabric Raft:
-  • 招待された組織のみ
-  • X.509 certificate が必要
-  • KYC が必要
-  • 通常 3-10 organizations のみ
+  • CHỈ các tổ chức được mời
+  • Phải có X.509 certificate
+  • Phải qua KYC
+  • Thường chỉ 3-10 organizations
 
-質問 2: Block を作成する人をどう選ぶか？
+Câu hỏi 2: Làm sao chọn người tạo block?
 ─────────────────────────────────────────────────────────────
 Ethereum PoS:
-  • 12 秒ごとにランダム
-  • 確率は stake した ETH の量に基づく
-  • 誰が選ばれるか事前にわからない
+  • RANDOM mỗi 12 giây
+  • Xác suất dựa trên số ETH stake
+  • Không ai biết trước ai được chọn
 
 Fabric Raft:
-  • 固定: 常に Leader node
-  • Leader は過半数の投票で選出される
-  • Leader は障害が発生するまで役割を維持
+  • CỐ ĐỊNH: Luôn là Leader node
+  • Leader được bầu bởi majority vote
+  • Leader giữ vai trò cho đến khi fail
 
-質問 3: 不正を防ぐ方法は？
+Câu hỏi 3: Làm sao đảm bảo không gian lận?
 ─────────────────────────────────────────────────────────────
 Ethereum PoS:
-  • Economic Security: 不正 = Stake した資金を失う
-  • 51% 攻撃には約 $30 billion USD が必要
-  • Slashing: Stake した ETH の 1-100% を失う
+  • Economic Security: Gian lận = Mất tiền cọc
+  • Tấn công 51% cần ~$30 tỷ USD
+  • Slashing: Mất 1-100% số ETH stake
 
 Fabric Raft:
-  • Trust-based: Consortium を信頼
-  • 1 つの org が不正 → 他の orgs が検出
-  • その org の certificate を revoke できる
+  • Trust-based: Tin tưởng vào consortium
+  • Nếu 1 org gian lận → Các org khác phát hiện
+  • Có thể revoke certificate của org đó
 
-質問 4: Transaction が finalized されるまでの時間は？
+Câu hỏi 4: Bao lâu để transaction finalized?
 ─────────────────────────────────────────────────────────────
 Ethereum PoS:
-  • 約 12 分 (2 epochs)
+  • ~12 phút (2 epochs)
   • Probabilistic finality
-  • 12 分未満の場合 re-org の可能性あり
+  • Có thể bị re-org nếu < 12 phút
 
 Fabric Raft:
-  • < 1 秒
+  • < 1 giây
   • Immediate finality
-  • 絶対に re-org しない
+  • KHÔNG BAO GIỜ bị re-org
 
-質問 5: 1 秒あたりの transactions 数は？
+Câu hỏi 5: Bao nhiêu transactions/giây?
 ─────────────────────────────────────────────────────────────
 Ethereum PoS:
   • 15-30 TPS (mainnet)
-  • すべての nodes がすべての transactions を実行
-  • ネットワーク全体で consensus (1M validators)
+  • Tất cả nodes phải execute tất cả transactions
+  • Consensus trên toàn bộ network (1M validators)
 
 Fabric Raft:
   • 3,000-20,000 TPS
-  • Endorsing peers のみが実行 (2-3 peers)
-  • Ordering service のみで consensus (3-5 nodes)
+  • Chỉ endorsing peers execute (2-3 peers)
+  • Consensus chỉ trên ordering service (3-5 nodes)
 ```
 
 ---
 
-#### 🔍 Consensus Mechanism の詳細分析
+#### 🔍 Phân tích chi tiết Cơ chế Đồng thuận
 
-### A. Ethereum Proof of Stake (PoS) - 詳細
+### A. Ethereum Proof of Stake (PoS) - Chi tiết
 
-**1. 基本概念:**
+**1. Khái niệm cơ bản:**
 
-Proof of Stake は、block を作成する権利を得るために資金を "stake"（担保）することに基づく consensus mechanism です。Proof of Work (PoW) のように計算能力で競争するのではなく、validators は stake した ETH の量で競争します。
+Proof of Stake là cơ chế đồng thuận dựa trên việc "đặt cọc" (stake) tiền để có quyền tạo block. Thay vì cạnh tranh bằng sức mạnh tính toán (như PoW), validators cạnh tranh bằng số lượng ETH họ stake.
 
-**2. ステップごとの動作:**
+**2. Cách hoạt động từng bước:**
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │              ETHEREUM PoS WORKFLOW                          │
 └─────────────────────────────────────────────────────────────┘
 
-EPOCH (6.4 分 = 32 slots)
+EPOCH (6.4 minutes = 32 slots)
 │
-├─ SLOT 1 (12 秒)
+├─ SLOT 1 (12 seconds)
 │  │
-│  ├─ [1] Validator を選択
-│  │    • RANDAO アルゴリズムがランダムに選択
-│  │    • 確率は stake した ETH の量に基づく
-│  │    • Validator A が "Block Proposer" として選択される
+│  ├─ [1] Select Validator
+│  │    • RANDAO algorithm randomly selects
+│  │    • Probability based on ETH staked amount
+│  │    • Validator A selected as "Block Proposer"
 │  │
-│  ├─ [2] Block を Propose
-│  │    • Validator A が新しい block を作成
-│  │    • 約 200-300 transactions を含む
-│  │    • Network に broadcast
+│  ├─ [2] Propose Block
+│  │    • Validator A creates new block
+│  │    • Contains ~200-300 transactions
+│  │    • Broadcast to network
 │  │
-│  ├─ [3] Attestation (投票)
-│  │    • 128 の他の validators が "Committee" として選択される
-│  │    • 各 validator が block に投票
-│  │    • Vote = "この block は有効であることに同意"
-│  │    • Block 承認には 2/3 の投票が必要
+│  ├─ [3] Attestation (Voting)
+│  │    • 128 other validators selected as "Committee"
+│  │    • Each validator votes for the block
+│  │    • Vote = "I agree this block is valid"
+│  │    • Requires 2/3 votes for block acceptance
 │  │
-│  └─ [4] Block が追加される
-│       • Block が chain に追加される
-│       • まだ finalized されていない（revert 可能）
+│  └─ [4] Block Added
+│       • Block added to chain
+│       • Not yet finalized (can be reverted)
 │
-├─ SLOT 2-31 (同じプロセス)
+├─ SLOT 2-31 (same process)
 │
 └─ CHECKPOINT
-   • 32 slots (1 epoch) 後
-   • 2 つの連続した epochs が OK → Finalized
-   • Finalized 後は revert 不可能
+   • After 32 slots (1 epoch)
+   • If 2 consecutive epochs OK → Finalized
+   • Cannot revert after finalized
 
-報酬と罰則:
-├─ ✅ 報酬条件:
-│  • Block を正しく propose
-│  • 正しくタイムリーに投票
-│  • Online で responsive
+REWARDS & PENALTIES:
+├─ ✅ Reward if:
+│  • Propose block correctly
+│  • Vote correctly and on time
+│  • Online and responsive
 │
-└─ ❌ 罰則 (Slashing) 条件:
-   • 同じ slot で 2 つの異なる blocks を propose
-   • 矛盾する投票
-   • 長時間 offline
-   • Network への攻撃を試みる
+└─ ❌ Penalty (Slashing) if:
+   • Propose 2 different blocks in same slot
+   • Contradictory votes
+   • Offline too long
+   • Attempt to attack network
 ```
 
-**3. 具体例:**
+**3. Ví dụ cụ thể:**
 
 ```javascript
-// 1000 validators がネットワークにいると仮定
+// Assume 1000 validators in network
 
-// Slot 1 (最初の 12 秒)
+// Slot 1 (first 12 seconds)
 // ──────────────────────────────────────────────
 
-// [Step 1] ランダム選択
+// [Step 1] Random selection
 const validators = [
   { address: "0xABC", stake: 32 ETH },
-  { address: "0xDEF", stake: 64 ETH },  // 2倍の stake = 2倍の確率
+  { address: "0xDEF", stake: 64 ETH },  // Double stake = double probability
   { address: "0x123", stake: 32 ETH },
-  // ... 997 の他の validators
+  // ... 997 other validators
 ];
 
-// RANDAO アルゴリズムが validator を選択
-const selectedProposer = randomSelect(validators); // 0xDEF が選ばれたと仮定
+// RANDAO algorithm selects validator
+const selectedProposer = randomSelect(validators); // Assume 0xDEF selected
 
-// [Step 2] Validator 0xDEF が block を作成
+// [Step 2] Validator 0xDEF creates block
 const newBlock = {
   number: 18000001,
   proposer: "0xDEF",
   transactions: [
     { from: "0xAlice", to: "0xBob", value: "1 ETH" },
     { from: "0xCharlie", to: "0xDavid", value: "0.5 ETH" },
-    // ... 298 の他の transactions
+    // ... 298 other transactions
   ],
   parentHash: "0x7f8e...",
   timestamp: 1704067200,
 };
 
-// [Step 3] Committee が投票
-const committee = randomSelect(validators, 128); // 128 validators を選択
+// [Step 3] Committee votes
+const committee = randomSelect(validators, 128); // Select 128 validators
 
-// Committee の各 validator が投票
+// Each validator in committee votes
 const votes = committee.map(validator => {
-  // Validator が block を validate
+  // Validator validates block
   const isValid = validateBlock(newBlock);
 
   return {
@@ -7931,100 +8310,100 @@ const votes = committee.map(validator => {
   };
 });
 
-// 投票を集計
+// Count votes
 const yesVotes = votes.filter(v => v.vote === "YES").length; // 120/128
 const threshold = committee.length * 2/3; // 85.3
 
 if (yesVotes >= threshold) {
-  console.log("✅ Block が承認された！");
+  console.log("✅ Block accepted!");
   addBlockToChain(newBlock);
 } else {
-  console.log("❌ Block が拒否された！");
+  console.log("❌ Block rejected!");
 }
 
 // [Step 4] Finality
-// Block はまだ finalized されていない、さらに 2 epochs (12.8 分) 待つ必要がある
+// Block not yet finalized, must wait 2 more epochs (12.8 minutes)
 ```
 
-**4. なぜ finalized に 12 分かかるのか？**
+**4. Tại sao cần 12 phút để Finalized?**
 
-**重要な概念:**
+**Khái niệm quan trọng:**
 
-Finalized = **取り消し不可能**（irreversible）。これは transaction が **100% 安全**であることを保証する最終状態です。
+Finalized = **Không thể đảo ngược** (irreversible). Đây là trạng thái cuối cùng đảm bảo transaction của bạn **100% an toàn**.
 
-**実例で説明:**
+**Giải thích bằng ví dụ thực tế:**
 
-誰かに 1000 ETH を送金すると想像してください:
+Tưởng tượng bạn chuyển 1000 ETH cho ai đó:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ Step 1: Transaction が Block 1000 に含まれる                 │
+│ Step 1: Transaction included in Block 1000                  │
 │ Status: PROPOSED                                            │
-│ ⚠️  リスク: Block が無効な場合拒否される可能性あり          │
-│ → まだ安全ではない、確認を待っている                         │
+│ ⚠️  Risk: Block may be rejected if invalid                 │
+│ → Not safe yet, waiting for confirmation                    │
 └─────────────────────────────────────────────────────────────┘
-                        ↓ (6.4 分 - 32 blocks)
+                        ↓ (6.4 minutes - 32 blocks)
 ┌─────────────────────────────────────────────────────────────┐
-│ Step 2: Block 1000-1032 が Checkpoint 1 に到達              │
+│ Step 2: Block 1000-1032 reaches Checkpoint 1                │
 │ Status: JUSTIFIED                                           │
-│ ✅ 2/3 の validators が "OK" を投票                         │
-│ ⚠️  リスク: Chain fork が発生した場合まだ revert 可能      │
-│ → 比較的安全だが、100% 確実ではない                         │
+│ ✅ 2/3 validators voted "OK"                                │
+│ ⚠️  Risk: Still can be reverted if chain fork occurs       │
+│ → Relatively safe, but not 100% certain                     │
 └─────────────────────────────────────────────────────────────┘
-                        ↓ (6.4 分 - さらに 32 blocks)
+                        ↓ (6.4 minutes - 32 more blocks)
 ┌─────────────────────────────────────────────────────────────┐
-│ Step 3: Block 1033-1064 が Checkpoint 2 に到達              │
+│ Step 3: Block 1033-1064 reaches Checkpoint 2                │
 │ Status: FINALIZED                                           │
-│ ✅✅ 2 つの連続した checkpoints が両方 OK                   │
-│ 🔒 Block 1000-1032 が FINALIZED                             │
-│ ✨ Revert、fork、または変更不可能                           │
-│ → 100% 安全！ Transaction が完了！                          │
+│ ✅✅ 2 consecutive checkpoints both OK                      │
+│ 🔒 Block 1000-1032 now FINALIZED                            │
+│ ✨ CANNOT be reverted, forked, or changed                   │
+│ → 100% SAFE! Your transaction is complete!                  │
 └─────────────────────────────────────────────────────────────┘
 
-合計時間: 6.4 + 6.4 = 12.8 分
+Total time: 6.4 + 6.4 = 12.8 minutes
 ```
 
-**詳細なタイムライン:**
+**Timeline chi tiết:**
 
 ```
-分 0:00 ───────────────────────────────────────────────────
+Minute 0:00 ───────────────────────────────────────────────────
 │
-│  Block 1000 (あなたの transaction がここにある)
+│  Block 1000 (Your transaction is here)
 │  Block 1001
 │  Block 1002
 │  ...
 │  Block 1031
 │
-分 6:24 ───────────────────────────────────────────────────
+Minute 6:24 ───────────────────────────────────────────────────
 │  Block 1032 ← CHECKPOINT 1
 │  └─→ Block 1000-1032 = JUSTIFIED ✓
-│      (確認済みだが、まだ finalized されていない)
+│      (Confirmed, but not finalized yet)
 │
 │  Block 1033
 │  Block 1034
 │  ...
 │  Block 1063
 │
-分 12:48 ──────────────────────────────────────────────────
+Minute 12:48 ──────────────────────────────────────────────────
 │  Block 1064 ← CHECKPOINT 2
 │  └─→ Block 1033-1064 = JUSTIFIED ✓
 │
 │  🎉 Block 1000-1032 → FINALIZED! 🎉
-│  (取り消し不可能)
+│  (Cannot be reversed)
 │
 ```
 
-**なぜ 2 つの checkpoints が必要なのか？**
+**Tại sao phải chờ 2 checkpoints?**
 
 1. **Checkpoint 1 (Justified):**
-   - 証明するのは: "この block は有効"
-   - しかし chain fork がまだ存在する可能性（2 つの競合する chains）
+   - Only proves: "This block is valid"
+   - But chain fork may still exist (2 competing chains)
 2. **Checkpoint 2 (Finalized):**
-   - 証明するのは: "他の chain fork が存在しない"
-   - Network が完全に consensus に達した
-   - Rollback 不可能
+   - Proves: "No other chain fork exists"
+   - Network has fully reached consensus
+   - Cannot rollback
 
-**Chain Fork の例:**
+**Ví dụ về Chain Fork:**
 
 ```
                     ┌─→ Block 1033a ─→ Block 1034a (Chain A)
@@ -8033,98 +8412,98 @@ Block 1032 (Justified)
                     │
                     └─→ Block 1033b ─→ Block 1034b (Chain B)
 
-⚠️  2 つの競合する chains！ どちらの chain が勝つかを知るには
-   さらに 1 つの checkpoint を待つ必要がある。
+⚠️  2 competing chains! Must wait for 1 more checkpoint to know
+   which chain wins.
 
-Checkpoint 2 の後:
+After Checkpoint 2:
 ─────────────────────────────────────────────────────────
-Chain A: Block 1064a (Checkpoint 2) ✅ → 勝つ！
-Chain B: Block 1064b (拒否)         ❌ → 負ける！
+Chain A: Block 1064a (Checkpoint 2) ✅ → Wins!
+Chain B: Block 1064b (Rejected)     ❌ → Loses!
 
-→ Chain A の Block 1000-1032 が FINALIZED
-→ Chain B に切り替えることはもうできない
+→ Block 1000-1032 now FINALIZED on Chain A
+→ Cannot switch to Chain B anymore
 ```
 
-**5. Economic Security (経済的セキュリティ):**
+**5. Economic Security (Bảo mật kinh tế):**
 
 ```javascript
-// Ethereum PoS への攻撃は非常にコストがかかる
+// Tấn công Ethereum PoS rất tốn kém
 
-// 51% 攻撃を試みると仮定
-const totalStaked = 30_000_000; // 30 million ETH が stake されている
-const attackerNeed = totalStaked * 0.51; // 15.3 million ETH
+// Giả sử muốn tấn công 51%
+const totalStaked = 30_000_000; // 30 triệu ETH đang stake
+const attackerNeed = totalStaked * 0.51; // 15.3 triệu ETH
 const ethPrice = 2000; // $2000/ETH
-const attackCost = attackerNeed * ethPrice; // $30.6 billion USD!
+const attackCost = attackerNeed * ethPrice; // $30.6 tỷ USD!
 
-// 攻撃が失敗した場合 → すべての stake を失う (Slashing)
-// 攻撃が成功した場合 → ETH の価値が下がる → それでも損失
+// Nếu tấn công thất bại → Mất hết tiền stake (Slashing)
+// Nếu tấn công thành công → ETH mất giá trị → Vẫn lỗ
 
-console.log("攻撃コスト:", attackCost);
-console.log("→ 経済的に実行不可能！");
+console.log("Chi phí tấn công:", attackCost);
+console.log("→ Không khả thi về mặt kinh tế!");
 ```
 
 ---
 
-### B. Hyperledger Fabric Consensus - 詳細
+### B. Hyperledger Fabric Consensus - Chi tiết
 
-**1. 基本概念:**
+**1. Khái niệm cơ bản:**
 
-Fabric には単一の consensus がなく、**pluggable**（交換可能）です。最も一般的なのは **Raft** (Crash Fault Tolerant) と **PBFT** (Byzantine Fault Tolerant) です。
+Fabric không có một consensus duy nhất, mà là **pluggable** (có thể thay đổi). Phổ biến nhất là **Raft** (Crash Fault Tolerant) và **PBFT** (Byzantine Fault Tolerant).
 
-**2. Execute-Order-Validate アーキテクチャ:**
+**2. Execute-Order-Validate Architecture:**
 
-これが Fabric の最大の違いです:
+Đây là điểm khác biệt lớn nhất của Fabric:
 
 ```
 ┌────────────────────────────────────────────────────────────┐
 │         FABRIC: EXECUTE-ORDER-VALIDATE                     │
 └────────────────────────────────────────────────────────────┘
 
-[Phase 1] EXECUTE (並列 - consensus 不要)
+[Phase 1] EXECUTE (Parallel - No consensus needed)
 │
-├─ Client が transaction proposal を送信
-│  • "Alice → Bob に $100 を送金"
+├─ Client sends transaction proposal
+│  • "Transfer $100 from Alice → Bob"
 │
-├─ Endorsing Peers が chaincode を実行
-│  • Peer 1 (Org1): 実行 → Read/Write Set
-│  • Peer 2 (Org2): 実行 → Read/Write Set
-│  • Peer 3 (Org3): 実行 → Read/Write Set
-│  • Ledger を更新しない（simulation のみ）
+├─ Endorsing Peers execute chaincode
+│  • Peer 1 (Org1): Execute → Read/Write Set
+│  • Peer 2 (Org2): Execute → Read/Write Set
+│  • Peer 3 (Org3): Execute → Read/Write Set
+│  • Don't update ledger (simulation only)
 │
-└─ Client が endorsements を受信
-   • Policy に従って十分な endorsements が必要
-   • 例: "3 のうち 2" または "Org1 AND Org2"
+└─ Client receives endorsements
+   • Need enough endorsements per policy
+   • Example: "2 out of 3" or "Org1 AND Org2"
 
-[Phase 2] ORDER (ここで Consensus が発生)
+[Phase 2] ORDER (Consensus happens here)
 │
-├─ Client が endorsed transaction を Orderer に送信
+├─ Client sends endorsed transaction to Orderer
 │
 ├─ Ordering Service (Raft Consensus)
-│  • Leader が transactions を受信
-│  • Leader が transactions のバッチを propose
-│  • Followers が投票 (majority)
-│  • 十分な投票で block を作成
+│  • Leader receives transactions
+│  • Leader proposes batch of transactions
+│  • Followers vote (majority)
+│  • Create block when enough votes
 │
-└─ Block をすべての peers に broadcast
+└─ Block broadcast to all peers
 
-[Phase 3] VALIDATE (最終チェック)
+[Phase 3] VALIDATE (Final check)
 │
-├─ Committing Peers が block を受信
+├─ Committing Peers receive block
 │
-├─ 各 transaction を validate:
-│  • Endorsement policy をチェック
-│  • Read/write set の競合をチェック
-│  • 署名をチェック
+├─ Validate each transaction:
+│  • Check endorsement policy
+│  • Check read/write set conflicts
+│  • Check signatures
 │
-├─ 有効な transactions → Ledger を更新
-│  • 無効な transactions → 無効としてマーク
+├─ Valid transactions → Update ledger
+│  • Invalid transactions → Mark as invalid
 │
-└─ Events を emit
+└─ Emit events
 
-FINALITY: Immediate (block が commit されたらすぐ)
+FINALITY: Immediate (ngay khi block được commit)
 ```
 
-**3. Raft Consensus - 詳細:**
+**3. Raft Consensus - Chi tiết:**
 
 ```
 ┌────────────────────────────────────────────────────────────┐
@@ -8135,11 +8514,11 @@ SETUP: 5 Orderer Nodes (Org1, Org2, Org3, Org4, Org5)
 
 [Step 1] Leader Election
 │
-├─ 起動時、すべての nodes が "Follower" 状態
-├─ Timeout 後、1 つの node が "Candidate" として自己推薦
-├─ Candidate が投票リクエストを送信
-├─ 他の nodes が投票
-└─ 50% 以上の投票を得た Node → Leader になる
+├─ On start, all nodes are in "Follower" state
+├─ After timeout, one node nominates itself as "Candidate"
+├─ Candidate sends vote request
+├─ Other nodes vote
+└─ Node with >50% votes → Becomes Leader
 
     Node1 (Leader) ←─── Heartbeat ───→ Node2 (Follower)
          │                                    ↓
@@ -8147,47 +8526,47 @@ SETUP: 5 Orderer Nodes (Org1, Org2, Org3, Org4, Org5)
                         ↓
                    Node5 (Follower)
 
-[Step 2] 通常運用
+[Step 2] Normal Operation
 │
-├─ Client が Leader に transaction を送信
+├─ Client sends transaction to Leader
 │
-├─ Leader が log に追加:
+├─ Leader appends to log:
 │  Log: [tx1, tx2, tx3, tx4, tx5, ...]
 │
-├─ Leader が log を Followers に複製:
+├─ Leader replicates log to Followers:
 │  Leader → Node2: [tx1, tx2, tx3]
 │  Leader → Node3: [tx1, tx2, tx3]
 │  Leader → Node4: [tx1, tx2, tx3]
 │  Leader → Node5: [tx1, tx2, tx3]
 │
-├─ Followers が自分の log に追加
+├─ Followers append to their own log
 │
-├─ Followers が Leader に ACK を送信
+├─ Followers send ACK to Leader
 │
-└─ Leader が 50% 以上の ACKs を受信 → Commit
-   • Block を作成
-   • Block をすべての peers に broadcast
-   • Finalized！
+└─ Leader receives >50% ACKs → Commit
+   • Create block
+   • Broadcast block to all peers
+   • Finalized!
 
-[Step 3] Leader 障害
+[Step 3] Leader Failure
 │
-├─ Leader がクラッシュ/offline
+├─ Leader crash/offline
 │
-├─ Followers が heartbeat を受信しない
+├─ Followers don't receive heartbeat
 │
-├─ Timeout 後 → 新しい election
+├─ After timeout → New election
 │
-├─ 最も完全な log を持つ Node が選択される
+├─ Node with most complete log is selected
 │
-└─ 新しい leader が続行
+└─ New leader continues
 
 FAULT TOLERANCE:
-• (N-1)/2 nodes の障害に耐えられる
-• 例: 5 nodes → 2 nodes の障害に耐えられる
-• 3 nodes → 1 node の障害に耐えられる
+• Can tolerate (N-1)/2 nodes fail
+• Example: 5 nodes → Can tolerate 2 nodes fail
+• 3 nodes → Can tolerate 1 node fail
 ```
 
-**4. Code 例 - Transaction Flow:**
+**4. Code ví dụ - Transaction Flow:**
 
 ```javascript
 // ════════════════════════════════════════════════════════════
@@ -8198,7 +8577,7 @@ FAULT TOLERANCE:
 const { Gateway, Wallets } = require("fabric-network");
 
 async function transferMoney() {
-  // 1. Network に接続
+  // 1. Connect to network
   const wallet = await Wallets.newFileSystemWallet("./wallet");
   const gateway = new Gateway();
   await gateway.connect(connectionProfile, {
@@ -8210,10 +8589,10 @@ async function transferMoney() {
   const network = await gateway.getNetwork("mychannel");
   const contract = network.getContract("banking");
 
-  // 2. Transaction proposal を submit
-  console.log("📤 Transaction proposal を送信中...");
+  // 2. Submit transaction proposal
+  console.log("📤 Sending transaction proposal...");
 
-  // Chaincode が endorsing peers で実行される
+  // Chaincode will be executed on endorsing peers
   const result = await contract.submitTransaction(
     "transfer",
     "Alice", // from
@@ -8221,77 +8600,77 @@ async function transferMoney() {
     "100" // amount
   );
 
-  // 裏側で起こっていること:
+  // Behind the scenes:
   // ────────────────────────────────────────────────────────
-  // Peer1 (Org1) が chaincode を実行:
+  // Peer1 (Org1) executes chaincode:
   //   Read: Alice balance = 500
   //   Read: Bob balance = 200
   //   Write: Alice balance = 400
   //   Write: Bob balance = 300
   //   → Endorsement: Sign(ReadWriteSet)
   //
-  // Peer2 (Org2) が chaincode を実行:
+  // Peer2 (Org2) executes chaincode:
   //   Read: Alice balance = 500
   //   Read: Bob balance = 200
   //   Write: Alice balance = 400
   //   Write: Bob balance = 300
   //   → Endorsement: Sign(ReadWriteSet)
   //
-  // Client が 2 つの endorsements を受信 → Policy を満たす (2 out of 2)
+  // Client receives 2 endorsements → Meets policy (2 out of 2)
   // ────────────────────────────────────────────────────────
 
-  console.log("✅ Transaction が endorsed された！");
+  console.log("✅ Transaction endorsed!");
 
   // ════════════════════════════════════════════════════════════
   // PHASE 2: ORDER (Consensus)
   // ════════════════════════════════════════════════════════════
 
-  // Client が endorsed transaction を Orderer に送信
-  // (SDK が自動的に行う)
+  // Client sends endorsed transaction to Orderer
+  // (SDK does this automatically)
 
   // Orderer (Raft consensus):
   // ────────────────────────────────────────────────────────
   // Leader Orderer:
-  //   1. Transaction を受信
-  //   2. Log に追加: [tx1, tx2, tx3, THIS_TX]
-  //   3. Followers に複製
-  //   4. Majority の ACKs を受信
-  //   5. Block を作成:
+  //   1. Receive transaction
+  //   2. Append to log: [tx1, tx2, tx3, THIS_TX]
+  //   3. Replicate to followers
+  //   4. Receive majority ACKs
+  //   5. Create block:
   //      Block #1001 {
   //        transactions: [tx1, tx2, tx3, THIS_TX],
   //        previousHash: "0x7f8e...",
   //        timestamp: 1704067200
   //      }
-  //   6. Block をすべての peers に broadcast
+  //   6. Broadcast block to all peers
   // ────────────────────────────────────────────────────────
 
-  console.log("📦 Block が作成され broadcast された！");
+  console.log("📦 Block created and broadcast!");
 
   // ════════════════════════════════════════════════════════════
   // PHASE 3: VALIDATE (Commit)
   // ════════════════════════════════════════════════════════════
 
-  // Committing Peers が validate:
+  // Committing Peers validate:
   // ────────────────────────────────────────────────────────
-  // Peer1 が validate:
-  //   ✓ Endorsement policy をチェック (2 out of 2 OK)
-  //   ✓ 署名が有効かチェック
-  //   ✓ Read set をチェック: Alice=500, Bob=200 (まだ有効)
-  //   ✓ 他の transactions との競合なし
-  //   → VALID → Ledger を更新
+  // Peer1 validates:
+  //   ✓ Check endorsement policy (2 out of 2 OK)
+  //   ✓ Check signatures valid
+  //   ✓ Check read set: Alice=500, Bob=200 (still valid)
+  //   ✓ No conflicts with other transactions
+  //   → VALID → Update ledger
   //
-  // Peer2 が validate:
-  //   ✓ 同じチェック
-  //   → VALID → Ledger を更新
+  // Peer2 validates:
+  //   ✓ Same checks
+  //   → VALID → Update ledger
   // ────────────────────────────────────────────────────────
 
-  console.log("✅ Transaction が ledger に commit された！");
-  console.log("結果:", result.toString());
+  console.log("✅ Transaction committed to ledger!");
+  console.log("Result:", result.toString());
 
-  // FINALITY: Immediate！
-  // Ethereum のような probabilistic finality なし
-  // Reorg なし
-  // Transaction がすぐに finalized
+  // FINALITY: Immediate!
+  // No probabilistic finality like Ethereum
+  // No reorg
+  // Transaction finalized immediately
 
   await gateway.disconnect();
 }
@@ -8299,396 +8678,397 @@ async function transferMoney() {
 transferMoney();
 ```
 
-**5. なぜ Fabric は Ethereum より速いのか？**
+**5. Tại sao Fabric nhanh hơn Ethereum?**
 
 ```
 ETHEREUM PoS:
-├─ すべての nodes がすべての transactions を実行
-├─ ネットワーク全体で consensus (数千の nodes)
-├─ Probabilistic finality (12 分)
-└─ → 遅い (15-30 TPS)
+├─ All nodes execute all transactions
+├─ Consensus across entire network (thousands of nodes)
+├─ Probabilistic finality (12 minutes)
+└─ → Slow (15-30 TPS)
 
 FABRIC:
-├─ Endorsing peers のみが実行 (2-3 peers)
-├─ Ordering service のみで consensus (3-5 nodes)
-├─ Immediate finality (< 1 秒)
-└─ → 速い (3000-20000 TPS)
+├─ Only endorsing peers execute (2-3 peers)
+├─ Consensus only on ordering service (3-5 nodes)
+├─ Immediate finality (< 1 second)
+└─ → Fast (3000-20000 TPS)
 
-具体例:
+Concrete example:
 ─────────────────────────────────────────────────
-Transaction: $100 を送金
+Transaction: Transfer $100
 
 Ethereum:
-  [0s]    Transaction を submit
-  [12s]   Block が proposed
-  [24s]   Block が attested
-  [768s]  Finalized (12 分)
-  → 合計: 12 分 48 秒
+  [0s]    Submit transaction
+  [12s]   Block proposed
+  [24s]   Block attested
+  [768s]  Finalized (12 minutes)
+  → Total: 12 minutes 48 seconds
 
 Fabric:
-  [0s]     Proposal を submit
-  [0.1s]   Endorsements を受信
-  [0.2s]   Raft で ordered
-  [0.3s]   Block が作成された
-  [0.4s]   Validated して committed
-  → 合計: 0.4 秒
+  [0s]     Submit proposal
+  [0.1s]   Endorsements received
+  [0.2s]   Ordered by Raft
+  [0.3s]   Block created
+  [0.4s]   Validated and committed
+  → Total: 0.4 seconds
 ```
 
 **6. Trade-offs:**
 
 ```
 ETHEREUM PoS:
-✅ Decentralized (数千の nodes)
+✅ Decentralized (thousands of nodes)
 ✅ Censorship resistant
-✅ Public で transparent
-❌ 遅い
-❌ 高い (gas fees)
-❌ Private ではない
+✅ Public and transparent
+❌ Slow
+❌ Expensive (gas fees)
+❌ Not private
 
 FABRIC RAFT:
-✅ 非常に速い
+✅ Very fast
 ✅ Free transactions
 ✅ Private data
-❌ より centralized (より少ない nodes)
-❌ Consortium を信頼する必要がある
-❌ Public ではない
+❌ More centralized (fewer nodes)
+❌ Requires trust in consortium
+❌ Not public
 ```
 
 ---
 
-#### ❓ Consensus Mechanism に関するよくある質問
+#### ❓ Câu hỏi Thường gặp về Cơ chế Đồng thuận
 
-**Q1: なぜ Ethereum PoS は finalized に 12 分かかり、Fabric は < 1 秒なのか？**
+**Q1: Tại sao Ethereum PoS cần 12 phút để finalized, còn Fabric chỉ cần < 1 giây?**
 
 ```
 Ethereum PoS:
 ─────────────────────────────────────────────────────────
-問題: Chain fork がないことを保証する必要がある
+Vấn đề: Phải đảm bảo KHÔNG có chain fork
 
 Timeline:
-  0:00  → Transaction が block 1000 に入る
+  0:00  → Transaction vào block 1000
   6:24  → Checkpoint 1 (Block 1032) - JUSTIFIED
-          ⚠️  まだ fork の可能性あり！
+          ⚠️  Vẫn có thể có fork!
   12:48 → Checkpoint 2 (Block 1064) - FINALIZED
-          ✅ Fork がないことを確認！
+          ✅ Chắc chắn không có fork!
 
-2 つの checkpoints が必要な理由:
-  • Checkpoint 1: "この Block は有効" を証明
-  • Checkpoint 2: "他の chain がない" を証明
-  • 1 つの checkpoint のみ → Fork 攻撃の可能性
+Lý do cần 2 checkpoints:
+  • Checkpoint 1: Chứng minh "Block này hợp lệ"
+  • Checkpoint 2: Chứng minh "Không có chain nào khác"
+  • Nếu chỉ 1 checkpoint → Có thể bị tấn công fork
 
-Fork の例:
+Ví dụ Fork:
                     ┌─→ Chain A (100 validators)
   Block 1032 ──────┤
                     └─→ Chain B (80 validators)
 
-  Checkpoint 2 の後:
-  → Chain A が勝つ (より多くの validators)
-  → Chain B が削除される
-  → Chain A の Block 1000-1032 = FINALIZED
+  Sau checkpoint 2:
+  → Chain A thắng (nhiều validators hơn)
+  → Chain B bị loại bỏ
+  → Block 1000-1032 trên Chain A = FINALIZED
 
 
 Fabric Raft:
 ─────────────────────────────────────────────────────────
-問題: 設計上、絶対に fork しない
+Vấn đề: KHÔNG BAO GIỜ có fork (by design)
 
 Timeline:
-  0.0s → Client が transaction を送信
-  0.1s → Endorsing peers が実行
-  0.2s → Leader Orderer が受信
-  0.3s → Followers が ACK (majority)
-  0.4s → FINALIZED！
+  0.0s → Client gửi transaction
+  0.1s → Endorsing peers execute
+  0.2s → Leader Orderer nhận
+  0.3s → Followers ACK (majority)
+  0.4s → FINALIZED!
 
-速い理由:
-  • Leader が 1 つのみ → 2 つの chains は不可能
-  • Majority vote → すぐに結果がわかる
-  • 複数の blocks を待つ必要なし
-  • Deterministic (ランダムではない)
+Lý do nhanh:
+  • CHỈ có 1 Leader → Không thể có 2 chains
+  • Majority vote → Ngay lập tức biết kết quả
+  • Không cần chờ nhiều blocks
+  • Deterministic (không random)
 
 Trade-off:
-  ✅ 速い
-  ❌ より centralized (3-5 orderers のみ)
-  ❌ Consortium を信頼する必要がある
+  ✅ Nhanh
+  ❌ Centralized hơn (chỉ 3-5 orderers)
+  ❌ Cần trust consortium
 ```
 
-**Q2: 1000 ETH を送金した場合、いつ受取人が確実に資金を受け取ったと言えるか？**
+**Q2: Nếu tôi gửi 1000 ETH, bao giờ tôi chắc chắn người nhận đã có tiền?**
 
 ```
 Ethereum:
 ─────────────────────────────────────────────────────────
-時間経過による安全性レベル:
+Mức độ an toàn theo thời gian:
 
-0 confirmations (0 秒):
-  ⚠️⚠️⚠️ 危険！
-  • Transaction が reject される可能性
-  • Replace される可能性 (higher gas)
-  • このレベルでは絶対に信頼しない
+0 confirmations (0 giây):
+  ⚠️⚠️⚠️ NGUY HIỂM!
+  • Transaction có thể bị reject
+  • Có thể bị replace (higher gas)
+  • KHÔNG BAO GIỜ tin tưởng ở mức này
 
-1-5 confirmations (12-60 秒):
-  ⚠️⚠️ 高リスク
-  • Re-org の可能性あり
-  • 小額の取引のみ OK (< $100)
-  • 例: コーヒーを買う
+1-5 confirmations (12-60 giây):
+  ⚠️⚠️ RỦI RO CAO
+  • Có thể bị re-org
+  • Chỉ OK cho giao dịch nhỏ (< $100)
+  • Ví dụ: Mua cafe
 
-12 confirmations (~2.4 分):
-  ⚠️ 中リスク
-  • Re-org の確率は非常に低い (~0.01%)
-  • 中額の取引 OK ($100-$10,000)
-  • 例: オンラインショッピング
+12 confirmations (~2.4 phút):
+  ⚠️ RỦI RO TRUNG BÌNH
+  • Xác suất re-org rất thấp (~0.01%)
+  • OK cho giao dịch vừa ($100-$10,000)
+  • Ví dụ: Mua hàng online
 
-64 confirmations (~12.8 分):
-  ✅ 安全
-  • Finalized！ Revert 不可能
-  • 高額の取引 OK (> $10,000)
-  • 例: 取引所への入金、不動産購入
+64 confirmations (~12.8 phút):
+  ✅ AN TOÀN
+  • Finalized! Không thể revert
+  • OK cho giao dịch lớn (> $10,000)
+  • Ví dụ: Nạp tiền vào sàn, mua nhà
 
 Best Practice:
-  • 取引 < $100: 1-5 confirmations を待つ
-  • 取引 $100-$10K: 12 confirmations を待つ
-  • 取引 > $10K: 64 confirmations を待つ (finalized)
+  • Giao dịch < $100: Chờ 1-5 confirmations
+  • Giao dịch $100-$10K: Chờ 12 confirmations
+  • Giao dịch > $10K: Chờ 64 confirmations (finalized)
 
 
 Fabric:
 ─────────────────────────────────────────────────────────
-安全性レベル:
+Mức độ an toàn:
 
-< 1 秒:
-  ✅ 100% 安全！
+< 1 giây:
+  ✅ AN TOÀN 100%!
   • Immediate finality
-  • Confirmations なし
-  • Re-org なし
-  • Transaction がすぐに FINALIZED
+  • Không có confirmations
+  • Không có re-org
+  • Transaction đã FINALIZED ngay lập tức
 
-理由:
+Lý do:
   • Raft consensus = Deterministic
-  • Majority vote = 確実
-  • Probabilistic finality なし
+  • Majority vote = Chắc chắn
+  • Không có probabilistic finality
 ```
 
-**Q3: Validator/node が不正をした場合、何が起こるか？**
+**Q3: Điều gì xảy ra nếu validator/node gian lận?**
 
 ```
-Ethereum PoS - Validator の不正:
+Ethereum PoS - Validator Gian lận:
 ─────────────────────────────────────────────────────────
-シナリオ 1: Validator が 2 つの異なる blocks を propose (Double signing)
+Tình huống 1: Validator propose 2 blocks khác nhau (Double signing)
 
   Slot 100:
-    Validator A が propose:
+    Validator A propose:
       - Block X: "Alice → Bob: 10 ETH"
-      - Block Y: "Alice → Charlie: 10 ETH"  (同じ資金！)
+      - Block Y: "Alice → Charlie: 10 ETH"  (cùng tiền!)
 
-  検出:
-    • 他の validators が 2 つの blocks を発見
-    • Network に報告
-    • Proof が on-chain で submit される
+  Phát hiện:
+    • Các validators khác thấy 2 blocks
+    • Báo cáo lên network
+    • Proof được submit on-chain
 
-  罰則:
-    ❌ Validator A が SLASHING される
-    ❌ 1 ETH を失う (~$2,000)
-    ❌ Validator set から kick される
-    ❌ 36 日間 stake できない
+  Hình phạt:
+    ❌ Validator A bị SLASHING
+    ❌ Mất 1 ETH (~$2,000)
+    ❌ Bị kick khỏi validator set
+    ❌ Không thể stake lại trong 36 ngày
 
-シナリオ 2: Validator が矛盾した投票
+Tình huống 2: Validator vote mâu thuẫn
 
   Slot 100:
-    Validator B が投票:
+    Validator B vote:
       - Vote 1: "Block X is valid"
-      - Vote 2: "Block Y is valid" (矛盾！)
+      - Vote 2: "Block Y is valid" (mâu thuẫn!)
 
-  罰則:
-    ❌ 0.5 ETH を失う
-    ❌ Kick される
+  Hình phạt:
+    ❌ Mất 0.5 ETH
+    ❌ Bị kick
 
-シナリオ 3: Validator が長期間 offline
+Tình huống 3: Validator offline quá lâu
 
-  Validator C が 1 週間 offline:
-    • 選ばれても blocks を propose しない
-    • Blocks に投票しない
+  Validator C offline 1 tuần:
+    • Không propose blocks khi được chọn
+    • Không vote cho blocks
 
-  罰則:
-    ❌ 約 0.1 ETH を失う
-    ❌ Kick されない (戻ることができる)
+  Hình phạt:
+    ❌ Mất ~0.1 ETH
+    ❌ Không bị kick (có thể quay lại)
 
-シナリオ 4: 51% 攻撃
+Tình huống 4: Tấn công 51%
 
-  Attacker が必要:
-    • 総 ETH stake の 51%
-    • 約 15 million ETH
-    • 約 $30 billion USD
+  Attacker cần:
+    • 51% tổng số ETH stake
+    • ~15 triệu ETH
+    • ~$30 tỷ USD
 
-  攻撃した場合:
-    ❌ $30 billion をすべて失う (slashing)
-    ❌ ETH の価値が下がる → それでも損失
-    → 経済的に実行不可能！
+  Nếu tấn công:
+    ❌ Mất HẾT $30 tỷ (slashing)
+    ❌ ETH giảm giá → Vẫn lỗ
+    → KHÔNG KHẢ THI về mặt kinh tế!
 
 
-Fabric Raft - Node の不正:
+Fabric Raft - Node Gian lận:
 ─────────────────────────────────────────────────────────
-シナリオ 1: Endorsing Peer の不正
+Tình huống 1: Endorsing Peer gian lận
 
-  Peer A (Org1) が誤って endorse:
-    • 無効な transaction を endorse
-    • 例: Alice が 100 ETH を送金するが 50 しか持っていない
+  Peer A (Org1) endorse sai:
+    • Endorse transaction không hợp lệ
+    • Ví dụ: Alice chuyển 100 ETH nhưng chỉ có 50
 
-  検出:
-    • Committing peers が validate
-    • Read/write set が無効であることを検出
-    • Transaction が INVALID とマークされる
+  Phát hiện:
+    • Committing peers validate
+    • Phát hiện read/write set không hợp lệ
+    • Transaction bị mark as INVALID
 
-  罰則:
-    ⚠️  自動罰則なし！
-    • 他の orgs が検出
-    • Consortium 会議
-    • Org1 の certificate を revoke できる
-    • Org1 を network から kick
+  Hình phạt:
+    ⚠️  Không có hình phạt tự động!
+    • Các org khác phát hiện
+    • Họp consortium
+    • Có thể revoke certificate của Org1
+    • Kick Org1 ra khỏi network
 
-シナリオ 2: Leader Orderer の不正
+Tình huống 2: Leader Orderer gian lận
 
-  Leader が試みる:
-    • Transactions の順序を変更
-    • 一部の transactions を無視
+  Leader cố gắng:
+    • Thay đổi thứ tự transactions
+    • Bỏ qua một số transactions
 
-  検出:
-    • Follower orderers が異なる log を持つ
-    • Majority が同意しない
-    • Leader が reject される
+  Phát hiện:
+    • Follower orderers có log khác
+    • Majority không đồng ý
+    • Leader bị reject
 
-  結果:
-    • Leader が kick される
-    • 新しい leader を選出
-    • システムは通常通り動作を続ける
+  Kết quả:
+    • Leader bị kick
+    • Bầu leader mới
+    • Network tiếp tục hoạt động
 
-シナリオ 3: Majority 攻撃
+Tình huống 3: Tấn công Majority
 
-  Attacker が必要:
-    • Orderers の >50% を制御
-    • 例: 5 つのうち 3 つの orderers
+  Attacker cần:
+    • Kiểm soát >50% orderers
+    • Ví dụ: 3/5 orderers
 
-  攻撃した場合:
-    ✅ 不正が可能！
-    • Transactions を変更できる
-    • Censorship できる
+  Nếu tấn công:
+    ✅ CÓ THỂ gian lận!
+    • Có thể thay đổi transactions
+    • Có thể censorship
 
-  予防:
-    • 信頼できる consortium を選択
-    • 多くの独立した orgs
-    • Orgs 間の法的契約
+  Phòng ngừa:
+    • Chọn consortium đáng tin cậy
+    • Nhiều orgs độc lập
+    • Legal contracts giữa các orgs
 ```
 
-**Q4: なぜ Ethereum を Fabric のように速くできないのか？**
+**Q4: Tại sao không làm Ethereum nhanh như Fabric?**
 
 ```
-問題: Decentralization vs Speed の Trade-off
+Vấn đề: Trade-off giữa Decentralization vs Speed
 
-Ethereum PoS (遅いが Decentralized):
+Ethereum PoS (Chậm nhưng Decentralized):
 ─────────────────────────────────────────────────────────
-なぜ遅いのか？
-  1. 多くの validators (1,000,000 validators)
-     → 多くの人からの投票を待つ必要がある
-     → 時間がかかる
+Tại sao chậm?
+  1. Nhiều validators (1,000,000 validators)
+     → Phải đợi votes từ nhiều người
+     → Mất thời gian
 
-  2. すべての nodes がすべての transactions を実行
-     → すべての node が verify する必要がある
+  2. Tất cả nodes execute tất cả transactions
+     → Mọi node phải verify
      → Bottleneck
 
   3. Probabilistic finality
-     → 確実にするため 2 epochs 待つ必要がある
-     → 12 分
+     → Phải chờ 2 epochs để chắc chắn
+     → 12 phút
 
   4. Byzantine Fault Tolerance
-     → 33% の悪意ある validators に対抗する必要がある
-     → 複数ラウンドの投票が必要
+     → Phải chống được 33% validators ác ý
+     → Cần nhiều rounds voting
 
-利点:
-  ✅ 誰でも参加できる
-  ✅ Censorship できない
-  ✅ 誰も信頼する必要がない
-  ✅ 真に decentralized
+Ưu điểm:
+  ✅ Bất kỳ ai cũng có thể tham gia
+  ✅ Không thể censorship
+  ✅ Không cần trust ai
+  ✅ Truly decentralized
 
 
-Fabric Raft (速いがより Centralized):
+Fabric Raft (Nhanh nhưng Centralized hơn):
 ─────────────────────────────────────────────────────────
-なぜ速いのか？
-  1. 少ない nodes (3-10 orderers)
-     → すぐに consensus に達する
-     → < 1 秒
+Tại sao nhanh?
+  1. Ít nodes (3-10 orderers)
+     → Nhanh chóng đạt consensus
+     → < 1 giây
 
-  2. Endorsing peers のみが実行
-     → すべての nodes ではない
+  2. Chỉ endorsing peers execute
+     → Không phải tất cả nodes
      → Parallel execution
 
   3. Immediate finality
-     → Majority vote = すぐに Finalized
-     → 待つ必要なし
+     → Majority vote = Finalized ngay
+     → Không cần chờ
 
-  4. Crash Fault Tolerance (Byzantine ではない)
-     → 仮定: Nodes は悪意がない
-     → >50% の投票のみ必要
+  4. Crash Fault Tolerance (không phải Byzantine)
+     → Giả định: Nodes không ác ý
+     → Chỉ cần >50% vote
 
-欠点:
-  ❌ Consortium のみが参加できる
-  ❌ Censorship できる (majority が同意すれば)
-  ❌ Consortium を信頼する必要がある
-  ❌ より centralized
+Nhược điểm:
+  ❌ Chỉ consortium được tham gia
+  ❌ Có thể censorship (nếu majority đồng ý)
+  ❌ Phải trust consortium
+  ❌ Centralized hơn
 
-結論:
-  • 両方は持てない！
-  • 選択が必要: Decentralized OR Fast
-  • Ethereum は Decentralized を選択
-  • Fabric は Fast を選択
+
+Kết luận:
+  • Không thể có cả 2!
+  • Phải chọn: Decentralized OR Fast
+  • Ethereum chọn Decentralized
+  • Fabric chọn Fast
 ```
 
-**Q5: いつ Ethereum を使うべきか？ いつ Fabric を使うべきか？**
+**Q5: Khi nào nên dùng Ethereum? Khi nào nên dùng Fabric?**
 
 ```
-Ethereum を使う場合:
+Dùng Ethereum khi:
 ─────────────────────────────────────────────────────────
-✅ Decentralization が必要
-   → DeFi、DAO、Public applications
+✅ Cần decentralization
+   → DeFi, DAO, Public applications
 
-✅ Trustless が必要
-   → どの組織も信頼したくない
+✅ Cần trustless
+   → Không muốn trust bất kỳ tổ chức nào
 
-✅ Public & transparent が必要
-   → 誰でも verify できる
+✅ Cần public & transparent
+   → Mọi người đều có thể verify
 
-✅ Composability が必要
-   → Smart contracts がお互いを呼び出す
-   → 例: Uniswap + Aave + Compound
+✅ Cần composability
+   → Smart contracts gọi nhau
+   → Ví dụ: Uniswap + Aave + Compound
 
-✅ Token economics が必要
-   → ICO、IDO、NFT、Governance token
+✅ Cần token economics
+   → ICO, IDO, NFT, Governance token
 
-例:
+Ví dụ:
   • Uniswap (DEX)
   • Aave (Lending)
   • OpenSea (NFT Marketplace)
   • MakerDAO (Stablecoin)
 
 
-Fabric を使う場合:
+Dùng Fabric khi:
 ─────────────────────────────────────────────────────────
-✅ Privacy が必要
-   → パートナー間の機密データ
-   → 例: 価格、契約、顧客情報
+✅ Cần privacy
+   → Dữ liệu nhạy cảm giữa các đối tác
+   → Ví dụ: Giá, hợp đồng, thông tin khách hàng
 
-✅ High throughput が必要
+✅ Cần high throughput
    → 3000-20000 TPS
-   → 例: 数百万の transactions がある supply chain
+   → Ví dụ: Supply chain với hàng triệu transactions
 
-✅ Immediate finality が必要
-   → 12 分待てない
-   → 例: Trade finance、payments
+✅ Cần immediate finality
+   → Không thể chờ 12 phút
+   → Ví dụ: Trade finance, payments
 
-✅ Compliance が必要
-   → KYC/AML、GDPR、HIPAA
-   → 参加者の実際の ID を知る
+✅ Cần compliance
+   → KYC/AML, GDPR, HIPAA
+   → Biết rõ danh tính participants
 
-✅ Free transactions が必要
-   → Gas fees を払いたくない
-   → Infrastructure cost のみ
+✅ Cần free transactions
+   → Không muốn trả gas fees
+   → Infrastructure cost only
 
-例:
+Ví dụ:
   • IBM Food Trust (Supply chain)
   • we.trade (Trade finance)
   • MedRec (Healthcare records)
@@ -8697,7 +9077,7 @@ Fabric を使う場合:
 
 ---
 
-**7. まとめ:**
+**7. Tóm tắt:**
 
 | Aspect               | Ethereum PoS             | Fabric Raft                |
 | -------------------- | ------------------------ | -------------------------- |
@@ -8706,38 +9086,38 @@ Fabric を使う場合:
 | **Consensus Type**   | Nakamoto-style           | CFT (Crash Fault Tolerant) |
 | **Finality**         | Probabilistic → Absolute | Immediate                  |
 | **Speed**            | 15-30 TPS                | 3000-20000 TPS             |
-| **Time to Finality** | 約 12 分                 | < 1 秒                     |
-| **Energy**           | 低い                     | 非常に低い                 |
+| **Time to Finality** | ~12 minutes              | < 1 second                 |
+| **Energy**           | Low                      | Very low                   |
 | **Fault Tolerance**  | 33% Byzantine            | 50% Crash                  |
-| **Best for**         | Public DApps、DeFi       | Enterprise、B2B            |
+| **Best for**         | Public DApps, DeFi       | Enterprise, B2B            |
 
-**Transaction Flow の比較:**
+**So sánh Transaction Flow:**
 
 **Ethereum:**
 
 ```
 User → MetaMask → RPC Node → Mempool
-→ Validator が tx を選択 → 実行 → Block が proposed
-→ Attestations → Block が finalized (12 blocks 後)
+→ Validator picks tx → Execute → Block proposed
+→ Attestations → Block finalized (12 blocks later)
 
-⏱️ 合計: Finality まで約 12 分
-💰 Gas fee: $5-50 (network congestion に依存)
+⏱️ Total: ~12 minutes for finality
+💰 Gas fee: $5-50 (depends on network congestion)
 ```
 
 **Fabric:**
 
 ```
-Client → Endorsing Peers (並列実行)
+Client → Endorsing Peers (parallel execution)
 → Ordering Service → Committing Peers
-→ Ledger が更新される
+→ Ledger updated
 
-⏱️ 合計: < 1 秒
-💰 Fee なし (infrastructure cost のみ)
+⏱️ Total: < 1 second
+💰 No fee (only infrastructure cost)
 ```
 
 ---
 
-#### 🏗️ 4. Smart Contract アーキテクチャ
+#### 🏗️ 4. Kiến trúc Smart Contract
 
 **Ethereum Smart Contract:**
 
@@ -8748,9 +9128,9 @@ pragma solidity ^0.8.0;
 contract SimpleStorage {
     uint256 private value;
 
-    // State が blockchain に保存される
-    // すべての nodes が execute
-    // 各 operation に Gas fee
+    // State được lưu trên blockchain
+    // Tất cả nodes đều execute
+    // Gas fee cho mỗi operation
 
     function setValue(uint256 newValue) public {
         value = newValue; // Cost: ~5000 gas
@@ -8773,15 +9153,15 @@ contract SimpleStorage {
 const { Contract } = require("fabric-contract-api");
 
 class SimpleStorage extends Contract {
-  // State が channel ledger に保存される
-  // endorsing peers のみが execute
-  // Gas fee なし
+  // State được lưu trên channel ledger
+  // Chỉ endorsing peers execute
+  // Không có gas fee
 
   async setValue(ctx, newValue) {
-    // Identity を確認
+    // Kiểm tra identity
     const clientId = ctx.clientIdentity.getID();
 
-    // 権限を確認（ACL）
+    // Kiểm tra quyền (ACL)
     const org = ctx.clientIdentity.getMSPID();
     if (org !== "Org1MSP") {
       throw new Error("Unauthorized");
@@ -8789,7 +9169,7 @@ class SimpleStorage extends Contract {
 
     await ctx.stub.putState("myValue", Buffer.from(newValue));
 
-    // Event を emit
+    // Emit event
     ctx.stub.setEvent("ValueChanged", Buffer.from(newValue));
   }
 
@@ -8799,144 +9179,64 @@ class SimpleStorage extends Contract {
   }
 }
 
-// Deploy: Free（approve のみ必要）
+// Deploy: Free (chỉ cần approve)
 // Write: Free
 // Read: Free
 ```
 
-**主な違い:**
+**Khác biệt chính:**
 
-| **Aspect**         | **Ethereum**      | **Fabric**           |
-| ------------------ | ----------------- | -------------------- |
-| **Language**       | Solidity          | Go, Node.js, Java    |
-| **Execution**      | All nodes         | Endorsing peers only |
-| **State**          | Global            | Per channel          |
-| **Cost**           | Gas fee           | Infrastructure only  |
-| **Upgrade**        | 困難（immutable） | 簡単（versioning）   |
-| **Access Control** | Code-based        | Identity-based       |
-
----
-
-#### 🏗️ 4. Smart Contract アーキテクチャ
-
-**Ethereum Smart Contract:**
-
-```solidity
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
-
-contract SimpleStorage {
-    uint256 private value;
-
-    // State が blockchain に保存される
-    // すべての nodes が execute
-    // 各 operation に Gas fee
-
-    function setValue(uint256 newValue) public {
-        value = newValue; // Cost: ~5000 gas
-    }
-
-    function getValue() public view returns (uint256) {
-        return value; // Free (read-only)
-    }
-}
-
-// Deploy: ~100,000 gas (~$5-20)
-// Write: ~5,000 gas (~$0.5-2)
-// Read: Free
-```
-
-**Fabric Chaincode:**
-
-```javascript
-// Node.js Chaincode
-const { Contract } = require("fabric-contract-api");
-
-class SimpleStorage extends Contract {
-  // State が channel ledger に保存される
-  // endorsing peers のみが execute
-  // Gas fee なし
-
-  async setValue(ctx, newValue) {
-    // Identity を確認
-    const clientId = ctx.clientIdentity.getID();
-
-    // 権限を確認（ACL）
-    const org = ctx.clientIdentity.getMSPID();
-    if (org !== "Org1MSP") {
-      throw new Error("Unauthorized");
-    }
-
-    await ctx.stub.putState("myValue", Buffer.from(newValue));
-
-    // Event を emit
-    ctx.stub.setEvent("ValueChanged", Buffer.from(newValue));
-  }
-
-  async getValue(ctx) {
-    const valueBytes = await ctx.stub.getState("myValue");
-    return valueBytes.toString();
-  }
-}
-
-// Deploy: Free（approve のみ必要）
-// Write: Free
-// Read: Free
-```
-
-**主な違い:**
-
-| **Aspect**         | **Ethereum**      | **Fabric**           |
-| ------------------ | ----------------- | -------------------- |
-| **Language**       | Solidity          | Go, Node.js, Java    |
-| **Execution**      | All nodes         | Endorsing peers only |
-| **State**          | Global            | Per channel          |
-| **Cost**           | Gas fee           | Infrastructure only  |
-| **Upgrade**        | 困難（immutable） | 簡単（versioning）   |
-| **Access Control** | Code-based        | Identity-based       |
+| **Aspect**         | **Ethereum**    | **Fabric**           |
+| ------------------ | --------------- | -------------------- |
+| **Language**       | Solidity        | Go, Node.js, Java    |
+| **Execution**      | All nodes       | Endorsing peers only |
+| **State**          | Global          | Per channel          |
+| **Cost**           | Gas fee         | Infrastructure only  |
+| **Upgrade**        | Khó (immutable) | Dễ (versioning)      |
+| **Access Control** | Code-based      | Identity-based       |
 
 ---
 
-### 7.4. どのプラットフォームをいつ使うか？
+### 7.4. Khi nào dùng nền tảng nào?
 
-#### 🎯 Ethereum を選択する場合:
+#### 🎯 Chọn Ethereum khi:
 
-**✅ 適した Use Cases:**
+**✅ Use Cases phù hợp:**
 
 **1. Token & Cryptocurrency**
 
 ```
-Example: プロジェクト向け Token 発行
+Example: Token issuance for projects
 - ICO/IDO
 - Utility token
 - Governance token
 - Stablecoin
 
-理由: Ethereum は最強の token エコシステムを持つ
+Reason: Ethereum has the strongest token ecosystem
 ```
 
 **2. DeFi (Decentralized Finance)**
 
 ```
-Example: DEX、Lending、Staking
+Example: DEX, Lending, Staking
 - Uniswap: AMM DEX
 - Aave: Lending protocol
 - Compound: Money market
 - Curve: Stablecoin swap
 
-理由: Decentralization と composability が必要
+Reason: Requires decentralization and composability
 ```
 
 **3. NFT & Digital Assets**
 
 ```
-Example: NFT marketplace、Game items
+Example: NFT marketplace, Game items
 - OpenSea: NFT trading
 - Axie Infinity: GameFi
 - Decentraland: Metaverse
 - Art collectibles
 
-理由: Ownership verification と liquidity が必要
+Reason: Requires ownership verification and liquidity
 ```
 
 **4. DAO & Governance**
@@ -8947,7 +9247,7 @@ Example: Decentralized organizations
 - Aragon: DAO framework
 - Snapshot: Voting
 
-理由: Transparency と trustless voting が必要
+Reason: Requires transparency and trustless voting
 ```
 
 **5. Public Crowdfunding**
@@ -8958,47 +9258,47 @@ Example: Community fundraising
 - NFT presale
 - Public fundraising
 
-理由: Global audience へのアクセス
+Reason: Access to global audience
 ```
 
 **6. Cross-border Payments**
 
 ```
-Example: 国際送金
+Example: International money transfer
 - USDT/USDC transfers
 - Remittance
 - Micropayments
 
-理由: 仲介銀行が不要
+Reason: No intermediary banks needed
 ```
 
 ---
 
-#### 🏢 Hyperledger Fabric を選択する場合:
+#### 🏢 Chọn Hyperledger Fabric khi:
 
-**✅ 適した Use Cases:**
+**✅ Use Cases phù hợp:**
 
 **1. Supply Chain Management**
 
 ```
-Example: 製品の出所追跡
+Example: Product provenance tracking
 - IBM Food Trust (Walmart)
 - TradeLens (Maersk shipping)
 - Everledger (Diamond tracking)
 
-理由:
-- パートナー間の privacy が必要
-- 機密データ（価格、契約）
+Reason:
+- Requires privacy between partners
+- Sensitive data (prices, contracts)
 - High throughput
-- Compliance 要件
+- Compliance requirements
 
 Code example:
 ```
 
 ```javascript
-// Fabric: 価格用の Private data
+// Fabric: Private data cho giá
 async function createShipment(ctx, shipmentId, product, quantity) {
-  // Public data（すべての channel メンバーに表示）
+  // Public data (visible to all channel members)
   const shipment = {
     shipmentId,
     product,
@@ -9008,7 +9308,7 @@ async function createShipment(ctx, shipmentId, product, quantity) {
   };
   await ctx.stub.putState(shipmentId, Buffer.from(JSON.stringify(shipment)));
 
-  // Private data（buyer と seller のみ）
+  // Private data (only between buyer and seller)
   const privateData = {
     price: 10000,
     discount: 5,
@@ -9026,11 +9326,11 @@ async function createShipment(ctx, shipmentId, product, quantity) {
 
 ```
 Example: Trade finance
-- we.trade（14 の欧州銀行）
-- Contour（Letter of Credit）
-- Marco Polo（Trade finance）
+- we.trade (14 European banks)
+- Contour (Letter of Credit)
+- Marco Polo (Trade finance)
 
-理由:
+Reason:
 - KYC/AML compliance
 - Regulatory requirements
 - Multi-party workflows
@@ -9052,22 +9352,22 @@ Bank B → Verify documents → Pay seller
   ↓
 Bank A → Reimburse Bank B → Debit buyer
 
-✅ すべてのステップが Fabric に記録される
-✅ 関係者のみがデータを閲覧
+✅ All steps recorded on Fabric
+✅ Only involved parties see data
 ✅ Immediate settlement
 ```
 
 **3. Healthcare Records**
 
 ```
-Example: 電子健康記録
+Example: Electronic health records
 - MedRec (MIT)
-- Guardtime（エストニアの healthcare）
-- BurstIQ（Health data marketplace）
+- Guardtime (Estonia healthcare)
+- BurstIQ (Health data marketplace)
 
-理由:
-- HIPAA compliance（US）
-- GDPR compliance（EU）
+Reason:
+- HIPAA compliance (US)
+- GDPR compliance (EU)
 - Patient privacy
 - Granular access control
 - Audit trail
@@ -9076,12 +9376,12 @@ Example:
 ```
 
 ```javascript
-// 認可された医師のみが閲覧可能
+// Only authorized doctors can view
 async function getPatientRecord(ctx, patientId) {
-  // Caller が認可されているか確認
+  // Check if caller is authorized
   const doctorId = ctx.clientIdentity.getID();
 
-  // ACL で permission を確認
+  // Check permission in ACL
   const permissionKey = `permission_${patientId}_${doctorId}`;
   const permissionBytes = await ctx.stub.getState(permissionKey);
 
@@ -9089,7 +9389,7 @@ async function getPatientRecord(ctx, patientId) {
     throw new Error("Unauthorized: No permission to access this record");
   }
 
-  // Patient record を返す
+  // Return patient record
   const recordBytes = await ctx.stub.getPrivateData(
     "patientRecords",
     patientId
@@ -9102,11 +9402,11 @@ async function getPatientRecord(ctx, patientId) {
 
 ```
 Example: Digital identity management
-- Sovrin（Self-sovereign identity）
-- uPort（Digital identity）
-- Civic（Identity verification）
+- Sovrin (Self-sovereign identity)
+- uPort (Digital identity)
+- Civic (Identity verification)
 
-理由:
+Reason:
 - Verifiable credentials
 - Privacy-preserving
 - Selective disclosure
@@ -9122,21 +9422,21 @@ Example: Asset tracking
 - Vehicle history
 - Warranty management
 
-理由:
+Reason:
 - High transaction volume
 - Low latency
 - Private data
-- Enterprise systems との統合
+- Integration with enterprise systems
 ```
 
 **6. Insurance Claims**
 
 ```
-Example: 保険金請求処理
-- B3i（Blockchain Insurance Industry Initiative）
+Example: Insurance claims processing
+- B3i (Blockchain Insurance Industry Initiative)
 - RiskBlock Alliance
 
-理由:
+Reason:
 - Multi-party process
 - Fraud prevention
 - Automated claims processing
@@ -9145,68 +9445,68 @@ Example: 保険金請求処理
 
 ---
 
-### 7.5. Decision Matrix（意思決定マトリックス）
+### 7.5. Decision Matrix (Ma trận quyết định)
 
-#### 📋 プラットフォーム選択のための質問表:
+#### 📋 Bảng câu hỏi để chọn nền tảng:
 
-| **質問**                                     | **Ethereum** | **Fabric** |
-| -------------------------------------------- | ------------ | ---------- |
-| データは公開可能か？                         | ✅ Yes       | ❌ No      |
-| Cryptocurrency/token が必要か？              | ✅ Yes       | ❌ No      |
-| 最大限の decentralization が必要か？         | ✅ Yes       | ❌ No      |
-| ユーザーは public/anonymous か？             | ✅ Yes       | ❌ No      |
-| KYC/AML compliance が必要か？                | ❌ No        | ✅ Yes     |
-| データは機密/秘密か？                        | ❌ No        | ✅ Yes     |
-| High throughput（>1000 TPS）が必要か？       | ❌ No        | ✅ Yes     |
-| Immediate finality が必要か？                | ❌ No        | ✅ Yes     |
-| Consortium/partnership があるか？            | ❌ No        | ✅ Yes     |
-| Gas fee の予算が限られているか？             | ❌ No        | ✅ Yes     |
-| Contract を頻繁に upgrade する必要があるか？ | ❌ No        | ✅ Yes     |
-| Regulatory requirements が厳しいか？         | ❌ No        | ✅ Yes     |
+| **Câu hỏi**                          | **Ethereum** | **Fabric** |
+| ------------------------------------ | ------------ | ---------- |
+| Dữ liệu có thể công khai?            | ✅ Yes       | ❌ No      |
+| Cần cryptocurrency/token?            | ✅ Yes       | ❌ No      |
+| Cần decentralization tối đa?         | ✅ Yes       | ❌ No      |
+| Người dùng là public/anonymous?      | ✅ Yes       | ❌ No      |
+| Cần KYC/AML compliance?              | ❌ No        | ✅ Yes     |
+| Dữ liệu nhạy cảm/bí mật?             | ❌ No        | ✅ Yes     |
+| Cần throughput cao (>1000 TPS)?      | ❌ No        | ✅ Yes     |
+| Cần immediate finality?              | ❌ No        | ✅ Yes     |
+| Có consortium/partnership?           | ❌ No        | ✅ Yes     |
+| Ngân sách gas fee hạn chế?           | ❌ No        | ✅ Yes     |
+| Cần upgrade contract thường xuyên?   | ❌ No        | ✅ Yes     |
+| Regulatory requirements nghiêm ngặt? | ❌ No        | ✅ Yes     |
 
-**使用方法:**
+**Cách sử dụng:**
 
-- 各列の ✅ の数を数える
-- ✅ が多い列 → そのプラットフォームを選択
+- Đếm số ✅ ở mỗi cột
+- Cột nào nhiều ✅ hơn → Chọn nền tảng đó
 
 ---
 
-### 📝 パート 7 のまとめ
+### 📝 Tổng kết Phần 7
 
 **Key Takeaways:**
 
 **1. Ethereum:**
 
-- ✅ Public、permissionless、decentralized
-- ✅ 適している: Token、DeFi、NFT、DAO
-- ✅ Global reach、large ecosystem
-- ❌ 遅い、高い、private ではない
+- ✅ Public, permissionless, decentralized
+- ✅ Tốt cho: Token, DeFi, NFT, DAO
+- ✅ Global reach, large ecosystem
+- ❌ Chậm, đắt, không private
 
 **2. Hyperledger Fabric:**
 
-- ✅ Private、permissioned、modular
-- ✅ 適している: Supply chain、Banking、Healthcare
-- ✅ 速い、安い、private
-- ❌ 複雑、consortium が必要
+- ✅ Private, permissioned, modular
+- ✅ Tốt cho: Supply chain, Banking, Healthcare
+- ✅ Nhanh, rẻ, private
+- ❌ Phức tạp, cần consortium
 
 **3. Decision Framework:**
 
 ```
-Public + token が必要？ → Ethereum
-Private + compliance が必要？ → Fabric
-両方が必要？ → Hybrid approach
+Cần public + token? → Ethereum
+Cần private + compliance? → Fabric
+Cần cả hai? → Hybrid approach
 ```
 
-**4. 「最良のプラットフォーム」は存在しない:**
+**4. Không có "nền tảng tốt nhất":**
 
-- 「最も適したプラットフォーム」のみが存在
-- 具体的な use case に依存
-- 選択前に requirements を慎重に検討
+- Chỉ có "nền tảng phù hợp nhất"
+- Phụ thuộc vào use case cụ thể
+- Cân nhắc kỹ requirements trước khi chọn
 
 **5. Future Trends:**
 
-- **Ethereum**: Layer 2 scaling、privacy solutions（zk-SNARKs）
-- **Fabric**: Better tooling、easier deployment
+- **Ethereum**: Layer 2 scaling, privacy solutions (zk-SNARKs)
+- **Fabric**: Better tooling, easier deployment
 - **Interoperability**: Cross-chain bridges
 
 ---

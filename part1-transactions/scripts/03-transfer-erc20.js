@@ -3,14 +3,14 @@ const fs = require("fs");
 require("dotenv").config();
 
 /**
- * Script 3: Demo transfer ERC20 Token
+ * Script 3: Demo ERC20 Token Transfer
  * 
- * Mục đích:
- * - Hiểu cách gọi hàm transfer() của ERC20
- * - Quan sát gas cost (~50,000-65,000 gas)
- * - So sánh với ETH transfer
+ * Purpose:
+ * - Understand how to call ERC20 transfer() function
+ * - Observe gas cost (~50,000-65,000 gas)
+ * - Compare with ETH transfer
  * 
- * Chạy: npx hardhat run scripts/03-transfer-erc20.js --network sepolia
+ * Run: npx hardhat run scripts/03-transfer-erc20.js --network sepolia
  */
 
 async function main() {
@@ -18,7 +18,7 @@ async function main() {
   console.log("=".repeat(60));
   console.log();
 
-  // Đọc địa chỉ contract đã deploy
+  // Read deployed contract address
   let contractAddress;
   try {
     const deployedInfo = fs.readFileSync("deployed-address.txt", "utf8");
@@ -26,22 +26,22 @@ async function main() {
     if (match) {
       contractAddress = match[1];
     } else {
-      throw new Error("Không tìm thấy contract address");
+      throw new Error("Contract address not found");
     }
   } catch (error) {
-    console.log("❌ Chưa deploy contract!");
-    console.log("   Vui lòng chạy: npx hardhat run scripts/01-deploy.js --network sepolia");
+    console.log("❌ Contract not deployed yet!");
+    console.log("   Please run: npx hardhat run scripts/01-deploy.js --network sepolia");
     return;
   }
 
   console.log("📍 Contract Address:", contractAddress);
   console.log();
 
-  // Kết nối với contract
+  // Connect to contract
   const [sender] = await ethers.getSigners();
   const token = await ethers.getContractAt("SimpleERC20", contractAddress);
 
-  // Lấy thông tin token
+  // Get token information
   const name = await token.name();
   const symbol = await token.symbol();
   const decimals = await token.decimals();
@@ -52,14 +52,14 @@ async function main() {
   console.log(`   Decimals: ${decimals}`);
   console.log();
 
-  // Địa chỉ nhận
+  // Recipient address
   const recipientAddress = process.env.RECIPIENT_ADDRESS || "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb";
   console.log("👤 Sender:", sender.address);
   console.log("👤 Recipient:", recipientAddress);
   console.log();
 
-  // Kiểm tra số dư token trước khi chuyển
-  console.log("📊 Số dư Token TRƯỚC khi chuyển:");
+  // Check token balance before transfer
+  console.log("📊 Token Balance BEFORE transfer:");
   const senderBalanceBefore = await token.balanceOf(sender.address);
   const recipientBalanceBefore = await token.balanceOf(recipientAddress);
   
@@ -67,56 +67,56 @@ async function main() {
   console.log(`   Recipient: ${ethers.formatUnits(recipientBalanceBefore, decimals)} ${symbol}`);
   console.log();
 
-  // Kiểm tra số dư ETH (để trả gas)
+  // Check ETH balance (to pay gas)
   const ethBalance = await ethers.provider.getBalance(sender.address);
-  console.log("💰 Số dư ETH (để trả gas):", ethers.formatEther(ethBalance), "ETH");
+  console.log("💰 ETH Balance (to pay gas):", ethers.formatEther(ethBalance), "ETH");
   console.log();
 
-  // Số lượng token muốn chuyển
+  // Amount of tokens to transfer
   const amountToSend = ethers.parseUnits("100", decimals); // 100 tokens
-  console.log("💰 Số lượng chuyển:", ethers.formatUnits(amountToSend, decimals), symbol);
+  console.log("💰 Amount to transfer:", ethers.formatUnits(amountToSend, decimals), symbol);
   console.log();
 
-  // Kiểm tra đủ số dư không
+  // Check sufficient balance
   if (senderBalanceBefore < amountToSend) {
-    console.log("❌ Không đủ token để chuyển!");
+    console.log("❌ Insufficient tokens to transfer!");
     return;
   }
 
-  // Estimate gas cho transfer
-  console.log("⏳ Đang estimate gas...");
+  // Estimate gas for transfer
+  console.log("⏳ Estimating gas...");
   const estimatedGas = await token.transfer.estimateGas(recipientAddress, amountToSend);
   console.log(`📊 Estimated Gas: ${estimatedGas.toString()} gas`);
   
-  // Lấy gas price
+  // Get gas price
   const feeData = await ethers.provider.getFeeData();
   const estimatedCost = estimatedGas * (feeData.maxFeePerGas || 0n);
   console.log(`💸 Estimated Cost: ${ethers.formatEther(estimatedCost)} ETH`);
   console.log();
 
-  // Gửi transaction
-  console.log("⏳ Đang gửi transaction...");
+  // Send transaction
+  console.log("⏳ Sending transaction...");
   const tx = await token.transfer(recipientAddress, amountToSend);
 
-  console.log("✅ Transaction đã gửi!");
+  console.log("✅ Transaction sent!");
   console.log("📍 Transaction Hash:", tx.hash);
-  console.log(`🔗 Xem trên Etherscan: https://sepolia.etherscan.io/tx/${tx.hash}`);
+  console.log(`🔗 View on Etherscan: https://sepolia.etherscan.io/tx/${tx.hash}`);
   console.log();
 
-  // Đợi transaction được mine
-  console.log("⏳ Đang đợi transaction được mine...");
+  // Wait for transaction to be mined
+  console.log("⏳ Waiting for transaction to be mined...");
   const receipt = await tx.wait();
   
-  console.log("✅ Transaction đã được confirm!");
+  console.log("✅ Transaction confirmed!");
   console.log();
 
-  // Thông tin transaction receipt
+  // Transaction receipt information
   console.log("📊 Transaction Receipt:");
   console.log(`   Block Number: ${receipt.blockNumber}`);
   console.log(`   Gas Used: ${receipt.gasUsed.toString()} gas`);
   console.log(`   Effective Gas Price: ${ethers.formatUnits(receipt.gasPrice, "gwei")} gwei`);
   
-  // Tính phí thực tế
+  // Calculate actual cost
   const actualCost = receipt.gasUsed * receipt.gasPrice;
   console.log(`   Transaction Fee: ${ethers.formatEther(actualCost)} ETH`);
   console.log(`   Status: ${receipt.status === 1 ? "✅ Success" : "❌ Failed"}`);
@@ -143,8 +143,8 @@ async function main() {
   }
   console.log();
 
-  // Kiểm tra số dư sau khi chuyển
-  console.log("📊 Số dư Token SAU khi chuyển:");
+  // Check balance after transfer
+  console.log("📊 Token Balance AFTER transfer:");
   const senderBalanceAfter = await token.balanceOf(sender.address);
   const recipientBalanceAfter = await token.balanceOf(recipientAddress);
   
@@ -152,8 +152,8 @@ async function main() {
   console.log(`   Recipient: ${ethers.formatUnits(recipientBalanceAfter, decimals)} ${symbol}`);
   console.log();
 
-  // Tính toán thay đổi
-  console.log("📈 Thay đổi Token:");
+  // Calculate changes
+  console.log("📈 Token Changes:");
   const senderChange = senderBalanceAfter - senderBalanceBefore;
   const recipientChange = recipientBalanceAfter - recipientBalanceBefore;
   
@@ -161,8 +161,8 @@ async function main() {
   console.log(`   Recipient: ${ethers.formatUnits(recipientChange, decimals)} ${symbol}`);
   console.log();
 
-  // So sánh ETH vs ERC20
-  console.log("📊 So sánh ETH Transfer vs ERC20 Transfer:");
+  // Compare ETH vs ERC20
+  console.log("📊 Compare ETH Transfer vs ERC20 Transfer:");
   console.log();
   console.log("   ETH Transfer:");
   console.log("   - Gas Used: ~21,000 gas");
@@ -177,26 +177,26 @@ async function main() {
   console.log("   - Cost: Higher");
   console.log();
 
-  // Giải thích
-  console.log("💡 Tại sao ERC20 tốn gas hơn?");
-  console.log("   1. Phải load contract code từ blockchain");
-  console.log("   2. Phải execute Solidity code (checks, math, storage updates)");
-  console.log("   3. Phải update mapping (storage writes expensive)");
-  console.log("   4. Phải emit events");
+  // Explanation
+  console.log("💡 Why does ERC20 cost more gas?");
+  console.log("   1. Must load contract code from blockchain");
+  console.log("   2. Must execute Solidity code (checks, math, storage updates)");
+  console.log("   3. Must update mapping (storage writes are expensive)");
+  console.log("   4. Must emit events");
   console.log();
-  console.log("   ETH transfer chỉ cần:");
-  console.log("   - Update balance của 2 địa chỉ (built-in)");
-  console.log("   - Không có code execution");
+  console.log("   ETH transfer only needs:");
+  console.log("   - Update balance of 2 addresses (built-in)");
+  console.log("   - No code execution");
   console.log();
 
-  console.log("✨ Demo hoàn tất!");
-  console.log("   Tiếp theo: npx hardhat run scripts/04-approve-transferFrom.js --network sepolia");
+  console.log("✨ Demo complete!");
+  console.log("   Next: npx hardhat run scripts/04-approve-transferFrom.js --network sepolia");
 }
 
 main()
   .then(() => process.exit(0))
   .catch((error) => {
-    console.error("❌ Lỗi:", error);
+    console.error("❌ Error:", error);
     process.exit(1);
   });
 

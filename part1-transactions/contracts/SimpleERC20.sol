@@ -3,10 +3,10 @@ pragma solidity ^0.8.20;
 
 /**
  * @title SimpleERC20
- * @dev Smart contract ERC20 đơn giản để học về transfer, approve, transferFrom
+ * @dev Simple ERC20 smart contract for learning about transfer, approve, transferFrom
  * 
- * Mục đích: Giáo dục - Minh họa các khái niệm cơ bản của ERC20
- * Không dùng cho production!
+ * Purpose: Educational - Illustrates basic concepts of ERC20
+ * Not for production use!
  */
 contract SimpleERC20 {
     // ============ State Variables ============
@@ -16,39 +16,39 @@ contract SimpleERC20 {
     uint8 public decimals;
     uint256 public totalSupply;
     
-    // Mapping lưu số dư của mỗi địa chỉ
+    // Mapping stores balance of each address
     mapping(address => uint256) public balanceOf;
     
-    // Mapping lưu allowance: owner => spender => amount
-    // allowance[owner][spender] = số tiền mà spender được phép tiêu từ owner
+    // Mapping stores allowance: owner => spender => amount
+    // allowance[owner][spender] = amount that spender is allowed to spend from owner
     mapping(address => mapping(address => uint256)) public allowance;
     
     // ============ Events ============
     
     /**
-     * @dev Emit khi có transfer thành công
-     * @param from Địa chỉ gửi
-     * @param to Địa chỉ nhận
-     * @param value Số lượng token
+     * @dev Emitted when transfer is successful
+     * @param from Sender address
+     * @param to Recipient address
+     * @param value Amount of tokens
      */
     event Transfer(address indexed from, address indexed to, uint256 value);
     
     /**
-     * @dev Emit khi có approve thành công
-     * @param owner Chủ sở hữu token
-     * @param spender Địa chỉ được phép tiêu
-     * @param value Số lượng được phép tiêu
+     * @dev Emitted when approve is successful
+     * @param owner Token owner
+     * @param spender Address allowed to spend
+     * @param value Amount allowed to spend
      */
     event Approval(address indexed owner, address indexed spender, uint256 value);
     
     // ============ Constructor ============
     
     /**
-     * @dev Khởi tạo token với thông tin cơ bản
-     * @param _name Tên token (vd: "Kaopiz Coin")
-     * @param _symbol Symbol (vd: "KPC")
-     * @param _decimals Số chữ số thập phân (thường là 18)
-     * @param _initialSupply Số lượng token ban đầu (sẽ mint cho deployer)
+     * @dev Initialize token with basic information
+     * @param _name Token name (e.g., "Kaopiz Coin")
+     * @param _symbol Symbol (e.g., "KPC")
+     * @param _decimals Number of decimals (usually 18)
+     * @param _initialSupply Initial token supply (will be minted to deployer)
      */
     constructor(
         string memory _name,
@@ -60,7 +60,7 @@ contract SimpleERC20 {
         symbol = _symbol;
         decimals = _decimals;
         
-        // Mint toàn bộ supply cho người deploy
+        // Mint entire supply to deployer
         totalSupply = _initialSupply;
         balanceOf[msg.sender] = _initialSupply;
         
@@ -70,16 +70,16 @@ contract SimpleERC20 {
     // ============ Core Functions ============
     
     /**
-     * @dev Chuyển token từ msg.sender đến địa chỉ khác
-     * @param to Địa chỉ nhận
-     * @param amount Số lượng token
-     * @return success True nếu thành công
+     * @dev Transfer tokens from msg.sender to another address
+     * @param to Recipient address
+     * @param amount Amount of tokens
+     * @return success True if successful
      * 
      * Flow:
-     * 1. Kiểm tra số dư của msg.sender
-     * 2. Trừ tiền từ msg.sender
-     * 3. Cộng tiền cho to
-     * 4. Emit event Transfer
+     * 1. Check msg.sender balance
+     * 2. Deduct tokens from msg.sender
+     * 3. Add tokens to recipient
+     * 4. Emit Transfer event
      */
     function transfer(address to, uint256 amount) public returns (bool success) {
         require(to != address(0), "Cannot transfer to zero address");
@@ -94,18 +94,18 @@ contract SimpleERC20 {
     }
     
     /**
-     * @dev Cho phép spender được quyền tiêu token của msg.sender
-     * @param spender Địa chỉ được phép tiêu
-     * @param amount Số lượng token được phép tiêu
-     * @return success True nếu thành công
+     * @dev Allow spender to spend tokens from msg.sender
+     * @param spender Address allowed to spend
+     * @param amount Amount of tokens allowed to spend
+     * @return success True if successful
      * 
      * Use case:
-     * - User approve cho DEX contract
-     * - User approve cho payment gateway
-     * - User approve cho staking contract
+     * - User approves DEX contract
+     * - User approves payment gateway
+     * - User approves staking contract
      * 
-     * ⚠️ Lưu ý: Nên set allowance về 0 trước khi set giá trị mới
-     * để tránh front-running attack
+     * ⚠️ Note: Should set allowance to 0 before setting new value
+     * to avoid front-running attack
      */
     function approve(address spender, uint256 amount) public returns (bool success) {
         require(spender != address(0), "Cannot approve zero address");
@@ -117,25 +117,25 @@ contract SimpleERC20 {
     }
     
     /**
-     * @dev Chuyển token từ địa chỉ from đến địa chỉ to
-     * Chỉ hoạt động nếu msg.sender đã được approve
-     * @param from Địa chỉ gửi (đã approve cho msg.sender)
-     * @param to Địa chỉ nhận
-     * @param amount Số lượng token
-     * @return success True nếu thành công
+     * @dev Transfer tokens from one address to another
+     * Only works if msg.sender has been approved
+     * @param from Sender address (has approved msg.sender)
+     * @param to Recipient address
+     * @param amount Amount of tokens
+     * @return success True if successful
      * 
      * Flow:
-     * 1. Kiểm tra allowance[from][msg.sender] >= amount
-     * 2. Kiểm tra balanceOf[from] >= amount
-     * 3. Trừ allowance
-     * 4. Trừ tiền từ from
-     * 5. Cộng tiền cho to
-     * 6. Emit event Transfer
+     * 1. Check allowance[from][msg.sender] >= amount
+     * 2. Check balanceOf[from] >= amount
+     * 3. Deduct allowance
+     * 4. Deduct tokens from sender
+     * 5. Add tokens to recipient
+     * 6. Emit Transfer event
      * 
      * Use case:
-     * - DEX contract rút tiền từ user để swap
-     * - Payment gateway tự động trừ tiền
-     * - Staking contract lấy token để stake
+     * - DEX contract withdraws tokens from user for swap
+     * - Payment gateway automatically deducts funds
+     * - Staking contract takes tokens to stake
      */
     function transferFrom(
         address from,
@@ -159,9 +159,9 @@ contract SimpleERC20 {
     // ============ Helper Functions ============
     
     /**
-     * @dev Mint thêm token (chỉ để demo, production nên có access control)
-     * @param to Địa chỉ nhận token mới
-     * @param amount Số lượng token mint
+     * @dev Mint additional tokens (for demo only, production should have access control)
+     * @param to Address to receive new tokens
+     * @param amount Amount of tokens to mint
      */
     function mint(address to, uint256 amount) public {
         require(to != address(0), "Cannot mint to zero address");
@@ -173,8 +173,8 @@ contract SimpleERC20 {
     }
     
     /**
-     * @dev Burn token của msg.sender
-     * @param amount Số lượng token burn
+     * @dev Burn tokens from msg.sender
+     * @param amount Amount of tokens to burn
      */
     function burn(uint256 amount) public {
         require(balanceOf[msg.sender] >= amount, "Insufficient balance to burn");

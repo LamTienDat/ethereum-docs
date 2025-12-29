@@ -1,18 +1,18 @@
 /**
  * Script 2: Filter Events by Address
  * 
- * Demo cách filter events theo địa chỉ cụ thể
+ * Demo how to filter events by specific address
  * 
- * Chạy: node 02-filter-by-address.js
+ * Run: node 02-filter-by-address.js
  */
 
 import { ethers } from 'ethers';
 
-// Cấu hình
+// Configuration
 const RPC_URL = 'https://api.zan.top/node/v1/eth/mainnet/7d5a7370dd004a1f913078deb248af07';
 const USDT_ADDRESS = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
 
-// Địa chỉ để test (Binance Hot Wallet - có nhiều giao dịch)
+// Test address (Binance Hot Wallet - has many transactions)
 const TARGET_ADDRESS = '0x28C6c06298d514Db089934071355E5743bf21d60';
 
 const ERC20_ABI = [
@@ -39,19 +39,19 @@ async function main() {
   console.log(`🔍 Scanning blocks ${fromBlock} to ${currentBlock}...\n`);
 
   try {
-    // 1. Lấy giao dịch GỬI ĐI (FROM = target)
+    // 1. Get OUTGOING transactions (FROM = target)
     console.log('📤 Querying OUTGOING transfers...');
     const sentFilter = contract.filters.Transfer(TARGET_ADDRESS, null);
     const sentEvents = await contract.queryFilter(sentFilter, fromBlock, currentBlock);
     console.log(`   Found ${sentEvents.length} outgoing transfers\n`);
 
-    // 2. Lấy giao dịch NHẬN VÀO (TO = target)
+    // 2. Get INCOMING transactions (TO = target)
     console.log('📥 Querying INCOMING transfers...');
     const receivedFilter = contract.filters.Transfer(null, TARGET_ADDRESS);
     const receivedEvents = await contract.queryFilter(receivedFilter, fromBlock, currentBlock);
     console.log(`   Found ${receivedEvents.length} incoming transfers\n`);
 
-    // Hiển thị một số giao dịch gửi đi
+    // Display some outgoing transactions
     if (sentEvents.length > 0) {
       console.log('📤 Sample OUTGOING transfers:');
       console.log('─'.repeat(100));
@@ -68,7 +68,7 @@ async function main() {
       console.log('\n' + '─'.repeat(100));
     }
 
-    // Hiển thị một số giao dịch nhận vào
+    // Display some incoming transactions
     if (receivedEvents.length > 0) {
       console.log('\n📥 Sample INCOMING transfers:');
       console.log('─'.repeat(100));
@@ -85,7 +85,7 @@ async function main() {
       console.log('\n' + '─'.repeat(100));
     }
 
-    // Thống kê
+    // Statistics
     let totalSent = 0n;
     let totalReceived = 0n;
 

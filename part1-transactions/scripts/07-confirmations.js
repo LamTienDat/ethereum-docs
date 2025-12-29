@@ -2,14 +2,14 @@ const { ethers } = require("hardhat");
 require("dotenv").config();
 
 /**
- * Script 7: Demo Confirmations
+ * Script 7: Confirmations Demo
  * 
- * Mục đích:
- * - Hiểu confirmations là gì
- * - Tại sao cần đợi nhiều confirmations
+ * Purpose:
+ * - Understand what confirmations are
+ * - Why multiple confirmations are needed
  * - Re-org attack
  * 
- * Chạy: npx hardhat run scripts/07-confirmations.js --network sepolia
+ * Run: npx hardhat run scripts/07-confirmations.js --network sepolia
  */
 
 async function main() {
@@ -21,39 +21,39 @@ async function main() {
   console.log("👤 Sender:", sender.address);
   console.log();
 
-  // ========== PHẦN 1: Confirmations là gì? ==========
+  // ========== PART 1: What are Confirmations? ==========
   console.log("=".repeat(60));
-  console.log("PHẦN 1: Confirmations là gì?");
+  console.log("PART 1: What are Confirmations?");
   console.log("=".repeat(60));
   console.log();
 
-  console.log("💡 Định nghĩa:");
-  console.log("   Confirmations = Số block được sinh ra SAU block chứa transaction của bạn");
+  console.log("💡 Definition:");
+  console.log("   Confirmations = Number of blocks created AFTER the block containing your transaction");
   console.log();
 
-  console.log("📊 Ví dụ:");
-  console.log("   - Transaction của bạn ở block 1000");
-  console.log("   - Block hiện tại là 1005");
+  console.log("📊 Example:");
+  console.log("   - Your transaction is in block 1000");
+  console.log("   - Current block is 1005");
   console.log("   - Confirmations = 1005 - 1000 = 5");
   console.log();
 
-  console.log("🔒 Tại sao cần confirmations?");
-  console.log("   - Block mới có thể bị \"re-org\" (reorganization)");
-  console.log("   - Re-org = Blockchain bị đảo chiều, block bị loại bỏ");
-  console.log("   - Càng nhiều confirmations = Càng khó re-org");
+  console.log("🔒 Why are confirmations needed?");
+  console.log("   - New blocks can be \"re-orged\" (reorganization)");
+  console.log("   - Re-org = Blockchain reverses, blocks are removed");
+  console.log("   - More confirmations = Harder to re-org");
   console.log();
 
   console.log("📈 Best Practices:");
-  console.log("   - Ethereum: 12+ confirmations (~2.5 phút)");
+  console.log("   - Ethereum: 12+ confirmations (~2.5 minutes)");
   console.log("   - BSC/Polygon: 64-128 confirmations");
-  console.log("   - Giao dịch nhỏ: 1-3 confirmations");
-  console.log("   - Giao dịch lớn: 12+ confirmations");
+  console.log("   - Small transactions: 1-3 confirmations");
+  console.log("   - Large transactions: 12+ confirmations");
   console.log("   - Exchange deposit: 12-64 confirmations");
   console.log();
 
-  // ========== PHẦN 2: Gửi Transaction ==========
+  // ========== PART 2: Send Transaction ==========
   console.log("=".repeat(60));
-  console.log("PHẦN 2: Gửi Transaction và Theo dõi Confirmations");
+  console.log("PART 2: Send Transaction and Monitor Confirmations");
   console.log("=".repeat(60));
   console.log();
 
@@ -65,49 +65,49 @@ async function main() {
   console.log(`   Value: ${ethers.formatEther(amount)} ETH`);
   console.log();
 
-  // Lấy block number hiện tại
+  // Get current block number
   const currentBlockBefore = await ethers.provider.getBlockNumber();
-  console.log("📊 Block hiện tại:", currentBlockBefore);
+  console.log("📊 Current block:", currentBlockBefore);
   console.log();
 
-  // Gửi transaction
-  console.log("⏳ Đang gửi transaction...");
+  // Send transaction
+  console.log("⏳ Sending transaction...");
   const tx = await sender.sendTransaction({
     to: recipient,
     value: amount
   });
 
-  console.log("✅ Transaction đã gửi!");
+  console.log("✅ Transaction sent!");
   console.log("📍 TX Hash:", tx.hash);
   console.log(`🔗 Etherscan: https://sepolia.etherscan.io/tx/${tx.hash}`);
   console.log();
 
-  // ========== PHẦN 3: Đợi 0 Confirmations (Pending) ==========
+  // ========== PART 3: Wait for 0 Confirmations (Pending) ==========
   console.log("=".repeat(60));
-  console.log("PHẦN 3: Transaction Pending (0 confirmations)");
-  console.log("=".repeat(60));
-  console.log();
-
-  console.log("⏳ Transaction đang ở mempool, chưa được mine...");
-  console.log("⚠️ Ở trạng thái này:");
-  console.log("   - Transaction có thể bị drop");
-  console.log("   - Có thể bị replaced (speed up/cancel)");
-  console.log("   - KHÔNG NÊN coi như đã hoàn thành");
-  console.log();
-
-  // ========== PHẦN 4: Đợi 1 Confirmation ==========
-  console.log("=".repeat(60));
-  console.log("PHẦN 4: Đợi 1 Confirmation");
+  console.log("PART 3: Transaction Pending (0 confirmations)");
   console.log("=".repeat(60));
   console.log();
 
-  console.log("⏳ Đang đợi transaction được mine...");
+  console.log("⏳ Transaction is in mempool, not mined yet...");
+  console.log("⚠️ In this state:");
+  console.log("   - Transaction can be dropped");
+  console.log("   - Can be replaced (speed up/cancel)");
+  console.log("   - Should NOT be considered complete");
+  console.log();
+
+  // ========== PART 4: Wait for 1 Confirmation ==========
+  console.log("=".repeat(60));
+  console.log("PART 4: Wait for 1 Confirmation");
+  console.log("=".repeat(60));
+  console.log();
+
+  console.log("⏳ Waiting for transaction to be mined...");
   const startTime = Date.now();
   
-  const receipt = await tx.wait(1); // Đợi 1 confirmation
+  const receipt = await tx.wait(1); // Wait for 1 confirmation
   
   const mineTime = Date.now() - startTime;
-  console.log(`✅ Transaction đã được mine! (${(mineTime / 1000).toFixed(1)}s)`);
+  console.log(`✅ Transaction mined! (${(mineTime / 1000).toFixed(1)}s)`);
   console.log();
 
   console.log("📊 Transaction Receipt:");
@@ -117,26 +117,26 @@ async function main() {
   console.log(`   Status: ${receipt.status === 1 ? "✅ Success" : "❌ Failed"}`);
   console.log();
 
-  console.log("⚠️ Với 1 confirmation:");
-  console.log("   - Transaction đã được mine");
-  console.log("   - Nhưng vẫn có khả năng bị re-org (rất thấp)");
-  console.log("   - Phù hợp cho: Giao dịch nhỏ, low-risk");
+  console.log("⚠️ With 1 confirmation:");
+  console.log("   - Transaction has been mined");
+  console.log("   - But still possible to be re-orged (very low probability)");
+  console.log("   - Suitable for: Small transactions, low-risk");
   console.log();
 
-  // ========== PHẦN 5: Đợi Nhiều Confirmations ==========
+  // ========== PART 5: Wait for Multiple Confirmations ==========
   console.log("=".repeat(60));
-  console.log("PHẦN 5: Đợi Nhiều Confirmations");
+  console.log("PART 5: Wait for Multiple Confirmations");
   console.log("=".repeat(60));
   console.log();
 
-  const targetConfirmations = 3; // Đợi 3 confirmations
-  console.log(`⏳ Đang đợi ${targetConfirmations} confirmations...`);
+  const targetConfirmations = 3; // Wait for 3 confirmations
+  console.log(`⏳ Waiting for ${targetConfirmations} confirmations...`);
   console.log();
 
   let currentConfirmations = 1;
   
   while (currentConfirmations < targetConfirmations) {
-    // Đợi block mới
+    // Wait for new block
     await new Promise(resolve => setTimeout(resolve, 12000)); // ~12s per block
     
     const currentBlock = await ethers.provider.getBlockNumber();
@@ -146,10 +146,10 @@ async function main() {
   }
 
   console.log();
-  console.log(`✅ Đã đạt ${targetConfirmations} confirmations!`);
+  console.log(`✅ Reached ${targetConfirmations} confirmations!`);
   console.log();
 
-  console.log("📊 Thống kê:");
+  console.log("📊 Statistics:");
   const finalBlock = await ethers.provider.getBlockNumber();
   console.log(`   Transaction Block: ${receipt.blockNumber}`);
   console.log(`   Current Block: ${finalBlock}`);
@@ -157,78 +157,78 @@ async function main() {
   console.log(`   Time Elapsed: ${((Date.now() - startTime) / 1000).toFixed(1)}s`);
   console.log();
 
-  // ========== PHẦN 6: Re-org Attack ==========
+  // ========== PART 6: Re-org Attack ==========
   console.log("=".repeat(60));
-  console.log("PHẦN 6: Re-org Attack");
+  console.log("PART 6: Re-org Attack");
   console.log("=".repeat(60));
   console.log();
 
-  console.log("❓ Re-org là gì?");
+  console.log("❓ What is Re-org?");
   console.log();
-  console.log("   Blockchain là một chuỗi blocks:");
+  console.log("   Blockchain is a chain of blocks:");
   console.log("   Block 1 → Block 2 → Block 3 → Block 4");
   console.log();
-  console.log("   Nếu có 2 miners cùng lúc mine block 3:");
+  console.log("   If 2 miners mine block 3 simultaneously:");
   console.log("   Block 1 → Block 2 → Block 3A");
   console.log("                     → Block 3B");
   console.log();
-  console.log("   Network sẽ chọn chain dài hơn:");
+  console.log("   Network will choose the longer chain:");
   console.log("   Block 1 → Block 2 → Block 3A → Block 4A (✅ Accepted)");
   console.log("                     → Block 3B (❌ Orphaned)");
   console.log();
-  console.log("   Nếu transaction của bạn ở Block 3B → Bị loại bỏ!");
+  console.log("   If your transaction is in Block 3B → Removed!");
   console.log();
 
-  console.log("🎯 Ví dụ tấn công:");
+  console.log("🎯 Attack Example:");
   console.log();
-  console.log("   1. Hacker gửi 100 ETH cho Exchange");
-  console.log("   2. Transaction được mine ở block 1000 (1 confirmation)");
-  console.log("   3. Exchange thấy 1 confirmation → Cho rút tiền");
-  console.log("   4. Hacker rút 100 ETH ra");
-  console.log("   5. Hacker mine block 1000 khác (không có transaction gửi tiền)");
-  console.log("   6. Nếu block mới của hacker được chấp nhận → Re-org!");
-  console.log("   7. Transaction gửi tiền bị hủy, nhưng hacker đã rút được tiền");
+  console.log("   1. Hacker sends 100 ETH to Exchange");
+  console.log("   2. Transaction mined in block 1000 (1 confirmation)");
+  console.log("   3. Exchange sees 1 confirmation → Allows withdrawal");
+  console.log("   4. Hacker withdraws 100 ETH");
+  console.log("   5. Hacker mines different block 1000 (without deposit transaction)");
+  console.log("   6. If hacker's new block is accepted → Re-org!");
+  console.log("   7. Deposit transaction cancelled, but hacker already withdrew");
   console.log();
 
-  console.log("🛡️ Phòng chống:");
-  console.log("   - Đợi nhiều confirmations (12+ cho Ethereum)");
-  console.log("   - Giao dịch lớn: Đợi lâu hơn");
+  console.log("🛡️ Prevention:");
+  console.log("   - Wait for multiple confirmations (12+ for Ethereum)");
+  console.log("   - Large transactions: Wait longer");
   console.log("   - Monitor chain re-orgs");
-  console.log("   - Sử dụng finality gadgets (Casper FFG)");
+  console.log("   - Use finality gadgets (Casper FFG)");
   console.log();
 
-  // ========== PHẦN 7: Best Practices ==========
+  // ========== PART 7: Best Practices ==========
   console.log("=".repeat(60));
-  console.log("PHẦN 7: Best Practices");
+  console.log("PART 7: Best Practices");
   console.log("=".repeat(60));
   console.log();
 
-  console.log("📋 Số confirmations nên đợi:");
+  console.log("📋 Recommended confirmations:");
   console.log();
   console.log("   Ethereum Mainnet:");
-  console.log("   - Giao dịch nhỏ (<$100): 1-3 confirmations");
-  console.log("   - Giao dịch trung bình ($100-$10k): 6-12 confirmations");
-  console.log("   - Giao dịch lớn (>$10k): 12-64 confirmations");
+  console.log("   - Small transactions (<$100): 1-3 confirmations");
+  console.log("   - Medium transactions ($100-$10k): 6-12 confirmations");
+  console.log("   - Large transactions (>$10k): 12-64 confirmations");
   console.log("   - Exchange deposit: 12-35 confirmations");
   console.log();
 
   console.log("   BSC/Polygon:");
-  console.log("   - Block time nhanh hơn (3s) → Cần nhiều confirmations hơn");
-  console.log("   - Thường: 64-128 confirmations");
+  console.log("   - Faster block time (3s) → Need more confirmations");
+  console.log("   - Usually: 64-128 confirmations");
   console.log();
 
   console.log("   Arbitrum/Optimism (Layer 2):");
-  console.log("   - Finality chậm hơn (7 days challenge period)");
-  console.log("   - Cần đợi finality period");
+  console.log("   - Slower finality (7 days challenge period)");
+  console.log("   - Need to wait for finality period");
   console.log();
 
   console.log("💻 Code Example:");
   console.log();
   console.log("```javascript");
-  console.log("// Đợi 12 confirmations");
+  console.log("// Wait for 12 confirmations");
   console.log("const receipt = await tx.wait(12);");
   console.log("");
-  console.log("// Hoặc manual check");
+  console.log("// Or manual check");
   console.log("const receipt = await tx.wait(1);");
   console.log("while (true) {");
   console.log("  const currentBlock = await provider.getBlockNumber();");
@@ -239,21 +239,21 @@ async function main() {
   console.log("```");
   console.log();
 
-  // ========== TÓM TẮT ==========
+  // ========== SUMMARY ==========
   console.log("=".repeat(60));
-  console.log("📝 Tóm tắt về Confirmations");
+  console.log("📝 Confirmations Summary");
   console.log("=".repeat(60));
   console.log();
 
-  console.log("✅ Điều cần nhớ:");
+  console.log("✅ Key Points:");
   console.log();
-  console.log("1. Confirmations = Số blocks sau block chứa transaction");
-  console.log("2. Càng nhiều confirmations = Càng an toàn");
-  console.log("3. Re-org có thể xảy ra với ít confirmations");
-  console.log("4. Ethereum: 12+ confirmations cho giao dịch lớn");
-  console.log("5. Frontend: Có thể show UI sau 1 confirmation");
-  console.log("6. Backend: Nên đợi 12+ confirmations trước khi update DB");
-  console.log("7. Exchange: Thường yêu cầu 12-64 confirmations");
+  console.log("1. Confirmations = Number of blocks after block containing transaction");
+  console.log("2. More confirmations = More secure");
+  console.log("3. Re-org can happen with few confirmations");
+  console.log("4. Ethereum: 12+ confirmations for large transactions");
+  console.log("5. Frontend: Can show UI after 1 confirmation");
+  console.log("6. Backend: Should wait 12+ confirmations before updating DB");
+  console.log("7. Exchange: Usually requires 12-64 confirmations");
   console.log();
 
   console.log("🔗 Resources:");
@@ -262,22 +262,22 @@ async function main() {
   console.log("   - Etherscan: https://sepolia.etherscan.io/");
   console.log();
 
-  console.log("✨ Hoàn thành tất cả demos của Phần 1!");
+  console.log("✨ Completed all Part 1 demos!");
   console.log();
-  console.log("🎉 Chúc mừng! Bạn đã học xong:");
-  console.log("   ✅ Chuyển ETH vs ERC20");
+  console.log("🎉 Congratulations! You've learned:");
+  console.log("   ✅ Transfer ETH vs ERC20");
   console.log("   ✅ transfer / approve / transferFrom");
-  console.log("   ✅ Nonce và stuck transactions");
-  console.log("   ✅ Gas estimation và optimization");
-  console.log("   ✅ Confirmations và transaction finality");
+  console.log("   ✅ Nonce and stuck transactions");
+  console.log("   ✅ Gas estimation and optimization");
+  console.log("   ✅ Confirmations and transaction finality");
   console.log();
-  console.log("📚 Tiếp theo: Học Phần 2 - Ví, Ký và Xác thực");
+  console.log("📚 Next: Learn Part 2 - Wallet, Signing and Authentication");
 }
 
 main()
   .then(() => process.exit(0))
   .catch((error) => {
-    console.error("❌ Lỗi:", error);
+    console.error("❌ Error:", error);
     process.exit(1);
   });
 

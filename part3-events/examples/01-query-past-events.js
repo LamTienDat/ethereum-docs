@@ -1,18 +1,18 @@
 /**
  * Script 1: Query Past Events
  * 
- * Demo cách lấy các events đã xảy ra trong quá khứ
+ * Demo how to retrieve events that occurred in the past
  * 
- * Chạy: node 01-query-past-events.js
+ * Run: node 01-query-past-events.js
  */
 
 import { ethers } from 'ethers';
 
-// Cấu hình
+// Configuration
 const RPC_URL = 'https://api.zan.top/node/v1/eth/mainnet/7d5a7370dd004a1f913078deb248af07'; // Ethereum Mainnet
 const USDT_ADDRESS = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
 
-// ERC20 ABI (chỉ cần event Transfer)
+// ERC20 ABI (only Transfer event needed)
 const ERC20_ABI = [
   'event Transfer(address indexed from, address indexed to, uint256 value)',
   'function decimals() view returns (uint8)',
@@ -22,33 +22,33 @@ const ERC20_ABI = [
 async function main() {
   console.log('🚀 Starting Past Events Query Demo\n');
 
-  // Kết nối provider
+  // Connect provider
   const provider = new ethers.JsonRpcProvider(RPC_URL);
   const contract = new ethers.Contract(USDT_ADDRESS, ERC20_ABI, provider);
 
-  // Lấy thông tin token
+  // Get token info
   const symbol = await contract.symbol();
   const decimals = await contract.decimals();
   console.log(`📊 Token: ${symbol} (${decimals} decimals)\n`);
 
-  // Lấy block hiện tại
+  // Get current block
   const currentBlock = await provider.getBlockNumber();
   console.log(`📦 Current block: ${currentBlock}\n`);
 
-  // Query range: 100 blocks gần nhất
+  // Query range: last 100 blocks
   const fromBlock = currentBlock - 100;
   const toBlock = currentBlock;
 
   console.log(`🔍 Querying Transfer events from block ${fromBlock} to ${toBlock}...\n`);
 
   try {
-    // Lấy tất cả Transfer events
+    // Get all Transfer events
     const filter = contract.filters.Transfer();
     const events = await contract.queryFilter(filter, fromBlock, toBlock);
 
     console.log(`✅ Found ${events.length} Transfer events\n`);
 
-    // Hiển thị 5 events đầu tiên
+    // Display first 5 events
     console.log('📋 First 5 events:');
     console.log('─'.repeat(100));
 
@@ -65,7 +65,7 @@ async function main() {
 
     console.log('\n' + '─'.repeat(100));
 
-    // Thống kê
+    // Statistics
     let totalVolume = 0n;
     events.forEach(event => {
       totalVolume += event.args.value;

@@ -3,22 +3,22 @@ const fs = require("fs");
 require("dotenv").config();
 
 /**
- * Script 4: Demo approve() và transferFrom()
+ * Script 4: Demo approve() and transferFrom()
  * 
- * Mục đích:
- * - Hiểu flow của approve/transferFrom
+ * Purpose:
+ * - Understand the flow of approve/transferFrom
  * - Use case: DEX, Payment Gateway, Staking
- * - Kiểm tra allowance
+ * - Check allowance
  * 
- * Chạy: npx hardhat run scripts/04-approve-transferFrom.js --network sepolia
+ * Run: npx hardhat run scripts/04-approve-transferFrom.js --network sepolia
  */
 
 async function main() {
-  console.log("🔐 Demo: approve() và transferFrom()\n");
+  console.log("🔐 Demo: approve() and transferFrom()\n");
   console.log("=".repeat(60));
   console.log();
 
-  // Đọc địa chỉ contract
+  // Read contract address
   let contractAddress;
   try {
     const deployedInfo = fs.readFileSync("deployed-address.txt", "utf8");
@@ -26,53 +26,53 @@ async function main() {
     if (match) {
       contractAddress = match[1];
     } else {
-      throw new Error("Không tìm thấy contract address");
+      throw new Error("Contract address not found");
     }
   } catch (error) {
-    console.log("❌ Chưa deploy contract!");
-    console.log("   Vui lòng chạy: npx hardhat run scripts/01-deploy.js --network sepolia");
+    console.log("❌ Contract not deployed yet!");
+    console.log("   Please run: npx hardhat run scripts/01-deploy.js --network sepolia");
     return;
   }
 
   console.log("📍 Contract Address:", contractAddress);
   console.log();
 
-  // Kết nối với contract
+  // Connect to contract
   const [owner] = await ethers.getSigners();
   const token = await ethers.getContractAt("SimpleERC20", contractAddress);
 
-  // Lấy thông tin token
+  // Get token information
   const symbol = await token.symbol();
   const decimals = await token.decimals();
 
   console.log("🪙 Token:", symbol);
   console.log();
 
-  // Scenario: Owner approve cho một địa chỉ khác (giả lập DEX/Gateway)
+  // Scenario: Owner approves another address (simulating DEX/Gateway)
   const spenderAddress = process.env.RECIPIENT_ADDRESS || "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb";
   
   console.log("📖 Scenario:");
-  console.log("   Owner (bạn) muốn cho phép Spender (DEX/Gateway) được quyền");
-  console.log("   rút tối đa 500 token từ ví của bạn.");
+  console.log("   Owner (you) wants to allow Spender (DEX/Gateway) to");
+  console.log("   withdraw up to 500 tokens from your wallet.");
   console.log();
   console.log("👤 Owner:", owner.address);
   console.log("👤 Spender:", spenderAddress);
   console.log();
 
-  // Kiểm tra số dư
+  // Check balance
   const ownerBalance = await token.balanceOf(owner.address);
-  console.log("💰 Số dư Owner:", ethers.formatUnits(ownerBalance, decimals), symbol);
+  console.log("💰 Owner Balance:", ethers.formatUnits(ownerBalance, decimals), symbol);
   console.log();
 
-  // Kiểm tra allowance hiện tại
-  console.log("🔍 Kiểm tra allowance hiện tại:");
+  // Check current allowance
+  console.log("🔍 Check current allowance:");
   const currentAllowance = await token.allowance(owner.address, spenderAddress);
   console.log(`   Allowance: ${ethers.formatUnits(currentAllowance, decimals)} ${symbol}`);
   console.log();
 
-  // ========== BƯỚC 1: APPROVE ==========
+  // ========== STEP 1: APPROVE ==========
   console.log("=" .repeat(60));
-  console.log("BƯỚC 1: Owner approve cho Spender");
+  console.log("STEP 1: Owner approves Spender");
   console.log("=".repeat(60));
   console.log();
 
@@ -85,17 +85,17 @@ async function main() {
   console.log("📊 Estimated Gas:", estimatedGasApprove.toString());
   console.log();
 
-  // Gửi approve transaction
-  console.log("⏳ Đang gửi approve transaction...");
+  // Send approve transaction
+  console.log("⏳ Sending approve transaction...");
   const approveTx = await token.approve(spenderAddress, approveAmount);
-  console.log("✅ Approve transaction đã gửi!");
+  console.log("✅ Approve transaction sent!");
   console.log("📍 TX Hash:", approveTx.hash);
   console.log();
 
-  // Đợi confirm
-  console.log("⏳ Đang đợi confirmation...");
+  // Wait for confirmation
+  console.log("⏳ Waiting for confirmation...");
   const approveReceipt = await approveTx.wait();
-  console.log("✅ Approve đã được confirm!");
+  console.log("✅ Approve confirmed!");
   console.log(`   Gas Used: ${approveReceipt.gasUsed.toString()}`);
   console.log();
 
@@ -117,33 +117,33 @@ async function main() {
   }
   console.log();
 
-  // Kiểm tra allowance sau approve
+  // Check allowance after approve
   const newAllowance = await token.allowance(owner.address, spenderAddress);
-  console.log("🔍 Allowance sau approve:");
+  console.log("🔍 Allowance after approve:");
   console.log(`   ${ethers.formatUnits(newAllowance, decimals)} ${symbol}`);
   console.log();
 
-  // ========== BƯỚC 2: TRANSFER FROM (Giả lập) ==========
+  // ========== STEP 2: TRANSFER FROM (Simulated) ==========
   console.log("=".repeat(60));
-  console.log("BƯỚC 2: Spender sử dụng transferFrom()");
+  console.log("STEP 2: Spender uses transferFrom()");
   console.log("=".repeat(60));
   console.log();
 
-  console.log("💡 Lưu ý:");
-  console.log("   Trong thực tế, Spender (DEX/Gateway) sẽ gọi transferFrom()");
-  console.log("   Ở đây chúng ta giả lập bằng cách Owner tự gọi transferFrom()");
-  console.log("   (vì chúng ta chỉ có 1 ví test)");
+  console.log("💡 Note:");
+  console.log("   In practice, Spender (DEX/Gateway) will call transferFrom()");
+  console.log("   Here we simulate by having Owner call transferFrom()");
+  console.log("   (because we only have 1 test wallet)");
   console.log();
 
-  // Số lượng muốn transfer
+  // Amount to transfer
   const transferAmount = ethers.parseUnits("100", decimals); // 100 tokens
   console.log("💰 Transfer amount:", ethers.formatUnits(transferAmount, decimals), symbol);
   console.log();
 
-  // Địa chỉ nhận (có thể là exchange, staking pool, etc.)
-  const recipientAddress = spenderAddress; // Trong thực tế có thể là địa chỉ khác
+  // Recipient address (could be exchange, staking pool, etc.)
+  const recipientAddress = spenderAddress; // In practice could be different address
 
-  console.log("📊 Trước transferFrom:");
+  console.log("📊 Before transferFrom:");
   const ownerBalanceBefore = await token.balanceOf(owner.address);
   const recipientBalanceBefore = await token.balanceOf(recipientAddress);
   const allowanceBefore = await token.allowance(owner.address, owner.address);
@@ -162,21 +162,21 @@ async function main() {
   console.log("📊 Estimated Gas:", estimatedGasTransferFrom.toString());
   console.log();
 
-  // Gửi transferFrom transaction
-  console.log("⏳ Đang gửi transferFrom transaction...");
+  // Send transferFrom transaction
+  console.log("⏳ Sending transferFrom transaction...");
   const transferFromTx = await token.transferFrom(
     owner.address,
     recipientAddress,
     transferAmount
   );
-  console.log("✅ TransferFrom transaction đã gửi!");
+  console.log("✅ TransferFrom transaction sent!");
   console.log("📍 TX Hash:", transferFromTx.hash);
   console.log();
 
-  // Đợi confirm
-  console.log("⏳ Đang đợi confirmation...");
+  // Wait for confirmation
+  console.log("⏳ Waiting for confirmation...");
   const transferFromReceipt = await transferFromTx.wait();
-  console.log("✅ TransferFrom đã được confirm!");
+  console.log("✅ TransferFrom confirmed!");
   console.log(`   Gas Used: ${transferFromReceipt.gasUsed.toString()}`);
   console.log();
 
@@ -198,79 +198,79 @@ async function main() {
   }
   console.log();
 
-  // Kiểm tra sau transferFrom
-  console.log("📊 Sau transferFrom:");
+  // Check after transferFrom
+  console.log("📊 After transferFrom:");
   const ownerBalanceAfter = await token.balanceOf(owner.address);
   const recipientBalanceAfter = await token.balanceOf(recipientAddress);
   const allowanceAfter = await token.allowance(owner.address, owner.address);
   
   console.log(`   Owner balance: ${ethers.formatUnits(ownerBalanceAfter, decimals)} ${symbol}`);
   console.log(`   Recipient balance: ${ethers.formatUnits(recipientBalanceAfter, decimals)} ${symbol}`);
-  console.log(`   Allowance còn lại: ${ethers.formatUnits(allowanceAfter, decimals)} ${symbol}`);
+  console.log(`   Remaining allowance: ${ethers.formatUnits(allowanceAfter, decimals)} ${symbol}`);
   console.log();
 
-  // Tính toán thay đổi
-  console.log("📈 Thay đổi:");
+  // Calculate changes
+  console.log("📈 Changes:");
   console.log(`   Owner: -${ethers.formatUnits(transferAmount, decimals)} ${symbol}`);
   console.log(`   Recipient: +${ethers.formatUnits(transferAmount, decimals)} ${symbol}`);
   console.log(`   Allowance: -${ethers.formatUnits(transferAmount, decimals)} ${symbol}`);
   console.log();
 
-  // ========== GIẢI THÍCH ==========
+  // ========== EXPLANATION ==========
   console.log("=".repeat(60));
-  console.log("💡 Giải thích Flow");
+  console.log("💡 Flow Explanation");
   console.log("=".repeat(60));
   console.log();
 
   console.log("1️⃣ approve(spender, amount):");
-  console.log("   - Owner cho phép Spender được quyền rút tối đa 'amount' token");
-  console.log("   - Lưu vào mapping: allowance[owner][spender] = amount");
+  console.log("   - Owner allows Spender to withdraw up to 'amount' tokens");
+  console.log("   - Stored in mapping: allowance[owner][spender] = amount");
   console.log("   - Emit event: Approval(owner, spender, amount)");
   console.log();
 
   console.log("2️⃣ transferFrom(from, to, amount):");
-  console.log("   - Spender gọi hàm này để rút token từ Owner");
-  console.log("   - Kiểm tra: allowance[from][msg.sender] >= amount");
-  console.log("   - Kiểm tra: balanceOf[from] >= amount");
-  console.log("   - Trừ allowance: allowance[from][msg.sender] -= amount");
-  console.log("   - Chuyển token: from -> to");
+  console.log("   - Spender calls this to withdraw tokens from Owner");
+  console.log("   - Check: allowance[from][msg.sender] >= amount");
+  console.log("   - Check: balanceOf[from] >= amount");
+  console.log("   - Deduct allowance: allowance[from][msg.sender] -= amount");
+  console.log("   - Transfer tokens: from -> to");
   console.log("   - Emit event: Transfer(from, to, amount)");
   console.log();
 
-  console.log("🎯 Use Cases thực tế:");
+  console.log("🎯 Real-world Use Cases:");
   console.log();
   console.log("   📊 DEX (Uniswap, PancakeSwap):");
-  console.log("      - User approve cho DEX contract");
-  console.log("      - Khi swap, DEX gọi transferFrom() để lấy token");
+  console.log("      - User approves DEX contract");
+  console.log("      - When swapping, DEX calls transferFrom() to get tokens");
   console.log();
   console.log("   💳 Payment Gateway:");
-  console.log("      - User approve cho gateway");
-  console.log("      - Khi thanh toán, gateway tự động trừ tiền");
+  console.log("      - User approves gateway");
+  console.log("      - When paying, gateway automatically deducts funds");
   console.log();
   console.log("   🏦 Staking:");
-  console.log("      - User approve cho staking contract");
-  console.log("      - Contract rút token để stake");
+  console.log("      - User approves staking contract");
+  console.log("      - Contract withdraws tokens to stake");
   console.log();
   console.log("   🎮 GameFi:");
-  console.log("      - User approve cho game contract");
-  console.log("      - Game tự động trừ tiền khi mua item");
+  console.log("      - User approves game contract");
+  console.log("      - Game automatically deducts when buying items");
   console.log();
 
-  console.log("⚠️ Lưu ý bảo mật:");
-  console.log("   - Chỉ approve cho contracts đã được audit");
-  console.log("   - Không approve unlimited (type(uint256).max) nếu không tin tưởng");
-  console.log("   - Có thể revoke bằng cách approve(spender, 0)");
-  console.log("   - Check allowance trước khi approve thêm (tránh front-running)");
+  console.log("⚠️ Security Notes:");
+  console.log("   - Only approve audited contracts");
+  console.log("   - Don't approve unlimited (type(uint256).max) unless trusted");
+  console.log("   - Can revoke by approve(spender, 0)");
+  console.log("   - Check allowance before approving more (avoid front-running)");
   console.log();
 
-  console.log("✨ Demo hoàn tất!");
-  console.log("   Tiếp theo: npx hardhat run scripts/05-nonce-demo.js --network sepolia");
+  console.log("✨ Demo complete!");
+  console.log("   Next: npx hardhat run scripts/05-nonce-demo.js --network sepolia");
 }
 
 main()
   .then(() => process.exit(0))
   .catch((error) => {
-    console.error("❌ Lỗi:", error);
+    console.error("❌ Error:", error);
     process.exit(1);
   });
 

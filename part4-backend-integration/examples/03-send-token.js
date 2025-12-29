@@ -1,17 +1,17 @@
 /**
- * Ví dụ 3: Gửi ERC20 Token từ Backend
+ * Example 3: Send ERC20 Token from Backend
  * 
- * Học cách:
- * - Kết nối với ERC20 contract
- * - Kiểm tra số dư token
- * - Gửi token đến địa chỉ khác
- * - Xử lý decimals của token
+ * Learn how to:
+ * - Connect to ERC20 contract
+ * - Check token balance
+ * - Send token to another address
+ * - Handle token decimals
  */
 
 require('dotenv').config();
 const { ethers } = require('ethers');
 
-// ABI tối thiểu cho ERC20
+// Minimal ABI for ERC20
 const ERC20_ABI = [
   'function transfer(address to, uint256 amount) returns (bool)',
   'function balanceOf(address account) view returns (uint256)',
@@ -21,52 +21,52 @@ const ERC20_ABI = [
 ];
 
 async function sendToken(tokenAddress, toAddress, amount) {
-  console.log('=== VÍ DỤ 3: GỬI ERC20 TOKEN ===\n');
+  console.log('=== EXAMPLE 3: SEND ERC20 TOKEN ===\n');
 
   try {
     // 1. Setup wallet
-    console.log('📡 Đang kết nối...');
+    console.log('📡 Connecting...');
     const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
     const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
     
     const network = await provider.getNetwork();
-    console.log(`✓ Kết nối: ${network.name}\n`);
+    console.log(`✓ Connected: ${network.name}\n`);
 
-    // 2. Kết nối với token contract
-    console.log('🪙 Đang kết nối với token contract...');
+    // 2. Connect to token contract
+    console.log('🪙 Connecting to token contract...');
     const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, wallet);
 
-    // 3. Lấy thông tin token
-    console.log('📋 Thông tin token:');
+    // 3. Get token information
+    console.log('📋 Token information:');
     const [name, symbol, decimals] = await Promise.all([
       tokenContract.name(),
       tokenContract.symbol(),
       tokenContract.decimals(),
     ]);
 
-    console.log(`   Tên: ${name}`);
+    console.log(`   Name: ${name}`);
     console.log(`   Symbol: ${symbol}`);
     console.log(`   Decimals: ${decimals}`);
     console.log(`   Contract: ${tokenAddress}\n`);
 
-    // 4. Kiểm tra số dư token
-    console.log('💰 Kiểm tra số dư token...');
+    // 4. Check token balance
+    console.log('💰 Checking token balance...');
     const balance = await tokenContract.balanceOf(wallet.address);
     const balanceFormatted = ethers.formatUnits(balance, decimals);
     const amountInWei = ethers.parseUnits(amount, decimals);
 
-    console.log(`   Số dư hiện tại: ${balanceFormatted} ${symbol}`);
-    console.log(`   Số lượng gửi: ${amount} ${symbol}`);
+    console.log(`   Current balance: ${balanceFormatted} ${symbol}`);
+    console.log(`   Amount to send: ${amount} ${symbol}`);
 
     if (balance < amountInWei) {
       throw new Error(
-        `Số dư ${symbol} không đủ! Cần ${amount}, hiện có ${balanceFormatted}`
+        `Insufficient ${symbol} balance! Need ${amount}, have ${balanceFormatted}`
       );
     }
-    console.log('   ✓ Số dư đủ để thực hiện giao dịch\n');
+    console.log('   ✓ Balance sufficient for transaction\n');
 
-    // 5. Ước tính gas
-    console.log('⛽ Ước tính gas...');
+    // 5. Estimate gas
+    console.log('⛽ Estimating gas...');
     try {
       const gasEstimate = await tokenContract.transfer.estimateGas(
         toAddress,
@@ -78,91 +78,90 @@ async function sendToken(tokenAddress, toAddress, amount) {
 
       console.log(`   Gas estimate: ${gasEstimate.toString()}`);
       console.log(`   Gas price: ${ethers.formatUnits(feeData.gasPrice, 'gwei')} Gwei`);
-      console.log(`   Phí gas ước tính: ~${gasCostInEth} ETH\n`);
+      console.log(`   Estimated gas fee: ~${gasCostInEth} ETH\n`);
     } catch (error) {
-      console.log('   ⚠️ Không thể ước tính gas chính xác');
-      console.log(`   Lỗi: ${error.message}\n`);
+      console.log('   ⚠️ Cannot estimate gas accurately');
+      console.log(`   Error: ${error.message}\n`);
     }
 
-    // 6. Thông tin giao dịch
-    console.log('📤 Thông tin giao dịch:');
-    console.log(`   Từ: ${wallet.address}`);
-    console.log(`   Đến: ${toAddress}`);
+    // 6. Transaction information
+    console.log('📤 Transaction information:');
+    console.log(`   From: ${wallet.address}`);
+    console.log(`   To: ${toAddress}`);
     console.log(`   Token: ${symbol}`);
-    console.log(`   Số lượng: ${amount} ${symbol}\n`);
+    console.log(`   Amount: ${amount} ${symbol}\n`);
 
-    // Uncomment để gửi thật
-    console.log('⚠️  CẢNH BÁO: Chế độ DRY RUN (không gửi thật)');
-    console.log('   Bỏ comment dòng 95-111 để thực hiện giao dịch thật\n');
+    // Uncomment to send for real
+    console.log('⚠️  WARNING: DRY RUN mode (not sending)');
+    console.log('   Uncomment lines 95-111 to execute real transaction\n');
 
     /*
-    // 7. Gửi token
-    console.log('📤 Đang gửi token...');
+    // 7. Send token
+    console.log('📤 Sending token...');
     const tx = await tokenContract.transfer(toAddress, amountInWei);
 
-    console.log(`✓ Transaction đã gửi!`);
+    console.log(`✓ Transaction sent!`);
     console.log(`   TX Hash: ${tx.hash}\n`);
 
-    // 8. Chờ confirmation
-    console.log('⏳ Đang chờ confirmation...');
+    // 8. Wait for confirmation
+    console.log('⏳ Waiting for confirmation...');
     const receipt = await tx.wait();
 
-    console.log('✅ Transaction đã được xác nhận!');
+    console.log('✅ Transaction confirmed!');
     console.log(`   Block: ${receipt.blockNumber}`);
     console.log(`   Gas used: ${receipt.gasUsed.toString()}`);
     console.log(`   Status: ${receipt.status === 1 ? 'SUCCESS ✓' : 'FAILED ✗'}\n`);
 
-    // 9. Kiểm tra số dư mới
+    // 9. Check new balance
     const newBalance = await tokenContract.balanceOf(wallet.address);
     const newBalanceFormatted = ethers.formatUnits(newBalance, decimals);
-    console.log(`💰 Số dư ${symbol} mới: ${newBalanceFormatted}\n`);
+    console.log(`💰 New ${symbol} balance: ${newBalanceFormatted}\n`);
 
     return receipt;
     */
 
   } catch (error) {
-    console.error('\n❌ Lỗi khi gửi token:', error.message);
+    console.error('\n❌ Error sending token:', error.message);
     
-    // Xử lý một số lỗi phổ biến
+    // Handle common errors
     if (error.message.includes('insufficient funds')) {
-      console.error('   → Không đủ ETH để trả phí gas');
+      console.error('   → Not enough ETH to pay gas fee');
     } else if (error.message.includes('execution reverted')) {
-      console.error('   → Contract revert - có thể do số dư token không đủ');
+      console.error('   → Contract revert - possibly insufficient token balance');
     }
     
     throw error;
   }
 }
 
-// Chạy chương trình
+// Run program
 async function main() {
-  // Lấy tham số từ command line
+  // Get parameters from command line
   const tokenAddress = process.argv[2] || process.env.USDT_ADDRESS;
   const recipientAddress = process.argv[3] || process.env.RECIPIENT_ADDRESS;
   const amount = process.argv[4] || '10';
 
   if (!tokenAddress) {
-    console.error('❌ Thiếu địa chỉ token!');
-    console.log('\nCách dùng:');
+    console.error('❌ Missing token address!');
+    console.log('\nUsage:');
     console.log('  node 03-send-token.js <token_address> <recipient_address> <amount>');
-    console.log('\nVí dụ:');
+    console.log('\nExample:');
     console.log('  node 03-send-token.js 0x7169D38820dfd117C3FA1f22a697dBA58d90BA06 0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb 10');
     process.exit(1);
   }
 
   if (!recipientAddress) {
-    console.error('❌ Thiếu địa chỉ người nhận!');
+    console.error('❌ Missing recipient address!');
     process.exit(1);
   }
 
   await sendToken(tokenAddress, recipientAddress, amount);
-  console.log('✅ Hoàn thành!');
+  console.log('✅ Complete!');
 }
 
 main()
   .then(() => process.exit(0))
   .catch((error) => {
-    console.error('\n❌ Thất bại!');
+    console.error('\n❌ Failed!');
     process.exit(1);
   });
-

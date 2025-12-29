@@ -1,20 +1,20 @@
 /**
  * Script 6: Custom Events Demo
  * 
- * Demo cách làm việc với custom events từ smart contract
+ * Demo how to work with custom events from smart contract
  * 
- * Chạy: node 06-custom-events.js
+ * Run: node 06-custom-events.js
  */
 
 import { ethers } from 'ethers';
 
-// Cấu hình
+// Configuration
 const RPC_URL = 'https://api.zan.top/node/v1/eth/mainnet/7d5a7370dd004a1f913078deb248af07';
 
-// Ví dụ: Uniswap V2 Pair contract (có nhiều custom events)
+// Example: Uniswap V2 Pair contract (has many custom events)
 const UNISWAP_PAIR_ADDRESS = '0xB4e16d0168e52d35CaCD2c6185b44281Ec28C9Dc'; // USDC/WETH pair
 
-// ABI với các custom events
+// ABI with custom events
 const PAIR_ABI = [
   'event Swap(address indexed sender, uint amount0In, uint amount1In, uint amount0Out, uint amount1Out, address indexed to)',
   'event Sync(uint112 reserve0, uint112 reserve1)',
@@ -31,7 +31,7 @@ async function main() {
   const provider = new ethers.JsonRpcProvider(RPC_URL);
   const contract = new ethers.Contract(UNISWAP_PAIR_ADDRESS, PAIR_ABI, provider);
 
-  // Lấy thông tin pair
+  // Get pair info
   const token0 = await contract.token0();
   const token1 = await contract.token1();
   const reserves = await contract.getReserves();
@@ -43,7 +43,7 @@ async function main() {
   console.log(`   Reserve1: ${ethers.formatUnits(reserves.reserve1, 18)} WETH\n`);
 
   const currentBlock = await provider.getBlockNumber();
-  const fromBlock = currentBlock - 100; // 100 blocks gần nhất
+  const fromBlock = currentBlock - 100; // Last 100 blocks
 
   console.log(`🔍 Querying events from block ${fromBlock} to ${currentBlock}...\n`);
 
@@ -57,7 +57,7 @@ async function main() {
     
     console.log(`Found ${swapEvents.length} swaps\n`);
 
-    // Hiển thị 3 swaps đầu tiên
+    // Display first 3 swaps
     for (let i = 0; i < Math.min(3, swapEvents.length); i++) {
       const event = swapEvents[i];
       const args = event.args;
@@ -84,7 +84,7 @@ async function main() {
     
     console.log(`Found ${syncEvents.length} syncs\n`);
 
-    // Hiển thị sync cuối cùng
+    // Display last sync
     if (syncEvents.length > 0) {
       const lastSync = syncEvents[syncEvents.length - 1];
       console.log(`Latest Sync - Block ${lastSync.blockNumber}`);
@@ -134,7 +134,7 @@ async function main() {
       }
     }
 
-    // Thống kê tổng hợp
+    // Summary statistics
     console.log('\n📊 Summary:');
     console.log('─'.repeat(100));
     console.log(`   Total Swaps: ${swapEvents.length}`);

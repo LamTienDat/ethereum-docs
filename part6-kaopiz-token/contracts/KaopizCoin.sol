@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/utils/Pausable.sol";
 
 /**
  * @title KaopizCoin
- * @dev ERC20 Token với tính năng mint, burn và pause
+ * @dev ERC20 Token with mint, burn and pause features
  */
 contract KaopizCoin is ERC20, ERC20Burnable, Ownable, Pausable {
     // Events
@@ -18,25 +18,25 @@ contract KaopizCoin is ERC20, ERC20Burnable, Ownable, Pausable {
     event ContractUnpaused(address indexed by, uint256 timestamp);
 
     // Constants
-    uint256 public constant MAX_SUPPLY = 1_000_000_000 * 10 ** 18; // 1 tỷ token
-    uint256 public constant INITIAL_SUPPLY = 100_000_000 * 10 ** 18; // 100 triệu token
+    uint256 public constant MAX_SUPPLY = 1_000_000_000 * 10 ** 18; // 1 billion tokens
+    uint256 public constant INITIAL_SUPPLY = 100_000_000 * 10 ** 18; // 100 million tokens
 
     /**
      * @dev Constructor
-     * @param initialOwner Địa chỉ owner ban đầu
+     * @param initialOwner Initial owner address
      */
     constructor(
         address initialOwner
     ) ERC20("KaopizCoin", "KPC") Ownable(initialOwner) {
-        // Mint initial supply cho owner
+        // Mint initial supply to owner
         _mint(initialOwner, INITIAL_SUPPLY);
         emit TokensMinted(initialOwner, INITIAL_SUPPLY, block.timestamp);
     }
 
     /**
-     * @dev Mint token mới (chỉ owner)
-     * @param to Địa chỉ nhận token
-     * @param amount Số lượng token
+     * @dev Mint new tokens (owner only)
+     * @param to Recipient address
+     * @param amount Token amount
      */
     function mint(address to, uint256 amount) public onlyOwner {
         require(to != address(0), "Cannot mint to zero address");
@@ -47,8 +47,8 @@ contract KaopizCoin is ERC20, ERC20Burnable, Ownable, Pausable {
     }
 
     /**
-     * @dev Burn token (bất kỳ ai có thể burn token của mình)
-     * @param amount Số lượng token cần burn
+     * @dev Burn tokens (anyone can burn their own tokens)
+     * @param amount Amount of tokens to burn
      */
     function burn(uint256 amount) public override {
         super.burn(amount);
@@ -56,9 +56,9 @@ contract KaopizCoin is ERC20, ERC20Burnable, Ownable, Pausable {
     }
 
     /**
-     * @dev Burn token từ địa chỉ khác (cần approve trước)
-     * @param account Địa chỉ cần burn token
-     * @param amount Số lượng token
+     * @dev Burn tokens from another address (requires prior approval)
+     * @param account Address to burn tokens from
+     * @param amount Token amount
      */
     function burnFrom(address account, uint256 amount) public override {
         super.burnFrom(account, amount);
@@ -66,7 +66,7 @@ contract KaopizCoin is ERC20, ERC20Burnable, Ownable, Pausable {
     }
 
     /**
-     * @dev Pause contract (chỉ owner)
+     * @dev Pause contract (owner only)
      */
     function pause() public onlyOwner {
         _pause();
@@ -74,7 +74,7 @@ contract KaopizCoin is ERC20, ERC20Burnable, Ownable, Pausable {
     }
 
     /**
-     * @dev Unpause contract (chỉ owner)
+     * @dev Unpause contract (owner only)
      */
     function unpause() public onlyOwner {
         _unpause();
@@ -82,7 +82,7 @@ contract KaopizCoin is ERC20, ERC20Burnable, Ownable, Pausable {
     }
 
     /**
-     * @dev Override _update để thêm pausable logic
+     * @dev Override _update to add pausable logic
      */
     function _update(
         address from,
@@ -93,7 +93,7 @@ contract KaopizCoin is ERC20, ERC20Burnable, Ownable, Pausable {
     }
 
     /**
-     * @dev Lấy thông tin chi tiết của token
+     * @dev Get detailed token information
      */
     function getTokenInfo()
         public

@@ -1,11 +1,11 @@
 /**
- * Ví dụ 7: Monitor Balance và Alert
+ * Example 7: Monitor Balance and Alert
  * 
- * Học cách:
- * - Monitor số dư wallet định kỳ
- * - Gửi alert khi số dư thấp
- * - Track thay đổi số dư
- * - Logging và reporting
+ * Learn how to:
+ * - Monitor wallet balance regularly
+ * - Send alert on low balance
+ * - Track balance changes
+ * - Logging and reporting
  */
 
 require('dotenv').config();
@@ -23,31 +23,31 @@ class BalanceMonitor {
   }
 
   /**
-   * Bắt đầu monitor
+   * Start monitoring
    */
   start() {
     if (this.isRunning) {
-      console.log('⚠️  Monitor đã đang chạy');
+      console.log('⚠️  Monitor is already running');
       return;
     }
 
-    console.log('🚀 Bắt đầu monitor balance...');
+    console.log('🚀 Starting balance monitor...');
     console.log(`   Interval: ${this.interval / 1000}s`);
     console.log(`   Alert threshold: ${this.minBalanceAlert} ETH\n`);
 
     this.isRunning = true;
 
-    // Check ngay lập tức
+    // Check immediately
     this.checkBalance();
 
-    // Schedule check định kỳ
+    // Schedule periodic checks
     this.intervalId = setInterval(() => {
       this.checkBalance();
     }, this.interval);
   }
 
   /**
-   * Dừng monitor
+   * Stop monitoring
    */
   stop() {
     if (this.intervalId) {
@@ -55,17 +55,17 @@ class BalanceMonitor {
       this.intervalId = null;
     }
     this.isRunning = false;
-    console.log('\n🛑 Đã dừng monitor');
+    console.log('\n🛑 Monitor stopped');
   }
 
   /**
-   * Kiểm tra số dư
+   * Check balance
    */
   async checkBalance() {
     try {
       const timestamp = new Date().toISOString();
       
-      // Lấy số dư ETH
+      // Get ETH balance
       const balance = await rpcCallWithRetry(
         () => this.walletManager.getBalance()
       );
@@ -74,7 +74,7 @@ class BalanceMonitor {
       // Log
       console.log(`[${timestamp}] 💰 Balance: ${balance} ETH`);
 
-      // Check thay đổi
+      // Check changes
       if (this.lastBalance !== null) {
         const change = balanceNum - this.lastBalance;
         if (change !== 0) {
@@ -83,7 +83,7 @@ class BalanceMonitor {
         }
       }
 
-      // Alert nếu số dư thấp
+      // Alert if balance is low
       if (balanceNum < this.minBalanceAlert) {
         this.sendLowBalanceAlert(balanceNum);
       }
@@ -91,12 +91,12 @@ class BalanceMonitor {
       this.lastBalance = balanceNum;
 
     } catch (error) {
-      console.error(`[${new Date().toISOString()}] ❌ Lỗi: ${error.message}`);
+      console.error(`[${new Date().toISOString()}] ❌ Error: ${error.message}`);
     }
   }
 
   /**
-   * Gửi alert khi số dư thấp
+   * Send alert on low balance
    */
   sendLowBalanceAlert(balance) {
     console.log('\n⚠️  🚨 LOW BALANCE ALERT! 🚨');
@@ -104,7 +104,7 @@ class BalanceMonitor {
     console.log(`   Threshold: ${this.minBalanceAlert} ETH`);
     console.log(`   Action Required: Top up wallet!\n`);
 
-    // Trong production, gửi email/SMS/webhook
+    // In production, send email/SMS/webhook
     // await this.sendEmail(balance);
     // await this.sendSlackNotification(balance);
     // await this.sendTelegramMessage(balance);
@@ -112,24 +112,24 @@ class BalanceMonitor {
 }
 
 /**
- * Demo monitor với token balance
+ * Demo monitor with token balance
  */
 async function monitorWithTokens(walletManager) {
-  console.log('\n📊 Monitor cả ETH và Token\n');
+  console.log('\n📊 Monitor ETH and Token\n');
 
   const tokenAddress = process.env.USDT_ADDRESS;
   
   if (!tokenAddress || !WalletManager.isValidAddress(tokenAddress)) {
-    console.log('⚠️  Không có token address hợp lệ để monitor\n');
+    console.log('⚠️  No valid token address to monitor\n');
     return;
   }
 
   try {
-    // Lấy thông tin token
+    // Get token info
     const tokenInfo = await walletManager.getTokenInfo(tokenAddress);
     console.log(`Token: ${tokenInfo.name} (${tokenInfo.symbol})\n`);
 
-    // Check balance một lần
+    // Check balance once
     const [ethBalance, tokenBalance] = await Promise.all([
       walletManager.getBalance(),
       walletManager.getTokenBalance(tokenAddress),
@@ -140,15 +140,15 @@ async function monitorWithTokens(walletManager) {
     console.log(`   ${tokenBalance.symbol}: ${tokenBalance.balance}\n`);
 
   } catch (error) {
-    console.error(`Lỗi khi monitor token: ${error.message}\n`);
+    console.error(`Error monitoring token: ${error.message}\n`);
   }
 }
 
 /**
- * Demo logging chi tiết
+ * Demo detailed logging
  */
 function demoLogging() {
-  console.log('\n📝 Best Practices cho Logging:\n');
+  console.log('\n📝 Best Practices for Logging:\n');
   
   console.log('1. Structured Logging:');
   console.log(`
@@ -169,22 +169,22 @@ function demoLogging() {
   console.log('   DEBUG - Detailed debugging info');
 
   console.log('\n3. Monitoring Tools:');
-  console.log('   - Winston / Pino cho logging');
-  console.log('   - Prometheus cho metrics');
-  console.log('   - Grafana cho visualization');
-  console.log('   - Sentry cho error tracking');
+  console.log('   - Winston / Pino for logging');
+  console.log('   - Prometheus for metrics');
+  console.log('   - Grafana for visualization');
+  console.log('   - Sentry for error tracking');
 
   console.log('\n4. Alerts:');
   console.log('   - Email (Sendgrid, AWS SES)');
   console.log('   - SMS (Twilio)');
   console.log('   - Slack/Discord webhook');
   console.log('   - Telegram bot');
-  console.log('   - PagerDuty cho on-call');
+  console.log('   - PagerDuty for on-call');
 }
 
 // Main
 async function main() {
-  console.log('=== VÍ DỤ 7: MONITOR BALANCE ===\n');
+  console.log('=== EXAMPLE 7: MONITOR BALANCE ===\n');
 
   try {
     // Setup wallet manager
@@ -201,22 +201,22 @@ async function main() {
       minBalanceAlert: parseFloat(process.env.MIN_BALANCE_ALERT) || 0.1,
     });
 
-    // Demo 2: Monitor với tokens
+    // Demo 2: Monitor with tokens
     await monitorWithTokens(walletManager);
 
     // Demo 3: Logging best practices
     demoLogging();
 
-    // Chạy monitor trong 2 phút
-    console.log('\n🚀 Bắt đầu monitor (sẽ chạy 2 phút)...\n');
+    // Run monitor for 2 minutes
+    console.log('\n🚀 Starting monitor (will run for 2 minutes)...\n');
     monitor.start();
 
-    // Dừng sau 2 phút
+    // Stop after 2 minutes
     setTimeout(() => {
       monitor.stop();
       
-      console.log('\n✅ Demo hoàn thành!\n');
-      console.log('💡 Trong Production:');
+      console.log('\n✅ Demo complete!\n');
+      console.log('💡 In Production:');
       console.log('   - Run monitor as background service');
       console.log('   - Implement proper error handling');
       console.log('   - Setup alerts (Email, SMS, Slack)');
@@ -228,16 +228,15 @@ async function main() {
     }, 120000); // 2 minutes
 
   } catch (error) {
-    console.error('\n❌ Lỗi:', error);
+    console.error('\n❌ Error:', error);
     process.exit(1);
   }
 }
 
 // Handle Ctrl+C
 process.on('SIGINT', () => {
-  console.log('\n\n👋 Đang dừng monitor...');
+  console.log('\n\n👋 Stopping monitor...');
   process.exit(0);
 });
 
 main();
-

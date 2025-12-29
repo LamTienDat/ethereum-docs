@@ -1,44 +1,44 @@
 /**
- * Ví dụ 5: RPC Provider và Fallback
+ * Example 5: RPC Provider and Fallback
  * 
- * Học cách:
- * - Sử dụng nhiều loại RPC provider
+ * Learn how to:
+ * - Use different types of RPC providers
  * - Setup FallbackProvider
- * - Tăng độ tin cậy cho ứng dụng
+ * - Increase application reliability
  */
 
 require('dotenv').config();
 const { ethers } = require('ethers');
 
 async function demoProviders() {
-  console.log('=== VÍ DỤ 5: RPC PROVIDER ===\n');
+  console.log('=== EXAMPLE 5: RPC PROVIDER ===\n');
 
-  // 1. JsonRpcProvider - Cơ bản nhất
-  console.log('📡 1. JsonRpcProvider (RPC URL trực tiếp):');
+  // 1. JsonRpcProvider - Most basic
+  console.log('📡 1. JsonRpcProvider (Direct RPC URL):');
   try {
     const provider1 = new ethers.JsonRpcProvider(process.env.RPC_URL);
     const blockNumber1 = await provider1.getBlockNumber();
     console.log(`   ✓ Block number: ${blockNumber1}\n`);
   } catch (error) {
-    console.error(`   ✗ Lỗi: ${error.message}\n`);
+    console.error(`   ✗ Error: ${error.message}\n`);
   }
 
-  // 2. AlchemyProvider - Khuyến nghị cho Production
+  // 2. AlchemyProvider - Recommended for Production
   if (process.env.ALCHEMY_API_KEY && process.env.ALCHEMY_API_KEY !== 'your_alchemy_api_key_here') {
     console.log('📡 2. AlchemyProvider:');
     try {
       const provider2 = new ethers.AlchemyProvider(
-        'sepolia', // hoặc 'mainnet', 'polygon', 'arbitrum'
+        'sepolia', // or 'mainnet', 'polygon', 'arbitrum'
         process.env.ALCHEMY_API_KEY
       );
       const blockNumber2 = await provider2.getBlockNumber();
       console.log(`   ✓ Block number: ${blockNumber2}\n`);
     } catch (error) {
-      console.error(`   ✗ Lỗi: ${error.message}\n`);
+      console.error(`   ✗ Error: ${error.message}\n`);
     }
   } else {
     console.log('📡 2. AlchemyProvider:');
-    console.log('   ⚠️ Cần setup ALCHEMY_API_KEY trong .env\n');
+    console.log('   ⚠️ Need to setup ALCHEMY_API_KEY in .env\n');
   }
 
   // 3. InfuraProvider
@@ -52,26 +52,26 @@ async function demoProviders() {
       const blockNumber3 = await provider3.getBlockNumber();
       console.log(`   ✓ Block number: ${blockNumber3}\n`);
     } catch (error) {
-      console.error(`   ✗ Lỗi: ${error.message}\n`);
+      console.error(`   ✗ Error: ${error.message}\n`);
     }
   } else {
     console.log('📡 3. InfuraProvider:');
-    console.log('   ⚠️ Cần setup INFURA_API_KEY trong .env\n');
+    console.log('   ⚠️ Need to setup INFURA_API_KEY in .env\n');
   }
 
-  // 4. WebSocketProvider - Cho realtime events
-  console.log('📡 4. WebSocketProvider (cho realtime):');
-  console.log('   ℹ️ WebSocket tốt cho listen events realtime');
-  console.log('   Ví dụ: wss://eth-mainnet.g.alchemy.com/v2/YOUR_KEY\n');
+  // 4. WebSocketProvider - For realtime events
+  console.log('📡 4. WebSocketProvider (for realtime):');
+  console.log('   ℹ️ WebSocket is good for listening to realtime events');
+  console.log('   Example: wss://eth-mainnet.g.alchemy.com/v2/YOUR_KEY\n');
 
   // 5. Demo FallbackProvider
-  console.log('📡 5. FallbackProvider (Độ tin cậy cao):');
-  console.log('   Tự động chuyển provider khi một provider gặp lỗi\n');
+  console.log('📡 5. FallbackProvider (High reliability):');
+  console.log('   Automatically switches provider when one fails\n');
   
   await demoFallbackProvider();
 
-  // 6. So sánh performance
-  console.log('\n📊 So sánh Performance:');
+  // 6. Compare performance
+  console.log('\n📊 Performance Comparison:');
   await compareProviderPerformance();
 }
 
@@ -82,7 +82,7 @@ async function demoFallbackProvider() {
   try {
     const providers = [];
 
-    // Thêm các provider có sẵn
+    // Add available providers
     if (process.env.RPC_URL) {
       providers.push({
         provider: new ethers.JsonRpcProvider(process.env.RPC_URL),
@@ -95,25 +95,25 @@ async function demoFallbackProvider() {
       providers.push({
         provider: new ethers.AlchemyProvider('sepolia', process.env.ALCHEMY_API_KEY),
         priority: 1,
-        weight: 2, // Weight cao hơn = ưu tiên hơn
+        weight: 2, // Higher weight = higher priority
       });
     }
 
     if (process.env.INFURA_API_KEY && process.env.INFURA_API_KEY !== 'your_infura_api_key_here') {
       providers.push({
         provider: new ethers.InfuraProvider('sepolia', process.env.INFURA_API_KEY),
-        priority: 2, // Priority thấp hơn = backup
+        priority: 2, // Lower priority = backup
         weight: 1,
       });
     }
 
     if (providers.length < 2) {
-      console.log('   ⚠️ Cần ít nhất 2 providers để demo FallbackProvider');
-      console.log('   Thêm ALCHEMY_API_KEY hoặc INFURA_API_KEY vào .env\n');
+      console.log('   ⚠️ Need at least 2 providers to demo FallbackProvider');
+      console.log('   Add ALCHEMY_API_KEY or INFURA_API_KEY to .env\n');
       return;
     }
 
-    console.log(`   Đang setup FallbackProvider với ${providers.length} providers...`);
+    console.log(`   Setting up FallbackProvider with ${providers.length} providers...`);
     const fallbackProvider = new ethers.FallbackProvider(providers);
 
     // Test
@@ -122,16 +122,16 @@ async function demoFallbackProvider() {
     const duration = Date.now() - startTime;
 
     console.log(`   ✓ Block number: ${blockNumber}`);
-    console.log(`   ✓ Thời gian: ${duration}ms`);
-    console.log(`   ✓ Nếu provider chính fail, tự động chuyển sang backup\n`);
+    console.log(`   ✓ Time: ${duration}ms`);
+    console.log(`   ✓ If main provider fails, automatically switches to backup\n`);
 
   } catch (error) {
-    console.error(`   ✗ Lỗi: ${error.message}\n`);
+    console.error(`   ✗ Error: ${error.message}\n`);
   }
 }
 
 /**
- * So sánh performance của các provider
+ * Compare provider performance
  */
 async function compareProviderPerformance() {
   const tests = [];
@@ -161,17 +161,17 @@ async function compareProviderPerformance() {
   }
 
   if (tests.length === 0) {
-    console.log('   ⚠️ Không có provider nào để test\n');
+    console.log('   ⚠️ No providers to test\n');
     return;
   }
 
-  console.log(`   Đang test ${tests.length} provider(s)...\n`);
+  console.log(`   Testing ${tests.length} provider(s)...\n`);
 
   for (const test of tests) {
     try {
       const startTime = Date.now();
       
-      // Thực hiện 3 requests
+      // Execute 3 requests
       await Promise.all([
         test.provider.getBlockNumber(),
         test.provider.getFeeData(),
@@ -181,28 +181,27 @@ async function compareProviderPerformance() {
       const duration = Date.now() - startTime;
       
       console.log(`   ${test.name}:`);
-      console.log(`     Thời gian: ${duration}ms`);
-      console.log(`     Trung bình: ~${Math.round(duration/3)}ms/request\n`);
+      console.log(`     Time: ${duration}ms`);
+      console.log(`     Average: ~${Math.round(duration/3)}ms/request\n`);
     } catch (error) {
       console.log(`   ${test.name}:`);
-      console.log(`     ✗ Lỗi: ${error.message}\n`);
+      console.log(`     ✗ Error: ${error.message}\n`);
     }
   }
 }
 
-// Chạy demo
+// Run demo
 demoProviders()
   .then(() => {
-    console.log('✅ Demo hoàn thành!\n');
+    console.log('✅ Demo complete!\n');
     console.log('💡 Best Practices:');
-    console.log('   - Dùng Alchemy/Infura cho production');
-    console.log('   - Implement FallbackProvider cho high availability');
-    console.log('   - Monitor performance và error rate');
-    console.log('   - Dùng WebSocket cho realtime events');
+    console.log('   - Use Alchemy/Infura for production');
+    console.log('   - Implement FallbackProvider for high availability');
+    console.log('   - Monitor performance and error rate');
+    console.log('   - Use WebSocket for realtime events');
     process.exit(0);
   })
   .catch((error) => {
-    console.error('\n❌ Lỗi:', error);
+    console.error('\n❌ Error:', error);
     process.exit(1);
   });
-

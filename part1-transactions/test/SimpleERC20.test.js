@@ -3,13 +3,13 @@ const { ethers } = require("hardhat");
 const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
 
 /**
- * Test Suite cho SimpleERC20 Contract
+ * Test Suite for SimpleERC20 Contract
  * 
- * Mục đích: Học cách viết tests cho smart contracts
+ * Purpose: Learn how to write tests for smart contracts
  */
 
 describe("SimpleERC20", function () {
-  // Fixture để deploy contract
+  // Fixture to deploy contract
   async function deployTokenFixture() {
     const [owner, addr1, addr2] = await ethers.getSigners();
 
@@ -30,33 +30,33 @@ describe("SimpleERC20", function () {
   }
 
   describe("Deployment", function () {
-    it("Nên set đúng token name", async function () {
+    it("Should set correct token name", async function () {
       const { token } = await loadFixture(deployTokenFixture);
       expect(await token.name()).to.equal("Test Token");
     });
 
-    it("Nên set đúng token symbol", async function () {
+    it("Should set correct token symbol", async function () {
       const { token } = await loadFixture(deployTokenFixture);
       expect(await token.symbol()).to.equal("TEST");
     });
 
-    it("Nên set đúng decimals", async function () {
+    it("Should set correct decimals", async function () {
       const { token } = await loadFixture(deployTokenFixture);
       expect(await token.decimals()).to.equal(18);
     });
 
-    it("Nên mint toàn bộ supply cho owner", async function () {
+    it("Should mint entire supply to owner", async function () {
       const { token, owner, INITIAL_SUPPLY } = await loadFixture(deployTokenFixture);
       const ownerBalance = await token.balanceOf(owner.address);
       expect(ownerBalance).to.equal(INITIAL_SUPPLY);
     });
 
-    it("Nên set đúng total supply", async function () {
+    it("Should set correct total supply", async function () {
       const { token, INITIAL_SUPPLY } = await loadFixture(deployTokenFixture);
       expect(await token.totalSupply()).to.equal(INITIAL_SUPPLY);
     });
 
-    it("Nên emit Transfer event khi deploy", async function () {
+    it("Should emit Transfer event on deployment", async function () {
       const [owner] = await ethers.getSigners();
       const TOKEN_NAME = "Test Token";
       const TOKEN_SYMBOL = "TEST";
@@ -74,7 +74,7 @@ describe("SimpleERC20", function () {
   });
 
   describe("transfer()", function () {
-    it("Nên chuyển token thành công", async function () {
+    it("Should transfer tokens successfully", async function () {
       const { token, owner, addr1, TOKEN_DECIMALS } = await loadFixture(deployTokenFixture);
       const amount = ethers.parseUnits("100", TOKEN_DECIMALS);
 
@@ -82,7 +82,7 @@ describe("SimpleERC20", function () {
         .to.changeTokenBalances(token, [owner, addr1], [-amount, amount]);
     });
 
-    it("Nên emit Transfer event", async function () {
+    it("Should emit Transfer event", async function () {
       const { token, owner, addr1, TOKEN_DECIMALS } = await loadFixture(deployTokenFixture);
       const amount = ethers.parseUnits("100", TOKEN_DECIMALS);
 
@@ -91,17 +91,17 @@ describe("SimpleERC20", function () {
         .withArgs(owner.address, addr1.address, amount);
     });
 
-    it("Nên revert nếu không đủ số dư", async function () {
+    it("Should revert if insufficient balance", async function () {
       const { token, addr1, TOKEN_DECIMALS } = await loadFixture(deployTokenFixture);
       const amount = ethers.parseUnits("100", TOKEN_DECIMALS);
 
-      // addr1 không có token
+      // addr1 has no tokens
       await expect(
         token.connect(addr1).transfer(addr1.address, amount)
       ).to.be.revertedWith("Insufficient balance");
     });
 
-    it("Nên revert nếu transfer đến zero address", async function () {
+    it("Should revert if transfer to zero address", async function () {
       const { token, TOKEN_DECIMALS } = await loadFixture(deployTokenFixture);
       const amount = ethers.parseUnits("100", TOKEN_DECIMALS);
 
@@ -110,7 +110,7 @@ describe("SimpleERC20", function () {
       ).to.be.revertedWith("Cannot transfer to zero address");
     });
 
-    it("Nên transfer 0 token thành công", async function () {
+    it("Should transfer 0 tokens successfully", async function () {
       const { token, addr1 } = await loadFixture(deployTokenFixture);
 
       await expect(token.transfer(addr1.address, 0))
@@ -120,7 +120,7 @@ describe("SimpleERC20", function () {
   });
 
   describe("approve()", function () {
-    it("Nên approve thành công", async function () {
+    it("Should approve successfully", async function () {
       const { token, owner, addr1, TOKEN_DECIMALS } = await loadFixture(deployTokenFixture);
       const amount = ethers.parseUnits("100", TOKEN_DECIMALS);
 
@@ -128,7 +128,7 @@ describe("SimpleERC20", function () {
       expect(await token.allowance(owner.address, addr1.address)).to.equal(amount);
     });
 
-    it("Nên emit Approval event", async function () {
+    it("Should emit Approval event", async function () {
       const { token, owner, addr1, TOKEN_DECIMALS } = await loadFixture(deployTokenFixture);
       const amount = ethers.parseUnits("100", TOKEN_DECIMALS);
 
@@ -137,7 +137,7 @@ describe("SimpleERC20", function () {
         .withArgs(owner.address, addr1.address, amount);
     });
 
-    it("Nên revert nếu approve cho zero address", async function () {
+    it("Should revert if approve zero address", async function () {
       const { token, TOKEN_DECIMALS } = await loadFixture(deployTokenFixture);
       const amount = ethers.parseUnits("100", TOKEN_DECIMALS);
 
@@ -146,7 +146,7 @@ describe("SimpleERC20", function () {
       ).to.be.revertedWith("Cannot approve zero address");
     });
 
-    it("Nên update allowance khi approve lại", async function () {
+    it("Should update allowance when approving again", async function () {
       const { token, owner, addr1, TOKEN_DECIMALS } = await loadFixture(deployTokenFixture);
       const amount1 = ethers.parseUnits("100", TOKEN_DECIMALS);
       const amount2 = ethers.parseUnits("200", TOKEN_DECIMALS);
@@ -160,11 +160,11 @@ describe("SimpleERC20", function () {
   });
 
   describe("transferFrom()", function () {
-    it("Nên transferFrom thành công khi đã approve", async function () {
+    it("Should transferFrom successfully when approved", async function () {
       const { token, owner, addr1, addr2, TOKEN_DECIMALS } = await loadFixture(deployTokenFixture);
       const amount = ethers.parseUnits("100", TOKEN_DECIMALS);
 
-      // Owner approve cho addr1
+      // Owner approves addr1
       await token.approve(addr1.address, amount);
 
       // addr1 transferFrom owner -> addr2
@@ -173,7 +173,7 @@ describe("SimpleERC20", function () {
       ).to.changeTokenBalances(token, [owner, addr2], [-amount, amount]);
     });
 
-    it("Nên emit Transfer event", async function () {
+    it("Should emit Transfer event", async function () {
       const { token, owner, addr1, addr2, TOKEN_DECIMALS } = await loadFixture(deployTokenFixture);
       const amount = ethers.parseUnits("100", TOKEN_DECIMALS);
 
@@ -186,7 +186,7 @@ describe("SimpleERC20", function () {
         .withArgs(owner.address, addr2.address, amount);
     });
 
-    it("Nên giảm allowance sau transferFrom", async function () {
+    it("Should decrease allowance after transferFrom", async function () {
       const { token, owner, addr1, addr2, TOKEN_DECIMALS } = await loadFixture(deployTokenFixture);
       const approveAmount = ethers.parseUnits("200", TOKEN_DECIMALS);
       const transferAmount = ethers.parseUnits("100", TOKEN_DECIMALS);
@@ -198,7 +198,7 @@ describe("SimpleERC20", function () {
       expect(remainingAllowance).to.equal(approveAmount - transferAmount);
     });
 
-    it("Nên revert nếu không đủ allowance", async function () {
+    it("Should revert if insufficient allowance", async function () {
       const { token, owner, addr1, addr2, TOKEN_DECIMALS } = await loadFixture(deployTokenFixture);
       const approveAmount = ethers.parseUnits("50", TOKEN_DECIMALS);
       const transferAmount = ethers.parseUnits("100", TOKEN_DECIMALS);
@@ -210,11 +210,11 @@ describe("SimpleERC20", function () {
       ).to.be.revertedWith("Insufficient allowance");
     });
 
-    it("Nên revert nếu from không đủ số dư", async function () {
+    it("Should revert if from has insufficient balance", async function () {
       const { token, addr1, addr2, TOKEN_DECIMALS } = await loadFixture(deployTokenFixture);
       const amount = ethers.parseUnits("100", TOKEN_DECIMALS);
 
-      // addr1 approve cho addr2 (nhưng addr1 không có token)
+      // addr1 approves addr2 (but addr1 has no tokens)
       await token.connect(addr1).approve(addr2.address, amount);
 
       await expect(
@@ -222,7 +222,7 @@ describe("SimpleERC20", function () {
       ).to.be.revertedWith("Insufficient balance");
     });
 
-    it("Nên revert nếu from là zero address", async function () {
+    it("Should revert if from is zero address", async function () {
       const { token, addr1, TOKEN_DECIMALS } = await loadFixture(deployTokenFixture);
       const amount = ethers.parseUnits("100", TOKEN_DECIMALS);
 
@@ -231,7 +231,7 @@ describe("SimpleERC20", function () {
       ).to.be.revertedWith("Cannot transfer from zero address");
     });
 
-    it("Nên revert nếu to là zero address", async function () {
+    it("Should revert if to is zero address", async function () {
       const { token, owner, addr1, TOKEN_DECIMALS } = await loadFixture(deployTokenFixture);
       const amount = ethers.parseUnits("100", TOKEN_DECIMALS);
 
@@ -244,7 +244,7 @@ describe("SimpleERC20", function () {
   });
 
   describe("mint()", function () {
-    it("Nên mint token thành công", async function () {
+    it("Should mint tokens successfully", async function () {
       const { token, addr1, TOKEN_DECIMALS } = await loadFixture(deployTokenFixture);
       const amount = ethers.parseUnits("1000", TOKEN_DECIMALS);
 
@@ -252,7 +252,7 @@ describe("SimpleERC20", function () {
       expect(await token.balanceOf(addr1.address)).to.equal(amount);
     });
 
-    it("Nên tăng total supply sau mint", async function () {
+    it("Should increase total supply after mint", async function () {
       const { token, addr1, INITIAL_SUPPLY, TOKEN_DECIMALS } = await loadFixture(deployTokenFixture);
       const amount = ethers.parseUnits("1000", TOKEN_DECIMALS);
 
@@ -260,7 +260,7 @@ describe("SimpleERC20", function () {
       expect(await token.totalSupply()).to.equal(INITIAL_SUPPLY + amount);
     });
 
-    it("Nên emit Transfer event từ zero address", async function () {
+    it("Should emit Transfer event from zero address", async function () {
       const { token, addr1, TOKEN_DECIMALS } = await loadFixture(deployTokenFixture);
       const amount = ethers.parseUnits("1000", TOKEN_DECIMALS);
 
@@ -269,7 +269,7 @@ describe("SimpleERC20", function () {
         .withArgs(ethers.ZeroAddress, addr1.address, amount);
     });
 
-    it("Nên revert nếu mint đến zero address", async function () {
+    it("Should revert if mint to zero address", async function () {
       const { token, TOKEN_DECIMALS } = await loadFixture(deployTokenFixture);
       const amount = ethers.parseUnits("1000", TOKEN_DECIMALS);
 
@@ -280,7 +280,7 @@ describe("SimpleERC20", function () {
   });
 
   describe("burn()", function () {
-    it("Nên burn token thành công", async function () {
+    it("Should burn tokens successfully", async function () {
       const { token, owner, INITIAL_SUPPLY, TOKEN_DECIMALS } = await loadFixture(deployTokenFixture);
       const amount = ethers.parseUnits("1000", TOKEN_DECIMALS);
 
@@ -288,7 +288,7 @@ describe("SimpleERC20", function () {
       expect(await token.balanceOf(owner.address)).to.equal(INITIAL_SUPPLY - amount);
     });
 
-    it("Nên giảm total supply sau burn", async function () {
+    it("Should decrease total supply after burn", async function () {
       const { token, INITIAL_SUPPLY, TOKEN_DECIMALS } = await loadFixture(deployTokenFixture);
       const amount = ethers.parseUnits("1000", TOKEN_DECIMALS);
 
@@ -296,7 +296,7 @@ describe("SimpleERC20", function () {
       expect(await token.totalSupply()).to.equal(INITIAL_SUPPLY - amount);
     });
 
-    it("Nên emit Transfer event đến zero address", async function () {
+    it("Should emit Transfer event to zero address", async function () {
       const { token, owner, TOKEN_DECIMALS } = await loadFixture(deployTokenFixture);
       const amount = ethers.parseUnits("1000", TOKEN_DECIMALS);
 
@@ -305,11 +305,11 @@ describe("SimpleERC20", function () {
         .withArgs(owner.address, ethers.ZeroAddress, amount);
     });
 
-    it("Nên revert nếu không đủ số dư để burn", async function () {
+    it("Should revert if insufficient balance to burn", async function () {
       const { token, addr1, TOKEN_DECIMALS } = await loadFixture(deployTokenFixture);
       const amount = ethers.parseUnits("1000", TOKEN_DECIMALS);
 
-      // addr1 không có token
+      // addr1 has no tokens
       await expect(
         token.connect(addr1).burn(amount)
       ).to.be.revertedWith("Insufficient balance to burn");
@@ -317,7 +317,7 @@ describe("SimpleERC20", function () {
   });
 
   describe("Gas Optimization", function () {
-    it("Nên đo gas cho transfer", async function () {
+    it("Should measure gas for transfer", async function () {
       const { token, addr1, TOKEN_DECIMALS } = await loadFixture(deployTokenFixture);
       const amount = ethers.parseUnits("100", TOKEN_DECIMALS);
 
@@ -325,10 +325,10 @@ describe("SimpleERC20", function () {
       const receipt = await tx.wait();
       
       console.log(`      Gas used for transfer: ${receipt.gasUsed.toString()}`);
-      expect(receipt.gasUsed).to.be.lessThan(100000); // Nên < 100k gas
+      expect(receipt.gasUsed).to.be.lessThan(100000); // Should be < 100k gas
     });
 
-    it("Nên đo gas cho approve", async function () {
+    it("Should measure gas for approve", async function () {
       const { token, addr1, TOKEN_DECIMALS } = await loadFixture(deployTokenFixture);
       const amount = ethers.parseUnits("100", TOKEN_DECIMALS);
 
@@ -339,7 +339,7 @@ describe("SimpleERC20", function () {
       expect(receipt.gasUsed).to.be.lessThan(100000);
     });
 
-    it("Nên đo gas cho transferFrom", async function () {
+    it("Should measure gas for transferFrom", async function () {
       const { token, owner, addr1, addr2, TOKEN_DECIMALS } = await loadFixture(deployTokenFixture);
       const amount = ethers.parseUnits("100", TOKEN_DECIMALS);
 

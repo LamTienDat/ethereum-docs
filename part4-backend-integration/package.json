@@ -1,7 +1,7 @@
 {
   "name": "part4-backend-integration",
   "version": "1.0.0",
-  "description": "Ví dụ tích hợp Backend với Ethereum - Wallet, RPC Provider, và Transaction Management",
+  "description": "Backend Integration with Ethereum Examples - Wallet, RPC Provider, and Transaction Management",
   "main": "index.js",
   "scripts": {
     "generate": "node scripts/generate-wallet.js",

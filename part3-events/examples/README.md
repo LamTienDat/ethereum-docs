@@ -1,145 +1,145 @@
-# Phần 3: Xử lý sự kiện (Events) - Examples
+# Part 3: Event Handling - Examples
 
-Các script đơn giản để test và học về Events trong Ethereum.
+Simple scripts to test and learn about Events in Ethereum.
 
-## 📋 Danh sách Scripts
+## 📋 Script List
 
 ### 1. Query Past Events (`01-query-past-events.js`)
 
-Lấy các events đã xảy ra trong quá khứ.
+Retrieve events that occurred in the past.
 
-**Chạy:**
+**Run:**
 
 ```bash
 node 01-query-past-events.js
 ```
 
-**Học được:**
+**What you'll learn:**
 
-- Query events trong một block range
-- Lấy tất cả Transfer events
-- Thống kê volume
-- Hiển thị event details
+- Query events within a block range
+- Get all Transfer events
+- Calculate volume statistics
+- Display event details
 
 ---
 
 ### 2. Filter by Address (`02-filter-by-address.js`)
 
-Filter events theo địa chỉ cụ thể.
+Filter events by specific address.
 
-**Chạy:**
+**Run:**
 
 ```bash
 node 02-filter-by-address.js
 ```
 
-**Học được:**
+**What you'll learn:**
 
-- Filter events gửi đi (FROM = address)
-- Filter events nhận vào (TO = address)
-- Tính tổng sent/received
+- Filter outgoing events (FROM = address)
+- Filter incoming events (TO = address)
+- Calculate total sent/received
 - Net flow calculation
 
 ---
 
 ### 3. Transaction History (`03-transaction-history.js`)
 
-Xây dựng lịch sử giao dịch đầy đủ cho một địa chỉ.
+Build complete transaction history for an address.
 
-**Chạy:**
+**Run:**
 
 ```bash
-# Dùng địa chỉ mặc định
+# Use default address
 node 03-transaction-history.js
 
-# Hoặc chỉ định địa chỉ
+# Or specify address
 node 03-transaction-history.js 0xYOUR_ADDRESS
 ```
 
-**Học được:**
+**What you'll learn:**
 
-- Gộp incoming + outgoing events
-- Sắp xếp theo thời gian
-- Format kết quả đẹp
-- Thống kê tổng hợp
+- Combine incoming + outgoing events
+- Sort by timestamp
+- Format results nicely
+- Summary statistics
 
 ---
 
 ### 4. Real-time Listener (`04-realtime-listener.js`)
 
-Lắng nghe events real-time với WebSocket.
+Listen to events in real-time with WebSocket.
 
-**Chạy:**
+**Run:**
 
 ```bash
 node 04-realtime-listener.js
 ```
 
-**Dừng:** Ctrl+C
+**Stop:** Ctrl+C
 
-**Học được:**
+**What you'll learn:**
 
-- Kết nối WebSocket provider
-- Lắng nghe events real-time
-- Hiển thị events ngay khi xảy ra
-- Thống kê theo thời gian
+- Connect WebSocket provider
+- Listen to events in real-time
+- Display events as they occur
+- Time-based statistics
 
 ---
 
 ### 5. Filtered Listener (`05-filter-listener.js`)
 
-Lắng nghe events với filter (chỉ địa chỉ cụ thể).
+Listen to events with filter (specific address only).
 
-**Chạy:**
+**Run:**
 
 ```bash
-# Dùng địa chỉ mặc định
+# Use default address
 node 05-filter-listener.js
 
-# Hoặc chỉ định địa chỉ
+# Or specify address
 node 05-filter-listener.js 0xYOUR_ADDRESS
 ```
 
-**Dừng:** Ctrl+C
+**Stop:** Ctrl+C
 
-**Học được:**
+**What you'll learn:**
 
-- Filter events real-time
-- Lắng nghe incoming/outgoing riêng biệt
-- Track net flow real-time
+- Filter events in real-time
+- Listen to incoming/outgoing separately
+- Track net flow in real-time
 - Multiple listeners
 
 ---
 
 ### 6. Custom Events (`06-custom-events.js`)
 
-Làm việc với custom events từ smart contract (Uniswap example).
+Work with custom events from smart contract (Uniswap example).
 
-**Chạy:**
+**Run:**
 
 ```bash
 node 06-custom-events.js
 ```
 
-**Học được:**
+**What you'll learn:**
 
-- Query nhiều loại events khác nhau
+- Query multiple event types
 - Swap, Mint, Burn, Sync events
 - Parse event arguments
 - Uniswap V2 pair events
 
 ---
 
-## 🚀 Cài đặt
+## 🚀 Installation
 
 ```bash
 cd part3-events/examples
 npm install
 ```
 
-## 📝 Chạy Scripts
+## 📝 Running Scripts
 
-### Cách 1: Trực tiếp
+### Method 1: Direct
 
 ```bash
 node 01-query-past-events.js
@@ -150,7 +150,7 @@ node 05-filter-listener.js 0xYOUR_ADDRESS
 node 06-custom-events.js
 ```
 
-### Cách 2: Dùng npm scripts
+### Method 2: Using npm scripts
 
 ```bash
 npm run 01  # Query past events
@@ -161,15 +161,15 @@ npm run 05  # Filtered listener
 npm run 06  # Custom events
 ```
 
-## 🔧 Cấu hình
+## 🔧 Configuration
 
-Các scripts sử dụng:
+Scripts use:
 
-- **RPC URL**: `https://api.zan.top/node/v1/eth/mainnet/7d5a7370dd004a1f913078deb248af07` (HTTP) hoặc `wss://eth.llamarpc.com` (WebSocket)
+- **RPC URL**: `https://api.zan.top/node/v1/eth/mainnet/7d5a7370dd004a1f913078deb248af07` (HTTP) or `wss://eth.llamarpc.com` (WebSocket)
 - **Network**: Ethereum Mainnet
 - **Contract**: USDT (`0xdAC17F958D2ee523a2206206994597C13D831ec7`)
 
-Bạn có thể thay đổi trong code nếu muốn test với contract khác.
+You can change these in the code if you want to test with other contracts.
 
 ## 📊 Output Examples
 
@@ -215,42 +215,42 @@ Press Ctrl+C to stop
 ────────────────────────────────────────────────────────────────────────────
 ```
 
-## ⚠️ Lưu ý
+## ⚠️ Important Notes
 
 ### Rate Limiting
 
-Nếu query quá nhiều, có thể bị rate limit. Giải pháp:
+If querying too much, you may hit rate limits. Solutions:
 
-- Giảm block range
-- Thêm delay giữa các requests
-- Dùng paid RPC provider (Infura, Alchemy)
+- Reduce block range
+- Add delay between requests
+- Use paid RPC provider (Infura, Alchemy)
 
 ### WebSocket Connection
 
-Scripts 4 và 5 dùng WebSocket. Nếu lỗi:
+Scripts 4 and 5 use WebSocket. If errors occur:
 
-- Thử lại sau vài giây
-- Hoặc đổi sang RPC provider khác
-- Hoặc dùng HTTP provider (không real-time)
+- Try again after a few seconds
+- Or switch to another RPC provider
+- Or use HTTP provider (not real-time)
 
 ### Block Range
 
-Không nên query quá nhiều blocks cùng lúc:
+Don't query too many blocks at once:
 
 - ✅ 100-1000 blocks: OK
-- ⚠️ 1000-5000 blocks: Có thể chậm
-- ❌ >10000 blocks: Thường bị lỗi
+- ⚠️ 1000-5000 blocks: May be slow
+- ❌ >10000 blocks: Usually fails
 
-## 🎯 Bài tập
+## 🎯 Exercises
 
-1. **Modify Script 1**: Thay đổi để query events của token khác (DAI, USDC)
-2. **Modify Script 2**: Thêm filter theo amount (chỉ hiển thị giao dịch > 10000 USDT)
-3. **Modify Script 3**: Export lịch sử ra file CSV
-4. **Modify Script 4**: Thêm notification khi có giao dịch lớn (> 100000 USDT)
-5. **Modify Script 5**: Track nhiều địa chỉ cùng lúc
-6. **Modify Script 6**: Tính APY của liquidity pool từ Mint/Burn events
+1. **Modify Script 1**: Change to query events from other tokens (DAI, USDC)
+2. **Modify Script 2**: Add amount filter (only show transactions > 10000 USDT)
+3. **Modify Script 3**: Export history to CSV file
+4. **Modify Script 4**: Add notification for large transactions (> 100000 USDT)
+5. **Modify Script 5**: Track multiple addresses simultaneously
+6. **Modify Script 6**: Calculate APY of liquidity pool from Mint/Burn events
 
-## 📚 Tài liệu tham khảo
+## 📚 Reference Documentation
 
 - [Solidity Events](https://docs.soliditylang.org/en/latest/contracts.html#events)
 - [Ethers.js - Contract Events](https://docs.ethers.org/v6/api/contract/#ContractEvent)
@@ -261,4 +261,4 @@ Không nên query quá nhiều blocks cùng lúc:
 
 **Happy Learning!** 🚀
 
-_Tài liệu được biên soạn bởi Kaopiz Team - © 2025_
+_Documentation compiled by Kaopiz Team - © 2025_

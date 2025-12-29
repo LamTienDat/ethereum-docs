@@ -1,16 +1,16 @@
 /**
  * Script 4: Real-time Event Listener
  * 
- * Demo cách lắng nghe events real-time
+ * Demo how to listen to events in real-time
  * 
- * Chạy: node 04-realtime-listener.js
- * (Ctrl+C để dừng)
+ * Run: node 04-realtime-listener.js
+ * (Ctrl+C to stop)
  */
 
 import { ethers } from 'ethers';
 
-// Cấu hình
-const RPC_URL = 'wss://eth.llamarpc.com'; // Dùng WebSocket cho real-time
+// Configuration
+const RPC_URL = 'wss://eth.llamarpc.com'; // Use WebSocket for real-time
 const USDT_ADDRESS = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
 
 const ERC20_ABI = [
@@ -22,7 +22,7 @@ const ERC20_ABI = [
 async function main() {
   console.log('🚀 Starting Real-time Event Listener\n');
 
-  // Kết nối với WebSocket provider
+  // Connect with WebSocket provider
   const provider = new ethers.WebSocketProvider(RPC_URL);
   const contract = new ethers.Contract(USDT_ADDRESS, ERC20_ABI, provider);
 
@@ -38,7 +38,7 @@ async function main() {
   let eventCount = 0;
   let totalVolume = 0n;
 
-  // Lắng nghe tất cả Transfer events
+  // Listen to all Transfer events
   contract.on('Transfer', async (from, to, value, event) => {
     eventCount++;
     totalVolume += value;
@@ -55,7 +55,7 @@ async function main() {
     console.log('─'.repeat(100));
   });
 
-  // Hiển thị thống kê mỗi 30 giây
+  // Display statistics every 30 seconds
   setInterval(() => {
     console.log(`\n📊 Statistics (last 30s):`);
     console.log(`   Events detected: ${eventCount}`);
@@ -64,7 +64,7 @@ async function main() {
     console.log('─'.repeat(100));
   }, 30000);
 
-  // Xử lý khi dừng
+  // Handle stop
   process.on('SIGINT', () => {
     console.log('\n\n🛑 Stopping listener...');
     console.log(`\n📊 Final Statistics:`);
