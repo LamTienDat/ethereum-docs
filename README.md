@@ -5446,7 +5446,7 @@ contract SafeLottery is VRFConsumerBase {
 
 #### 📋 要件
 
-**TLCoin (KPC)** という名前のトークンを作成し、以下の機能を実装：
+**TLCoin (TLC)** という名前のトークンを作成し、以下の機能を実装：
 
 - ERC20 標準に準拠
 - Mint 可能（owner のみ）
@@ -5508,7 +5508,7 @@ contract TLCoin is ERC20, ERC20Burnable, Ownable, Pausable {
      */
     constructor(
         address initialOwner
-    ) ERC20("TLCoin", "KPC") Ownable(initialOwner) {
+    ) ERC20("TLCoin", "TLC") Ownable(initialOwner) {
         // Owner に initial supply を mint
         _mint(initialOwner, INITIAL_SUPPLY);
         emit TokensMinted(initialOwner, INITIAL_SUPPLY, block.timestamp);
@@ -5628,11 +5628,11 @@ uint256 public constant INITIAL_SUPPLY = 100_000_000 * 10**18;
 
 ```solidity
 constructor(address initialOwner)
-    ERC20("TLCoin", "KPC")
+    ERC20("TLCoin", "TLC")
     Ownable(initialOwner)
 ```
 
-- "TLCoin" という名前と "KPC" という symbol で token を初期化
+- "TLCoin" という名前と "TLC" という symbol で token を初期化
 - 初期 owner を設定
 - Owner に initial supply を mint
 
@@ -5699,7 +5699,7 @@ describe("TLCoin", function () {
 
     it("Should have correct token info", async function () {
       expect(await tlCoin.name()).to.equal("TLCoin");
-      expect(await tlCoin.symbol()).to.equal("KPC");
+      expect(await tlCoin.symbol()).to.equal("TLC");
       expect(await tlCoin.decimals()).to.equal(18);
     });
   });
@@ -5992,12 +5992,12 @@ async function main() {
   console.log(
     "   Total Supply:",
     ethers.formatEther(tokenInfo.tokenTotalSupply),
-    "KPC"
+    "TLC"
   );
   console.log(
     "   Max Supply:",
     ethers.formatEther(tokenInfo.tokenMaxSupply),
-    "KPC"
+    "TLC"
   );
   console.log("   Is Paused:", tokenInfo.isPaused);
 
@@ -6380,7 +6380,7 @@ function TransferForm({ wallet, contractAddress, onTransferComplete }) {
       console.log("Transaction confirmed:", receipt);
 
       setSuccess(
-        `✅ Transfer successful! ${amount} KPC sent to ${recipient.slice(
+        `✅ Transfer successful! ${amount} TLC sent to ${recipient.slice(
           0,
           6
         )}...${recipient.slice(-4)}`
@@ -6410,7 +6410,7 @@ function TransferForm({ wallet, contractAddress, onTransferComplete }) {
 
   return (
     <div className="transfer-form">
-      <h2>💸 Transfer KPC</h2>
+      <h2>💸 Transfer TLC</h2>
       <form onSubmit={handleTransfer}>
         <div className="form-group">
           <label>Recipient Address:</label>
@@ -6425,7 +6425,7 @@ function TransferForm({ wallet, contractAddress, onTransferComplete }) {
         </div>
 
         <div className="form-group">
-          <label>Amount (KPC):</label>
+          <label>Amount (TLC):</label>
           <input
             type="number"
             value={amount}
@@ -6555,7 +6555,7 @@ function TransactionHistory({ wallet, contractAddress }) {
                   {tx.type === "sent" ? "📤 Sent" : "📥 Received"}
                 </span>
                 <span className="tx-amount">
-                  {parseFloat(tx.value).toFixed(4)} KPC
+                  {parseFloat(tx.value).toFixed(4)} TLC
                 </span>
               </div>
               <div className="tx-details">
@@ -7142,7 +7142,7 @@ http://localhost:3000
 **3. Transfer を実行:**
 
 - 受信者のアドレスを入力
-- KPC の数量を入力
+- TLC の数量を入力
 - "Send Transfer" をクリック
 - MetaMask で transaction を confirm
 - Transaction の confirmation を待つ

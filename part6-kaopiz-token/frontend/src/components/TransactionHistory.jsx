@@ -134,7 +134,7 @@ function TransactionHistory({ wallet, contractAddress }) {
                   {tx.type === 'sent' ? '📤 Sent' : '📥 Received'}
                 </span>
                 <span className="tx-amount">
-                  {parseFloat(tx.value).toFixed(4)} KPC
+                  {parseFloat(tx.value).toFixed(4)} TLC
                 </span>
               </div>
               <div className="tx-details">

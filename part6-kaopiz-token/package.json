@@ -1,7 +1,7 @@
 {
   "name": "tl-coin",
   "version": "1.0.0",
-  "description": "TLCoin (KPC) - Complete ERC20 Token DApp",
+  "description": "TLCoin (TLC) - Complete ERC20 Token DApp",
   "main": "index.js",
   "scripts": {
     "compile": "hardhat compile",

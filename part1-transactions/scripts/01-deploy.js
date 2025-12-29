@@ -32,7 +32,7 @@ async function main() {
 
   // Token parameters
   const TOKEN_NAME = "TL Coin";
-  const TOKEN_SYMBOL = "KPC";
+  const TOKEN_SYMBOL = "TLC";
   const TOKEN_DECIMALS = 18;
   const INITIAL_SUPPLY = ethers.parseUnits("1000000", TOKEN_DECIMALS); // 1 million tokens
 

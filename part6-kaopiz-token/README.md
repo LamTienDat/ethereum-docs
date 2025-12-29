@@ -1,10 +1,10 @@
-# 🪙 TLCoin (KPC) - Complete DApp Project
+# 🪙 TLCoin (TLC) - Complete DApp Project
 
 Complete project from Smart Contract to Frontend for custom ERC20 token.
 
 ## 📋 Overview
 
-**TLCoin (KPC)** is an ERC20 token with features:
+**TLCoin (TLC)** is an ERC20 token with features:
 
 - ✅ ERC20 standard compliant
 - ✅ Mint tokens (owner only)
@@ -143,10 +143,10 @@ Output:
 ✅ TLCoin deployed to: 0x1234567890abcdef...
 📊 Token Info:
    Name: TLCoin
-   Symbol: KPC
+   Symbol: TLC
    Decimals: 18
-   Initial Supply: 100000000.0 KPC
-   Max Supply: 1000000000.0 KPC
+   Initial Supply: 100000000.0 TLC
+   Max Supply: 1000000000.0 TLC
 ```
 
 **⚠️ NOTE:** Copy contract address to use for frontend!

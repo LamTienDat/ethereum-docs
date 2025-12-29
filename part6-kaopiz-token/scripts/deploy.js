@@ -29,12 +29,12 @@ async function main() {
   console.log(
     "   Total Supply:",
     ethers.formatEther(tokenInfo.tokenTotalSupply),
-    "KPC"
+    "TLC"
   );
   console.log(
     "   Max Supply:",
     ethers.formatEther(tokenInfo.tokenMaxSupply),
-    "KPC"
+    "TLC"
   );
   console.log("   Is Paused:", tokenInfo.isPaused);
 

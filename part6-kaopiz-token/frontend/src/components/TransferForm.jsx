@@ -66,7 +66,7 @@ function TransferForm({ wallet, contractAddress, onTransferComplete }) {
       
       console.log('Transaction confirmed!', receipt)
       setSuccess(
-        `✅ Transfer successful! ${amount} KPC sent to ${recipient.slice(0, 6)}...${recipient.slice(-4)}`
+        `✅ Transfer successful! ${amount} TLC sent to ${recipient.slice(0, 6)}...${recipient.slice(-4)}`
       )
 
       // Reset form
@@ -98,7 +98,7 @@ function TransferForm({ wallet, contractAddress, onTransferComplete }) {
 
   return (
     <div className="transfer-form">
-      <h2>💸 Transfer KPC</h2>
+      <h2>💸 Transfer TLC</h2>
       <form onSubmit={handleTransfer}>
         <div className="form-group">
           <label>Recipient Address:</label>
@@ -113,7 +113,7 @@ function TransferForm({ wallet, contractAddress, onTransferComplete }) {
         </div>
 
         <div className="form-group">
-          <label>Amount (KPC):</label>
+          <label>Amount (TLC):</label>
           <input
             type="number"
             value={amount}

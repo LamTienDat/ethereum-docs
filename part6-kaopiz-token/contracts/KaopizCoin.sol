@@ -27,7 +27,7 @@ contract TLCoin is ERC20, ERC20Burnable, Ownable, Pausable {
      */
     constructor(
         address initialOwner
-    ) ERC20("TLCoin", "KPC") Ownable(initialOwner) {
+    ) ERC20("TLCoin", "TLC") Ownable(initialOwner) {
         // Mint initial supply to owner
         _mint(initialOwner, INITIAL_SUPPLY);
         emit TokensMinted(initialOwner, INITIAL_SUPPLY, block.timestamp);
