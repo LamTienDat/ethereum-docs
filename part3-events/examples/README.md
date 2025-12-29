@@ -163,92 +163,142 @@ npm run 06  # Custom events
 
 ## 🔧 Configuration
 
-Scripts use:
+### Network: Sepolia Testnet
 
-- **RPC URL**: `https://api.zan.top/node/v1/eth/mainnet/7d5a7370dd004a1f913078deb248af07` (HTTP) or `wss://eth.llamarpc.com` (WebSocket)
-- **Network**: Ethereum Mainnet
-- **Contract**: USDT (`0xdAC17F958D2ee523a2206206994597C13D831ec7`)
+Scripts 1-5 use **Sepolia Testnet**:
 
-You can change these in the code if you want to test with other contracts.
+- **RPC URL (HTTP)**: `https://eth-sepolia.g.alchemy.com/v2/demo`
+- **RPC URL (WebSocket)**: `wss://eth-sepolia.g.alchemy.com/v2/demo`
+- **Network**: Sepolia Testnet
+- **Contract**: USDT on Sepolia (`0x7169D38820dfd117C3FA1f22a697dBA58d90BA06`)
+- **Test Address**: `0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb`
+
+### Script 6: Custom Events
+
+Script 6 uses **Ethereum Mainnet** because Uniswap V2 is not deployed on Sepolia. This is acceptable for learning as we're only reading data (no transactions).
+
+- **RPC URL**: `https://eth.llamarpc.com` (free public RPC)
+- **Contract**: Uniswap V2 USDC/WETH Pair
+
+### Using Your Own RPC
+
+For better performance and higher rate limits, replace `demo` with your own Alchemy API key:
+
+```javascript
+// Get free API key at: https://www.alchemy.com/
+const RPC_URL = "https://eth-sepolia.g.alchemy.com/v2/YOUR_API_KEY";
+const WS_URL = "wss://eth-sepolia.g.alchemy.com/v2/YOUR_API_KEY";
+```
 
 ## 📊 Output Examples
 
-### Script 1: Query Past Events
+### Script 1: Query Past Events (Sepolia)
 
 ```
 🚀 Starting Past Events Query Demo
 
 📊 Token: USDT (6 decimals)
 
-📦 Current block: 18500000
+📦 Current block: 5234567
 
-🔍 Querying Transfer events from block 18499900 to 18500000...
+🔍 Querying Transfer events from block 5234467 to 5234567...
 
-✅ Found 1247 Transfer events
+✅ Found 12 Transfer events
 
 📋 First 5 events:
 ────────────────────────────────────────────────────────────────────────────
 
-1. Block 18499901
-   From: 0xAAA...
-   To:   0xBBB...
-   Amount: 1000.00 USDT
+1. Block 5234470
+   From: 0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb
+   To:   0xAAA...
+   Amount: 100.00 USDT
    Tx: 0xabc123...
 ```
 
-### Script 4: Real-time Listener
+### Script 4: Real-time Listener (Sepolia)
 
 ```
 🚀 Starting Real-time Event Listener
 
 📊 Token: USDT
 📡 Listening for Transfer events...
-⏰ Started at: 2025-12-17 10:30:00
+⏰ Started at: 2025-12-29 10:30:00
 ────────────────────────────────────────────────────────────────────────────
 Press Ctrl+C to stop
 
-🔔 Event #1 - Block 18500001
-   From: 0xAAA...
+🔔 Event #1 - Block 5234568
+   From: 0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb
    To:   0xBBB...
-   Amount: 500.00 USDT
+   Amount: 50.00 USDT
    Tx: 0xdef456...
 ────────────────────────────────────────────────────────────────────────────
 ```
 
 ## ⚠️ Important Notes
 
+### Network: Sepolia Testnet
+
+- ✅ All scripts (except #6) run on **Sepolia Testnet**
+- ✅ Safe to test - no real money involved
+- ✅ Free testnet ETH from faucets
+- ⚠️ Script #6 uses Mainnet (read-only, no transactions)
+
 ### Rate Limiting
 
-If querying too much, you may hit rate limits. Solutions:
+The demo RPC URL has rate limits. Solutions:
 
-- Reduce block range
+- Get your own free Alchemy API key: https://www.alchemy.com/
+- Reduce block range for queries
 - Add delay between requests
-- Use paid RPC provider (Infura, Alchemy)
 
 ### WebSocket Connection
 
 Scripts 4 and 5 use WebSocket. If errors occur:
 
+- Make sure you have a valid Alchemy API key
 - Try again after a few seconds
-- Or switch to another RPC provider
-- Or use HTTP provider (not real-time)
+- Check your internet connection
 
 ### Block Range
 
-Don't query too many blocks at once:
+Don't query too many blocks at once on Sepolia:
 
 - ✅ 100-1000 blocks: OK
 - ⚠️ 1000-5000 blocks: May be slow
 - ❌ >10000 blocks: Usually fails
 
+### Getting Testnet ETH
+
+If you want to test with your own address:
+
+- [Alchemy Sepolia Faucet](https://sepoliafaucet.com/)
+- [Infura Sepolia Faucet](https://www.infura.io/faucet/sepolia)
+
+### Checking Transactions
+
+View your transactions on Sepolia Etherscan:
+
+```
+https://sepolia.etherscan.io/address/YOUR_ADDRESS
+https://sepolia.etherscan.io/tx/YOUR_TX_HASH
+```
+
 ## 🎯 Exercises
 
-1. **Modify Script 1**: Change to query events from other tokens (DAI, USDC)
-2. **Modify Script 2**: Add amount filter (only show transactions > 10000 USDT)
+1. **Modify Script 1**: Change to query events from other Sepolia tokens (LINK, DAI)
+
+   - LINK on Sepolia: `0x779877A7B0D9E8603169DdbD7836e478b4624789`
+   - DAI on Sepolia: `0x68194a729C2450ad26072b3D33ADaCbcef39D574`
+
+2. **Modify Script 2**: Add amount filter (only show transactions > 100 USDT)
+
 3. **Modify Script 3**: Export history to CSV file
-4. **Modify Script 4**: Add notification for large transactions (> 100000 USDT)
+
+4. **Modify Script 4**: Add notification for large transactions (> 1000 USDT)
+
 5. **Modify Script 5**: Track multiple addresses simultaneously
-6. **Modify Script 6**: Calculate APY of liquidity pool from Mint/Burn events
+
+6. **Modify Script 6**: Calculate APY of liquidity pool from Mint/Burn events (Mainnet)
 
 ## 📚 Reference Documentation
 
@@ -260,5 +310,3 @@ Don't query too many blocks at once:
 ---
 
 **Happy Learning!** 🚀
-
-_Documentation compiled by Kaopiz Team - © 2025_

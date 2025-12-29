@@ -26,7 +26,6 @@
     "hardhat",
     "solidity"
   ],
-  "author": "Kaopiz Team",
   "license": "MIT",
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",

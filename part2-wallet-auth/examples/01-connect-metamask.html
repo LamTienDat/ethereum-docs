@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bài 1: Kết nối MetaMask</title>
+    <title>Lesson 1: Connect MetaMask</title>
     <style>
         * {
             margin: 0;
@@ -178,24 +178,24 @@
         <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" 
              alt="MetaMask" class="metamask-logo">
         
-        <h1>🦊 Kết nối MetaMask</h1>
-        <p class="subtitle">Bài 1: Học cách kết nối ví MetaMask với website</p>
+        <h1>🦊 Connect MetaMask</h1>
+        <p class="subtitle">Lesson 1: Learn how to connect MetaMask wallet to website</p>
 
         <div id="status" class="status info">
-            Nhấn nút bên dưới để kết nối ví MetaMask của bạn
+            Click the button below to connect your MetaMask wallet
         </div>
 
         <button id="connectBtn" onclick="connectWallet()">
-            Kết nối MetaMask
+            Connect MetaMask
         </button>
 
         <div id="walletInfo" class="wallet-info">
             <div class="info-row">
-                <span class="info-label">📍 Địa chỉ:</span>
+                <span class="info-label">📍 Address:</span>
                 <span class="info-value" id="address">-</span>
             </div>
             <div class="info-row">
-                <span class="info-label">💰 Số dư:</span>
+                <span class="info-label">💰 Balance:</span>
                 <span class="info-value" id="balance">-</span>
             </div>
             <div class="info-row">
@@ -209,13 +209,13 @@
         </div>
 
         <div class="steps">
-            <h3>📚 Những gì bạn sẽ học:</h3>
+            <h3>📚 What you'll learn:</h3>
             <ol>
-                <li>Kiểm tra MetaMask đã được cài đặt chưa</li>
-                <li>Kết nối ví với <code>eth_requestAccounts</code></li>
-                <li>Lấy địa chỉ ví và số dư</li>
-                <li>Xử lý lỗi khi user từ chối kết nối</li>
-                <li>Hiển thị thông tin wallet</li>
+                <li>Check if MetaMask is installed</li>
+                <li>Connect wallet with <code>eth_requestAccounts</code></li>
+                <li>Get wallet address and balance</li>
+                <li>Handle errors when user rejects connection</li>
+                <li>Display wallet information</li>
             </ol>
         </div>
     </div>
@@ -251,112 +251,112 @@
             return networks[chainId] || `Unknown (${chainId})`;
         }
 
-        // Hàm kết nối wallet
+        // Connect wallet function
         async function connectWallet() {
-            console.log('🔄 Bắt đầu kết nối wallet...');
+            console.log('🔄 Starting wallet connection...');
 
-            // Bước 1: Kiểm tra MetaMask đã cài chưa
+            // Step 1: Check if MetaMask is installed
             if (typeof window.ethereum === 'undefined') {
-                showStatus('❌ MetaMask chưa được cài đặt! Vui lòng cài đặt MetaMask extension.', 'error');
+                showStatus('❌ MetaMask is not installed! Please install MetaMask extension.', 'error');
                 console.error('MetaMask not installed');
                 
-                // Mở trang download MetaMask
+                // Open MetaMask download page
                 setTimeout(() => {
-                    if (confirm('Bạn có muốn cài đặt MetaMask không?')) {
+                    if (confirm('Would you like to install MetaMask?')) {
                         window.open('https://metamask.io/download/', '_blank');
                     }
                 }, 1000);
                 return;
             }
 
-            console.log('✅ MetaMask đã được cài đặt');
+            console.log('✅ MetaMask is installed');
 
             try {
-                // Disable button khi đang connect
+                // Disable button while connecting
                 connectBtn.disabled = true;
-                connectBtn.textContent = 'Đang kết nối...';
-                showStatus('⏳ Đang chờ bạn approve trên MetaMask...', 'info');
+                connectBtn.textContent = 'Connecting...';
+                showStatus('⏳ Waiting for your approval on MetaMask...', 'info');
 
-                // Bước 2: Request accounts
-                console.log('📝 Gọi eth_requestAccounts...');
+                // Step 2: Request accounts
+                console.log('📝 Calling eth_requestAccounts...');
                 const accounts = await window.ethereum.request({ 
                     method: 'eth_requestAccounts' 
                 });
 
-                console.log('✅ Kết nối thành công!');
+                console.log('✅ Connected successfully!');
                 console.log('Accounts:', accounts);
 
-                // Lấy địa chỉ đầu tiên
+                // Get first address
                 const address = accounts[0];
-                console.log('Địa chỉ:', address);
+                console.log('Address:', address);
 
-                // Bước 3: Tạo provider
+                // Step 3: Create provider
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
                 console.log('Provider created:', provider);
 
-                // Bước 4: Lấy số dư
-                console.log('💰 Đang lấy số dư...');
+                // Step 4: Get balance
+                console.log('💰 Getting balance...');
                 const balance = await provider.getBalance(address);
                 const balanceInEth = ethers.utils.formatEther(balance);
-                console.log('Số dư:', balanceInEth, 'ETH');
+                console.log('Balance:', balanceInEth, 'ETH');
 
-                // Bước 5: Lấy network info
-                console.log('🌐 Đang lấy thông tin network...');
+                // Step 5: Get network info
+                console.log('🌐 Getting network info...');
                 const network = await provider.getNetwork();
                 console.log('Network:', network);
 
-                // Hiển thị thông tin
+                // Display information
                 document.getElementById('address').textContent = formatAddress(address);
                 document.getElementById('balance').textContent = `${parseFloat(balanceInEth).toFixed(4)} ETH`;
                 document.getElementById('network').textContent = getNetworkName(network.chainId);
                 document.getElementById('chainId').textContent = network.chainId;
 
                 walletInfo.classList.add('show');
-                showStatus('✅ Kết nối thành công!', 'success');
-                connectBtn.textContent = 'Đã kết nối';
+                showStatus('✅ Connected successfully!', 'success');
+                connectBtn.textContent = 'Connected';
 
-                console.log('🎉 Hoàn tất!');
+                console.log('🎉 Complete!');
 
             } catch (error) {
-                console.error('❌ Lỗi:', error);
+                console.error('❌ Error:', error);
 
-                // Xử lý các loại lỗi khác nhau
+                // Handle different error types
                 if (error.code === 4001) {
-                    // User từ chối kết nối
-                    showStatus('❌ Bạn đã từ chối kết nối. Vui lòng thử lại.', 'error');
+                    // User rejected connection
+                    showStatus('❌ You rejected the connection. Please try again.', 'error');
                 } else if (error.code === -32002) {
-                    // Request đang pending
-                    showStatus('⚠️ Vui lòng kiểm tra MetaMask, có request đang chờ approve.', 'error');
+                    // Request pending
+                    showStatus('⚠️ Please check MetaMask, there is a pending request.', 'error');
                 } else {
-                    showStatus(`❌ Lỗi: ${error.message}`, 'error');
+                    showStatus(`❌ Error: ${error.message}`, 'error');
                 }
 
                 connectBtn.disabled = false;
-                connectBtn.textContent = 'Kết nối MetaMask';
+                connectBtn.textContent = 'Connect MetaMask';
             }
         }
 
-        // Kiểm tra nếu đã kết nối trước đó
+        // Check if already connected
         window.addEventListener('load', async () => {
             console.log('🚀 Page loaded');
 
             if (typeof window.ethereum !== 'undefined') {
                 console.log('✅ MetaMask detected');
 
-                // Kiểm tra xem đã connect chưa
+                // Check if already connected
                 const accounts = await window.ethereum.request({ 
                     method: 'eth_accounts' 
                 });
 
                 if (accounts.length > 0) {
-                    console.log('✅ Đã kết nối trước đó:', accounts[0]);
-                    showStatus('✅ Đã kết nối trước đó. Click để xem thông tin.', 'success');
-                    connectBtn.textContent = 'Xem thông tin';
+                    console.log('✅ Already connected:', accounts[0]);
+                    showStatus('✅ Already connected. Click to view info.', 'success');
+                    connectBtn.textContent = 'View Info';
                 }
             } else {
                 console.log('❌ MetaMask not detected');
-                showStatus('❌ MetaMask chưa được cài đặt', 'error');
-                connectBtn.textContent = 'Cài đặt MetaMask';
+                showStatus('❌ MetaMask is not installed', 'error');
+                connectBtn.textContent = 'Install MetaMask';
                 connectBtn.onclick = () => {
                     window.open('https://metamask.io/download/', '_blank');
                 };
@@ -368,19 +368,19 @@
             window.ethereum.on('accountsChanged', (accounts) => {
                 console.log('👤 Account changed:', accounts);
                 if (accounts.length === 0) {
-                    showStatus('⚠️ Ví đã bị disconnect', 'error');
+                    showStatus('⚠️ Wallet disconnected', 'error');
                     walletInfo.classList.remove('show');
                     connectBtn.disabled = false;
-                    connectBtn.textContent = 'Kết nối MetaMask';
+                    connectBtn.textContent = 'Connect MetaMask';
                 } else {
-                    // Reload thông tin với account mới
+                    // Reload info with new account
                     location.reload();
                 }
             });
 
             window.ethereum.on('chainChanged', (chainId) => {
                 console.log('🌐 Network changed:', chainId);
-                // Reload page khi đổi network
+                // Reload page when network changes
                 location.reload();
             });
         }

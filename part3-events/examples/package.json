@@ -17,7 +17,6 @@
     "ethers.js",
     "blockchain"
   ],
-  "author": "Kaopiz Team",
   "license": "MIT",
   "dependencies": {
     "ethers": "^6.9.0"

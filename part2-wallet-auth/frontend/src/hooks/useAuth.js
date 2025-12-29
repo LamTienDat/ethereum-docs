@@ -15,14 +15,14 @@ import {
 /**
  * Custom Hook: useAuth
  * 
- * Quản lý SIWE authentication
+ * Manage SIWE authentication
  * 
  * Returns:
- * - isAuthenticated: Đã đăng nhập hay chưa
- * - isAuthenticating: Đang xác thực
- * - user: Thông tin user
- * - error: Lỗi nếu có
- * - signIn: Function để sign in với SIWE
+ * - isAuthenticated: Whether user is logged in
+ * - isAuthenticating: Authenticating status
+ * - user: User information
+ * - error: Error if any
+ * - signIn: Function to sign in with SIWE
  * - signOut: Function để sign out
  */
 export function useAuth() {
@@ -38,7 +38,7 @@ export function useAuth() {
    */
   const signIn = useCallback(async () => {
     if (!isConnected || !account || !signer || !chainId) {
-      setError('Vui lòng kết nối ví trước');
+      setError('Please connect wallet first');
       return false;
     }
 
@@ -83,9 +83,9 @@ export function useAuth() {
       console.error('❌ Sign-In error:', err);
       
       if (err.code === 4001) {
-        setError('Bạn đã từ chối ký message');
+        setError('You rejected signing the message');
       } else {
-        setError(err.message || 'Lỗi xác thực');
+        setError(err.message || 'Authentication error');
       }
       
       return false;

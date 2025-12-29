@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { ethers } from 'ethers'
 import './TokenInfo.css'
 
-// ABI tối thiểu để đọc thông tin token
+// Minimal ABI to read token information
 const TOKEN_ABI = [
   'function name() view returns (string)',
   'function symbol() view returns (string)',

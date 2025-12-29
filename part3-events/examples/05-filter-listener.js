@@ -9,9 +9,9 @@
 
 import { ethers } from 'ethers';
 
-// Configuration
-const RPC_URL = 'wss://eth.llamarpc.com';
-const USDT_ADDRESS = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
+// Configuration - Sepolia Testnet
+const RPC_URL = 'wss://eth-sepolia.g.alchemy.com/v2/demo'; // Sepolia WebSocket
+const USDT_ADDRESS = '0x7169D38820dfd117C3FA1f22a697dBA58d90BA06'; // USDT on Sepolia
 
 const ERC20_ABI = [
   'event Transfer(address indexed from, address indexed to, uint256 value)',
@@ -22,8 +22,8 @@ const ERC20_ABI = [
 async function main() {
   console.log('🚀 Starting Filtered Real-time Listener\n');
 
-  // Get address from command line or use default (Binance)
-  const watchAddress = process.argv[2] || '0x28C6c06298d514Db089934071355E5743bf21d60';
+  // Get address from command line or use default (Sepolia address)
+  const watchAddress = process.argv[2] || '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb';
 
   const provider = new ethers.WebSocketProvider(RPC_URL);
   const contract = new ethers.Contract(USDT_ADDRESS, ERC20_ABI, provider);

@@ -1,6 +1,6 @@
 # 🎨 KaopizCoin Frontend
 
-React frontend application để tương tác với KaopizCoin smart contract.
+React frontend application to interact with KaopizCoin smart contract.
 
 ## 🚀 Quick Start
 
@@ -21,6 +21,7 @@ npm run preview
 ## 📋 Features
 
 ### 1. **Wallet Connection** 🦊
+
 - Connect/Disconnect MetaMask
 - Display account address
 - Show current network
@@ -28,25 +29,28 @@ npm run preview
 - Switch to Sepolia testnet
 
 ### 2. **Token Information** 📊
+
 - Token name, symbol, decimals
-- Total supply và max supply
+- Total supply and max supply
 - User balance
 - Contract status (active/paused)
 - Supply percentage
 - Refresh button
 
 ### 3. **Transfer Tokens** 💸
+
 - Input recipient address
 - Input amount
-- Validate address và balance
+- Validate address and balance
 - Send transaction
 - Wait for confirmation
 - Success/Error feedback
 
 ### 4. **Transaction History** 📜
+
 - Display last 20 transactions
 - Filter sent/received
-- Show timestamp và block number
+- Show timestamp and block number
 - Link to Etherscan
 - Auto-refresh
 
@@ -54,14 +58,14 @@ npm run preview
 
 ### Update Contract Address
 
-Chỉnh sửa `src/App.jsx`:
+Edit `src/App.jsx`:
 
 ```javascript
 // Line 8
-const CONTRACT_ADDRESS = 'YOUR_CONTRACT_ADDRESS_HERE'
+const CONTRACT_ADDRESS = "YOUR_CONTRACT_ADDRESS_HERE";
 ```
 
-**Contract address hiện tại:** `0xE4e0429D16f174E36D966806569aD800eD6F5B12`
+**Current contract address:** `0xE4e0429D16f174E36D966806569aD800eD6F5B12`
 
 ### Supported Networks
 
@@ -69,17 +73,17 @@ const CONTRACT_ADDRESS = 'YOUR_CONTRACT_ADDRESS_HERE'
 - **BSC Testnet** (Chain ID: 97)
 - **Localhost** (Chain ID: 31337)
 
-Để thêm networks khác, chỉnh sửa `TransactionHistory.jsx`:
+To add other networks, edit `TransactionHistory.jsx`:
 
 ```javascript
 const getExplorerUrl = (txHash) => {
   if (wallet.chainId === 11155111) {
-    return `https://sepolia.etherscan.io/tx/${txHash}`
+    return `https://sepolia.etherscan.io/tx/${txHash}`;
   } else if (wallet.chainId === YOUR_CHAIN_ID) {
-    return `https://your-explorer.com/tx/${txHash}`
+    return `https://your-explorer.com/tx/${txHash}`;
   }
-  return '#'
-}
+  return "#";
+};
 ```
 
 ## 📁 Project Structure
@@ -108,37 +112,40 @@ frontend/
 
 ## 🔌 Smart Contract ABI
 
-Contract ABIs được define inline trong components:
+Contract ABIs are defined inline in components:
 
 **WalletConnect & TokenInfo:**
+
 ```javascript
 const TOKEN_ABI = [
-  'function name() view returns (string)',
-  'function symbol() view returns (string)',
-  'function decimals() view returns (uint8)',
-  'function totalSupply() view returns (uint256)',
-  'function balanceOf(address) view returns (uint256)',
-  'function MAX_SUPPLY() view returns (uint256)',
-  'function paused() view returns (bool)',
-  'function getTokenInfo() view returns (string, string, uint8, uint256, uint256, bool)'
-]
+  "function name() view returns (string)",
+  "function symbol() view returns (string)",
+  "function decimals() view returns (uint8)",
+  "function totalSupply() view returns (uint256)",
+  "function balanceOf(address) view returns (uint256)",
+  "function MAX_SUPPLY() view returns (uint256)",
+  "function paused() view returns (bool)",
+  "function getTokenInfo() view returns (string, string, uint8, uint256, uint256, bool)",
+];
 ```
 
 **TransferForm:**
+
 ```javascript
 const TOKEN_ABI = [
-  'function transfer(address to, uint256 amount) returns (bool)',
-  'function balanceOf(address) view returns (uint256)',
-  'function decimals() view returns (uint8)'
-]
+  "function transfer(address to, uint256 amount) returns (bool)",
+  "function balanceOf(address) view returns (uint256)",
+  "function decimals() view returns (uint8)",
+];
 ```
 
 **TransactionHistory:**
+
 ```javascript
 const TOKEN_ABI = [
-  'event Transfer(address indexed from, address indexed to, uint256 value)',
-  'function decimals() view returns (uint8)'
-]
+  "event Transfer(address indexed from, address indexed to, uint256 value)",
+  "function decimals() view returns (uint8)",
+];
 ```
 
 ## 💡 Usage Examples
@@ -183,7 +190,7 @@ Edit `src/index.css`:
 :root {
   /* Change primary color */
   --primary-color: #646cff;
-  
+
   /* Change gradient */
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
@@ -191,7 +198,7 @@ Edit `src/index.css`:
 
 ### Modify Components
 
-Mỗi component có file CSS riêng, dễ dàng customize:
+Each component has its own CSS file for easy customization:
 
 - `WalletConnect.css` - Wallet connection UI
 - `TokenInfo.css` - Token information display
@@ -207,6 +214,7 @@ Error: Please install MetaMask!
 ```
 
 **Solution:**
+
 1. Install MetaMask extension
 2. Refresh page
 
@@ -217,6 +225,7 @@ Warning: Please switch to Sepolia Testnet
 ```
 
 **Solution:**
+
 1. Click warning message
 2. Approve network switch in MetaMask
 3. Or manually switch in MetaMask settings
@@ -228,6 +237,7 @@ Error: insufficient funds for gas
 ```
 
 **Solution:**
+
 - Get testnet ETH from faucet: https://sepoliafaucet.com/
 
 ### Contract not responding
@@ -237,6 +247,7 @@ Error: Failed to load token information
 ```
 
 **Solution:**
+
 1. Check contract address is correct
 2. Check you're on correct network
 3. Check RPC connection
@@ -246,10 +257,10 @@ Error: Failed to load token information
 
 ```json
 {
-  "ethers": "^6.13.0",      // Ethereum library
-  "react": "^18.3.1",        // UI framework
-  "react-dom": "^18.3.1",    // React DOM
-  "vite": "^5.4.2"           // Build tool
+  "ethers": "^6.13.0", // Ethereum library
+  "react": "^18.3.1", // UI framework
+  "react-dom": "^18.3.1", // React DOM
+  "vite": "^5.4.2" // Build tool
 }
 ```
 
@@ -264,6 +275,7 @@ Error: Failed to load token information
 ## 📱 Responsive Design
 
 Frontend is fully responsive:
+
 - ✅ Desktop (1200px+)
 - ✅ Tablet (768px - 1200px)
 - ✅ Mobile (< 768px)
@@ -276,23 +288,26 @@ Frontend is fully responsive:
 npm run build
 ```
 
-Tạo folder `dist/` với static files.
+Creates `dist/` folder with static files.
 
 ### Deploy Options
 
 1. **Vercel** (Recommended)
+
    ```bash
    npm install -g vercel
    vercel
    ```
 
 2. **Netlify**
+
    ```bash
    npm install -g netlify-cli
    netlify deploy
    ```
 
 3. **GitHub Pages**
+
    ```bash
    npm run build
    # Upload dist/ folder to gh-pages branch
@@ -312,6 +327,3 @@ Tạo folder `dist/` với static files.
 - [MetaMask Docs](https://docs.metamask.io/)
 
 ---
-
-**Built with ❤️ by Kaopiz Team**
-

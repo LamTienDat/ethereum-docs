@@ -3,13 +3,16 @@
  * 
  * Demo how to work with custom events from smart contract
  * 
+ * Note: This example uses Ethereum Mainnet because Uniswap V2 is not deployed on Sepolia.
+ * For learning purposes, this is acceptable as we're only reading data (no transactions).
+ * 
  * Run: node 06-custom-events.js
  */
 
 import { ethers } from 'ethers';
 
-// Configuration
-const RPC_URL = 'https://api.zan.top/node/v1/eth/mainnet/7d5a7370dd004a1f913078deb248af07';
+// Configuration - Using Mainnet for this example (Uniswap V2 not on Sepolia)
+const RPC_URL = 'https://eth.llamarpc.com'; // Ethereum Mainnet (free public RPC)
 
 // Example: Uniswap V2 Pair contract (has many custom events)
 const UNISWAP_PAIR_ADDRESS = '0xB4e16d0168e52d35CaCD2c6185b44281Ec28C9Dc'; // USDC/WETH pair

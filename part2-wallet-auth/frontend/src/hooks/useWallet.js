@@ -4,18 +4,18 @@ import { BrowserProvider } from 'ethers';
 /**
  * Custom Hook: useWallet
  * 
- * Quản lý kết nối MetaMask và wallet state
+ * Manage MetaMask connection and wallet state
  * 
  * Returns:
- * - account: Địa chỉ ví hiện tại
- * - chainId: Chain ID hiện tại
+ * - account: Current wallet address
+ * - chainId: Current chain ID
  * - provider: Ethers provider
  * - signer: Ethers signer
- * - isConnected: Trạng thái kết nối
- * - isConnecting: Đang kết nối
- * - error: Lỗi nếu có
- * - connect: Function để kết nối
- * - disconnect: Function để ngắt kết nối
+ * - isConnected: Connection status
+ * - isConnecting: Connecting status
+ * - error: Error if any
+ * - connect: Function to connect
+ * - disconnect: Function to disconnect
  */
 export function useWallet() {
   const [account, setAccount] = useState(null);
@@ -27,15 +27,15 @@ export function useWallet() {
 
   const isConnected = !!account;
 
-  // Kiểm tra MetaMask đã cài chưa
+  // Check if MetaMask is installed
   const isMetaMaskInstalled = typeof window.ethereum !== 'undefined';
 
   /**
-   * Kết nối ví
+   * Connect wallet
    */
   const connect = useCallback(async () => {
     if (!isMetaMaskInstalled) {
-      setError('MetaMask chưa được cài đặt!');
+      setError('MetaMask is not installed!');
       return false;
     }
 
@@ -78,9 +78,9 @@ export function useWallet() {
       console.error('❌ Connection error:', err);
       
       if (err.code === 4001) {
-        setError('Bạn đã từ chối kết nối');
+        setError('You rejected the connection');
       } else if (err.code === -32002) {
-        setError('Vui lòng kiểm tra MetaMask, có request đang chờ');
+        setError('Please check MetaMask, there is a pending request');
       } else {
         setError(err.message);
       }
@@ -92,7 +92,7 @@ export function useWallet() {
   }, [isMetaMaskInstalled]);
 
   /**
-   * Ngắt kết nối
+   * Disconnect wallet
    */
   const disconnect = useCallback(() => {
     setAccount(null);
@@ -163,7 +163,7 @@ export function useWallet() {
   }, [isMetaMaskInstalled, handleAccountsChanged, handleChainChanged, handleDisconnect]);
 
   /**
-   * Auto-connect nếu đã connect trước đó
+   * Auto-connect if previously connected
    */
   useEffect(() => {
     if (!isMetaMaskInstalled) return;

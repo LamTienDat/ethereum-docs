@@ -7,7 +7,7 @@ import './SIWEAuth.css';
 /**
  * Component: SIWEAuth
  * 
- * Hiển thị SIWE authentication UI
+ * Display SIWE authentication UI
  */
 export function SIWEAuth() {
   const { isConnected } = useWallet();
@@ -46,42 +46,42 @@ export function SIWEAuth() {
       console.log('✅ Profile loaded:', profileData);
     } catch (err) {
       console.error('❌ Error loading profile:', err);
-      alert('Lỗi khi tải profile: ' + err.message);
+      alert('Error loading profile: ' + err.message);
     } finally {
       setLoadingProfile(false);
     }
   };
 
-  // Nếu chưa connect wallet
+  // If wallet not connected
   if (!isConnected) {
     return (
       <div className="siwe-auth">
         <div className="alert alert-info">
           <span className="alert-icon">ℹ️</span>
           <div className="alert-content">
-            <strong>Vui lòng kết nối ví trước</strong>
-            <p>Bạn cần kết nối MetaMask để sử dụng SIWE authentication</p>
+            <strong>Please connect wallet first</strong>
+            <p>You need to connect MetaMask to use SIWE authentication</p>
           </div>
         </div>
       </div>
     );
   }
 
-  // Nếu chưa authenticate
+  // If not authenticated
   if (!isAuthenticated) {
     return (
       <div className="siwe-auth">
         <div className="auth-card">
           <div className="auth-header">
             <h3>🔐 Sign-In With Ethereum</h3>
-            <p>Xác thực bằng ví của bạn - không cần password!</p>
+            <p>Authenticate with your wallet - no password needed!</p>
           </div>
 
           {error && (
             <div className="alert alert-error">
               <span className="alert-icon">❌</span>
               <div className="alert-content">
-                <strong>Lỗi xác thực</strong>
+                <strong>Authentication Error</strong>
                 <p>{error}</p>
               </div>
             </div>
@@ -89,13 +89,13 @@ export function SIWEAuth() {
 
           <div className="auth-body">
             <div className="info-box">
-              <h4>📝 SIWE hoạt động như thế nào?</h4>
+              <h4>📝 How does SIWE work?</h4>
               <ol>
-                <li>Backend tạo một nonce ngẫu nhiên</li>
-                <li>Frontend tạo message theo format EIP-4361</li>
-                <li>Bạn ký message bằng private key</li>
-                <li>Backend verify signature</li>
-                <li>Nhận JWT token để truy cập protected routes</li>
+                <li>Backend generates a random nonce</li>
+                <li>Frontend creates message in EIP-4361 format</li>
+                <li>You sign the message with your private key</li>
+                <li>Backend verifies the signature</li>
+                <li>Receive JWT token to access protected routes</li>
               </ol>
             </div>
 
@@ -107,17 +107,17 @@ export function SIWEAuth() {
               {isAuthenticating ? (
                 <>
                   <span className="spinner"></span>
-                  Đang xác thực...
+                  Authenticating...
                 </>
               ) : (
                 <>
-                  🔐 Sign-In với Ethereum
+                  🔐 Sign-In with Ethereum
                 </>
               )}
             </button>
 
             <p className="hint">
-              Bạn sẽ được yêu cầu ký một message để chứng minh ownership
+              You will be asked to sign a message to prove ownership
             </p>
           </div>
         </div>
@@ -125,14 +125,14 @@ export function SIWEAuth() {
     );
   }
 
-  // Đã authenticate
+  // Authenticated
   return (
     <div className="siwe-auth">
       <div className="auth-card success">
         <div className="auth-header">
           <div className="success-badge">
             <span className="status-dot"></span>
-            <span>Đã xác thực</span>
+            <span>Authenticated</span>
           </div>
           <button
             className="btn btn-secondary btn-sm"
@@ -144,10 +144,10 @@ export function SIWEAuth() {
 
         <div className="auth-body">
           <div className="user-info">
-            <h4>👤 Thông tin người dùng</h4>
+            <h4>👤 User Information</h4>
             
             <div className="info-row">
-              <span className="info-label">📍 Địa chỉ:</span>
+              <span className="info-label">📍 Address:</span>
               <span className="info-value" title={user.address}>
                 {user.address.substring(0, 10)}...{user.address.substring(user.address.length - 8)}
               </span>
@@ -161,21 +161,21 @@ export function SIWEAuth() {
             <div className="info-row">
               <span className="info-label">⏰ Issued At:</span>
               <span className="info-value">
-                {new Date(user.iat * 1000).toLocaleString('vi-VN')}
+                {new Date(user.iat * 1000).toLocaleString('en-US')}
               </span>
             </div>
 
             <div className="info-row">
               <span className="info-label">⏳ Expires At:</span>
               <span className="info-value">
-                {new Date(user.exp * 1000).toLocaleString('vi-VN')}
+                {new Date(user.exp * 1000).toLocaleString('en-US')}
               </span>
             </div>
           </div>
 
           <div className="protected-route-demo">
             <h4>🔒 Protected Route Demo</h4>
-            <p>Thử truy cập một protected route:</p>
+            <p>Try accessing a protected route:</p>
             
             <button
               className="btn btn-outline"
@@ -185,10 +185,10 @@ export function SIWEAuth() {
               {loadingProfile ? (
                 <>
                   <span className="spinner"></span>
-                  Đang tải...
+                  Loading...
                 </>
               ) : (
-                'Tải Profile'
+                'Load Profile'
               )}
             </button>
 
@@ -202,26 +202,25 @@ export function SIWEAuth() {
 
           <div className="success-message">
             <p>
-              ✅ <strong>Xác thực thành công!</strong>
+              ✅ <strong>Authentication successful!</strong>
             </p>
             <p>
-              Bạn đã đăng nhập bằng SIWE. Token JWT của bạn được lưu trong localStorage
-              và sẽ được gửi kèm trong các requests đến protected routes.
+              You are signed in with SIWE. Your JWT token is stored in localStorage
+              and will be sent with requests to protected routes.
             </p>
           </div>
         </div>
       </div>
 
       <div className="info-card">
-        <h4>💡 Lưu ý</h4>
+        <h4>💡 Notes</h4>
         <ul>
-          <li>Token sẽ tự động expire sau 24 giờ</li>
-          <li>Nếu bạn đổi account hoặc network, sẽ tự động sign out</li>
-          <li>Trong production, nên implement refresh token mechanism</li>
-          <li>SIWE cho phép authentication không cần password</li>
+          <li>Token will automatically expire after 24 hours</li>
+          <li>If you change account or network, you will be automatically signed out</li>
+          <li>In production, implement a refresh token mechanism</li>
+          <li>SIWE allows authentication without passwords</li>
         </ul>
       </div>
     </div>
   );
 }
-

@@ -5,8 +5,8 @@ import TokenInfo from './components/TokenInfo'
 import TransferForm from './components/TransferForm'
 import TransactionHistory from './components/TransactionHistory'
 
-// ⚠️ IMPORTANT: Thay YOUR_CONTRACT_ADDRESS bằng địa chỉ contract thực tế
-// Lấy từ deployment: 0xE4e0429D16f174E36D966806569aD800eD6F5B12
+// ⚠️ IMPORTANT: Replace YOUR_CONTRACT_ADDRESS with actual contract address
+// From deployment: 0xE4e0429D16f174E36D966806569aD800eD6F5B12
 const CONTRACT_ADDRESS = '0xE4e0429D16f174E36D966806569aD800eD6F5B12'
 
 function App() {
@@ -79,7 +79,6 @@ function App() {
       </main>
 
       <footer className="App-footer">
-        <p>Built with ❤️ by Kaopiz Team</p>
         <p className="contract-info">
           Contract: <a 
             href={`https://sepolia.etherscan.io/address/${CONTRACT_ADDRESS}`}

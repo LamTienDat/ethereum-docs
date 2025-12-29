@@ -6657,9 +6657,7 @@ function App() {
         )}
       </main>
 
-      <footer className="App-footer">
-        <p>Built with ❤️ by Kaopiz Team</p>
-      </footer>
+      <footer className="App-footer"></footer>
     </div>
   );
 }

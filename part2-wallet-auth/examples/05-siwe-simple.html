@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bài 5: SIWE Simple</title>
+    <title>Lesson 5: SIWE Simple</title>
     <style>
         * {
             margin: 0;
@@ -240,10 +240,10 @@
 <body>
     <div class="container">
         <h1>🔐 Sign-In With Ethereum (SIWE)</h1>
-        <p class="subtitle">Bài 5: Xác thực người dùng với SIWE (EIP-4361)</p>
+        <p class="subtitle">Lesson 5: Authenticate users with SIWE (EIP-4361)</p>
 
         <div id="status" class="status info">
-            Nhấn nút bên dưới để bắt đầu quá trình Sign-In
+            Click the button below to start the Sign-In process
         </div>
 
         <button id="connectBtn" onclick="connectAndSignIn()">
@@ -260,7 +260,7 @@
         </div>
 
         <div id="sessionInfo" class="session-info">
-            <h3>✅ Đã đăng nhập thành công!</h3>
+            <h3>✅ Successfully signed in!</h3>
             <div class="info-row">
                 <span class="info-label">📍 Địa chỉ:</span>
                 <span class="info-value" id="sessionAddress">-</span>
@@ -304,13 +304,13 @@
         </div>
 
         <div class="steps">
-            <h3>📚 Những gì bạn sẽ học:</h3>
+            <h3>📚 What you'll learn:</h3>
             <ol>
                 <li>SIWE message format theo <code>EIP-4361</code></li>
                 <li>Generate nonce để prevent replay attacks</li>
                 <li>Sign message với MetaMask</li>
                 <li>Verify signature và recover address</li>
-                <li>Tạo session sau khi verify thành công</li>
+                <li>Create session after successful verification</li>
                 <li>Use cases: Authentication không cần password</li>
             </ol>
         </div>
@@ -365,8 +365,8 @@ Issued At: ${issuedAt}`;
 
             try {
                 connectBtn.disabled = true;
-                connectBtn.textContent = 'Đang xử lý...';
-                showStatus('⏳ Đang kết nối MetaMask...', 'info');
+                connectBtn.textContent = 'Processing...';
+                showStatus('⏳ Connecting to MetaMask...', 'info');
 
                 // Step 1: Connect wallet
                 console.log('📝 Step 1: Connecting wallet...');
@@ -387,7 +387,7 @@ Issued At: ${issuedAt}`;
                 console.log('📝 Step 2: Generating nonce...');
                 const nonce = generateNonce();
                 console.log('🔑 Nonce:', nonce);
-                showStatus('⏳ Đang tạo SIWE message...', 'info');
+                showStatus('⏳ Creating SIWE message...', 'info');
 
                 // Step 3: Create SIWE message
                 console.log('📝 Step 3: Creating SIWE message...');
@@ -400,7 +400,7 @@ Issued At: ${issuedAt}`;
 
                 // Step 4: Sign message
                 console.log('📝 Step 4: Requesting signature...');
-                showStatus('⏳ Vui lòng ký message trên MetaMask...', 'info');
+                showStatus('⏳ Please sign the message on MetaMask...', 'info');
                 
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
                 const signer = provider.getSigner();
@@ -410,7 +410,7 @@ Issued At: ${issuedAt}`;
 
                 // Step 5: Verify signature
                 console.log('📝 Step 5: Verifying signature...');
-                showStatus('⏳ Đang verify signature...', 'info');
+                showStatus('⏳ Verifying signature...', 'info');
                 
                 const recoveredAddress = ethers.utils.verifyMessage(message, signature);
                 console.log('🔍 Recovered address:', recoveredAddress);
@@ -444,7 +444,7 @@ Issued At: ${issuedAt}`;
                 connectBtn.style.display = 'none';
                 logoutBtn.style.display = 'block';
 
-                showStatus('✅ Sign-In thành công! Session đã được tạo.', 'success');
+                showStatus('✅ Sign-In successful! Session has been created.', 'success');
                 console.log('🎉 Sign-In completed!');
 
             } catch (error) {
@@ -475,7 +475,7 @@ Issued At: ${issuedAt}`;
             connectBtn.disabled = false;
             connectBtn.textContent = '🦊 Connect & Sign-In';
             
-            showStatus('👋 Đã logout thành công', 'info');
+            showStatus('👋 Successfully logged out', 'info');
             console.log('✅ Logged out');
         }
 
@@ -498,7 +498,7 @@ Issued At: ${issuedAt}`;
                     connectBtn.style.display = 'none';
                     logoutBtn.style.display = 'block';
                     
-                    showStatus('✅ Đã đăng nhập trước đó', 'success');
+                    showStatus('✅ Already signed in', 'success');
                 } catch (error) {
                     console.error('❌ Invalid session:', error);
                     localStorage.removeItem('siwe_session');

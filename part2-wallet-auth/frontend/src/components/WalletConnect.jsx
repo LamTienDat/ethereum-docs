@@ -6,7 +6,7 @@ import './WalletConnect.css';
 /**
  * Component: WalletConnect
  * 
- * Hiển thị button kết nối MetaMask và thông tin wallet
+ * Display MetaMask connection button and wallet information
  */
 export function WalletConnect() {
   const {
@@ -24,7 +24,7 @@ export function WalletConnect() {
   const [balance, setBalance] = useState(null);
   const [networkName, setNetworkName] = useState('');
 
-  // Lấy số dư khi connect
+  // Get balance when connected
   useEffect(() => {
     if (account && provider) {
       provider.getBalance(account)
@@ -39,7 +39,7 @@ export function WalletConnect() {
     }
   }, [account, provider]);
 
-  // Lấy tên network
+  // Get network name
   useEffect(() => {
     const networks = {
       1: 'Ethereum Mainnet',
@@ -53,21 +53,21 @@ export function WalletConnect() {
     setNetworkName(networks[chainId] || `Unknown (${chainId})`);
   }, [chainId]);
 
-  // Format địa chỉ
+  // Format address
   const formatAddress = (addr) => {
     if (!addr) return '';
     return `${addr.substring(0, 6)}...${addr.substring(38)}`;
   };
 
-  // Nếu chưa cài MetaMask
+  // If MetaMask not installed
   if (!isMetaMaskInstalled) {
     return (
       <div className="wallet-connect">
         <div className="alert alert-error">
           <span className="alert-icon">⚠️</span>
           <div className="alert-content">
-            <strong>MetaMask chưa được cài đặt!</strong>
-            <p>Vui lòng cài đặt MetaMask extension để tiếp tục.</p>
+            <strong>MetaMask is not installed!</strong>
+            <p>Please install MetaMask extension to continue.</p>
           </div>
         </div>
         <a 
@@ -76,13 +76,13 @@ export function WalletConnect() {
           rel="noopener noreferrer"
           className="btn btn-primary"
         >
-          Cài đặt MetaMask
+          Install MetaMask
         </a>
       </div>
     );
   }
 
-  // Nếu chưa connect
+  // If not connected
   if (!isConnected) {
     return (
       <div className="wallet-connect">
@@ -90,7 +90,7 @@ export function WalletConnect() {
           <div className="alert alert-error">
             <span className="alert-icon">❌</span>
             <div className="alert-content">
-              <strong>Lỗi kết nối</strong>
+              <strong>Connection Error</strong>
               <p>{error}</p>
             </div>
           </div>
@@ -104,49 +104,49 @@ export function WalletConnect() {
           {isConnecting ? (
             <>
               <span className="spinner"></span>
-              Đang kết nối...
+              Connecting...
             </>
           ) : (
             <>
-              🦊 Kết nối MetaMask
+              🦊 Connect MetaMask
             </>
           )}
         </button>
         
         <p className="hint">
-          Nhấn để kết nối ví MetaMask của bạn
+          Click to connect your MetaMask wallet
         </p>
       </div>
     );
   }
 
-  // Đã connect
+  // Connected
   return (
     <div className="wallet-connect">
       <div className="wallet-card">
         <div className="wallet-header">
           <div className="wallet-status">
             <span className="status-dot"></span>
-            <span>Đã kết nối</span>
+            <span>Connected</span>
           </div>
           <button 
             className="btn btn-secondary btn-sm"
             onClick={disconnect}
           >
-            Ngắt kết nối
+            Disconnect
           </button>
         </div>
 
         <div className="wallet-info">
           <div className="info-row">
-            <span className="info-label">📍 Địa chỉ:</span>
+            <span className="info-label">📍 Address:</span>
             <span className="info-value" title={account}>
               {formatAddress(account)}
             </span>
           </div>
 
           <div className="info-row">
-            <span className="info-label">💰 Số dư:</span>
+            <span className="info-label">💰 Balance:</span>
             <span className="info-value">
               {balance ? `${parseFloat(balance).toFixed(4)} ETH` : 'Loading...'}
             </span>
@@ -168,10 +168,10 @@ export function WalletConnect() {
             className="btn btn-outline"
             onClick={() => {
               navigator.clipboard.writeText(account);
-              alert('Đã copy địa chỉ!');
+              alert('Address copied!');
             }}
           >
-            📋 Copy địa chỉ
+            📋 Copy Address
           </button>
           
           <a
@@ -180,7 +180,7 @@ export function WalletConnect() {
             rel="noopener noreferrer"
             className="btn btn-outline"
           >
-            🔍 Xem trên Etherscan
+            🔍 View on Etherscan
           </a>
         </div>
       </div>

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bài 3: Ký và Verify Message</title>
+    <title>Lesson 3: Sign and Verify Message</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -137,39 +137,39 @@
 </head>
 <body>
     <div class="container">
-        <h1>🔏 Ký và Verify Message</h1>
-        <p class="subtitle">Bài 3: Học cách ký message và verify signature</p>
+        <h1>🔏 Sign and Verify Message</h1>
+        <p class="subtitle">Lesson 3: Learn how to sign messages and verify signatures</p>
 
         <div id="statusDiv"></div>
 
         <div class="info-box">
-            <h4>💡 Message Signing là gì?</h4>
+            <h4>💡 What is Message Signing?</h4>
             <p>
-                Message signing cho phép bạn chứng minh quyền sở hữu một địa chỉ ví
-                mà không cần gửi transaction (không tốn gas). Use cases: Authentication,
+                Message signing allows you to prove ownership of a wallet address
+                without sending a transaction (no gas cost). Use cases: Authentication,
                 Proof of ownership, Off-chain voting.
             </p>
         </div>
 
         <!-- Sign Section -->
         <div class="section">
-            <h3>✍️ Bước 1: Ký Message</h3>
+            <h3>✍️ Step 1: Sign Message</h3>
             
-            <label>Message muốn ký:</label>
-            <textarea id="messageInput" placeholder="Nhập message...">Hello from Kaopiz! 
+            <label>Message to sign:</label>
+            <textarea id="messageInput" placeholder="Enter message...">Hello from Kaopiz! 
 Timestamp: ${new Date().toISOString()}</textarea>
 
-            <button onclick="signMessage()">🔏 Ký Message</button>
+            <button onclick="signMessage()">🔏 Sign Message</button>
             
             <div id="signResult" class="result hidden"></div>
         </div>
 
         <!-- Verify Section -->
         <div class="section">
-            <h3>✅ Bước 2: Verify Signature</h3>
+            <h3>✅ Step 2: Verify Signature</h3>
             
             <label>Original Message:</label>
-            <textarea id="verifyMessage" placeholder="Message gốc..."></textarea>
+            <textarea id="verifyMessage" placeholder="Original message..."></textarea>
 
             <label>Signature:</label>
             <input type="text" id="signatureInput" placeholder="0x...">
@@ -184,12 +184,12 @@ Timestamp: ${new Date().toISOString()}</textarea>
 
         <!-- Use Cases -->
         <div class="info-box">
-            <h4>🎯 Use Cases thực tế:</h4>
+            <h4>🎯 Real-world Use Cases:</h4>
             <p>
                 <strong>1. Authentication:</strong> Sign-In With Ethereum (SIWE)<br>
-                <strong>2. Proof of Ownership:</strong> Chứng minh bạn sở hữu địa chỉ<br>
-                <strong>3. Off-chain Voting:</strong> Vote không tốn gas<br>
-                <strong>4. Message Verification:</strong> Xác thực message từ user
+                <strong>2. Proof of Ownership:</strong> Prove you own an address<br>
+                <strong>3. Off-chain Voting:</strong> Vote without gas costs<br>
+                <strong>4. Message Verification:</strong> Verify messages from users
             </p>
         </div>
     </div>
@@ -212,7 +212,7 @@ Timestamp: ${new Date().toISOString()}</textarea>
         // Initialize
         window.addEventListener('load', async () => {
             if (typeof window.ethereum === 'undefined') {
-                showStatus('❌ MetaMask chưa được cài đặt!', 'error');
+                showStatus('❌ MetaMask is not installed!', 'error');
                 return;
             }
 
@@ -222,10 +222,10 @@ Timestamp: ${new Date().toISOString()}</textarea>
                 signer = provider.getSigner();
                 userAddress = await signer.getAddress();
                 
-                showStatus(`✅ Đã kết nối: ${userAddress}`, 'success');
+                showStatus(`✅ Connected: ${userAddress}`, 'success');
                 document.getElementById('expectedAddress').value = userAddress;
             } catch (error) {
-                showStatus('❌ Lỗi kết nối: ' + error.message, 'error');
+                showStatus('❌ Connection error: ' + error.message, 'error');
             }
         });
 
@@ -234,12 +234,12 @@ Timestamp: ${new Date().toISOString()}</textarea>
                 const message = document.getElementById('messageInput').value;
                 
                 if (!message) {
-                    showStatus('❌ Vui lòng nhập message!', 'error');
+                    showStatus('❌ Please enter a message!', 'error');
                     return;
                 }
 
                 console.log('📝 Message:', message);
-                showResult('signResult', '⏳ Đang chờ user ký trên MetaMask...');
+                showResult('signResult', '⏳ Waiting for user to sign on MetaMask...');
 
                 // Sign message
                 const signature = await signer.signMessage(message);
@@ -250,23 +250,23 @@ Timestamp: ${new Date().toISOString()}</textarea>
                 document.getElementById('signatureInput').value = signature;
 
                 showResult('signResult', 
-                    `✅ Ký thành công!\n\n` +
+                    `✅ Signed successfully!\n\n` +
                     `Message:\n${message}\n\n` +
                     `Signature:\n${signature}\n\n` +
                     `Signer Address:\n${userAddress}\n\n` +
-                    `💡 Signature này có thể verify off-chain\n` +
-                    `💡 Không tốn gas (không phải transaction)\n` +
-                    `💡 Scroll xuống để verify!`
+                    `💡 This signature can be verified off-chain\n` +
+                    `💡 No gas cost (not a transaction)\n` +
+                    `💡 Scroll down to verify!`
                 );
 
-                showStatus('✅ Đã ký message thành công!', 'success');
+                showStatus('✅ Message signed successfully!', 'success');
             } catch (error) {
                 if (error.code === 4001) {
-                    showResult('signResult', '❌ User từ chối ký message');
-                    showStatus('❌ User từ chối ký message', 'error');
+                    showResult('signResult', '❌ User rejected signing');
+                    showStatus('❌ User rejected signing', 'error');
                 } else {
-                    showResult('signResult', '❌ Lỗi: ' + error.message);
-                    showStatus('❌ Lỗi: ' + error.message, 'error');
+                    showResult('signResult', '❌ Error: ' + error.message);
+                    showStatus('❌ Error: ' + error.message, 'error');
                 }
             }
         }
@@ -278,7 +278,7 @@ Timestamp: ${new Date().toISOString()}</textarea>
                 const expectedAddress = document.getElementById('expectedAddress').value;
 
                 if (!message || !signature) {
-                    showStatus('❌ Vui lòng điền đầy đủ thông tin!', 'error');
+                    showStatus('❌ Please fill in all required fields!', 'error');
                     return;
                 }
 
@@ -290,7 +290,7 @@ Timestamp: ${new Date().toISOString()}</textarea>
                 const recoveredAddress = ethers.utils.verifyMessage(message, signature);
                 console.log('✅ Recovered Address:', recoveredAddress);
 
-                let result = `✅ Signature hợp lệ!\n\n` +
+                let result = `✅ Signature is valid!\n\n` +
                     `Original Message:\n${message}\n\n` +
                     `Signature:\n${signature}\n\n` +
                     `Recovered Address:\n${recoveredAddress}\n\n`;
@@ -302,14 +302,14 @@ Timestamp: ${new Date().toISOString()}</textarea>
                     result += `Match: ${matches ? '✅ YES' : '❌ NO'}\n\n`;
                     
                     if (matches) {
-                        result += `🎉 Signature được ký bởi địa chỉ mong đợi!`;
-                        showStatus('✅ Verify thành công! Signature hợp lệ.', 'success');
+                        result += `🎉 Signature was signed by the expected address!`;
+                        showStatus('✅ Verification successful! Signature is valid.', 'success');
                     } else {
-                        result += `⚠️ Signature KHÔNG được ký bởi địa chỉ mong đợi!`;
-                        showStatus('⚠️ Signature hợp lệ nhưng không khớp địa chỉ!', 'error');
+                        result += `⚠️ Signature was NOT signed by the expected address!`;
+                        showStatus('⚠️ Signature is valid but address does not match!', 'error');
                     }
                 } else {
-                    showStatus('✅ Signature hợp lệ!', 'success');
+                    showStatus('✅ Signature is valid!', 'success');
                 }
 
                 showResult('verifyResult', result);
@@ -317,14 +317,14 @@ Timestamp: ${new Date().toISOString()}</textarea>
             } catch (error) {
                 console.error('❌ Verify failed:', error);
                 showResult('verifyResult', 
-                    `❌ Verify thất bại!\n\n` +
-                    `Lỗi: ${error.message}\n\n` +
-                    `Có thể:\n` +
-                    `- Signature không đúng định dạng\n` +
-                    `- Message đã bị thay đổi\n` +
-                    `- Signature không khớp với message`
+                    `❌ Verification failed!\n\n` +
+                    `Error: ${error.message}\n\n` +
+                    `Possible reasons:\n` +
+                    `- Signature format is incorrect\n` +
+                    `- Message has been modified\n` +
+                    `- Signature does not match message`
                 );
-                showStatus('❌ Verify thất bại: ' + error.message, 'error');
+                showStatus('❌ Verification failed: ' + error.message, 'error');
             }
         }
 
@@ -336,4 +336,3 @@ Timestamp: ${new Date().toISOString()}</textarea>
     </script>
 </body>
 </html>
-

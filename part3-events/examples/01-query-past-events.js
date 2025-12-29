@@ -8,9 +8,9 @@
 
 import { ethers } from 'ethers';
 
-// Configuration
-const RPC_URL = 'https://api.zan.top/node/v1/eth/mainnet/7d5a7370dd004a1f913078deb248af07'; // Ethereum Mainnet
-const USDT_ADDRESS = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
+// Configuration - Sepolia Testnet
+const RPC_URL = 'https://eth-sepolia.g.alchemy.com/v2/demo'; // Sepolia Testnet (use your own API key)
+const USDT_ADDRESS = '0x7169D38820dfd117C3FA1f22a697dBA58d90BA06'; // USDT on Sepolia
 
 // ERC20 ABI (only Transfer event needed)
 const ERC20_ABI = [

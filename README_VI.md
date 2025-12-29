@@ -6838,7 +6838,6 @@ function App() {
       </main>
 
       <footer className="App-footer">
-        <p>Built with ❤️ by Kaopiz Team</p>
         <p className="contract-info">
           Contract:{" "}
           <a

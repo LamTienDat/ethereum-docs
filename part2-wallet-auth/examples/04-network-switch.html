@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bài 4: Chuyển Network</title>
+    <title>Lesson 4: Switch Network</title>
     <style>
         * {
             margin: 0;
@@ -195,19 +195,19 @@
 </head>
 <body>
     <div class="container">
-        <h1>🌐 Chuyển Network</h1>
-        <p class="subtitle">Bài 4: Học cách switch và add networks trong MetaMask</p>
+        <h1>🌐 Switch Network</h1>
+        <p class="subtitle">Lesson 4: Learn how to switch and add networks in MetaMask</p>
 
         <div id="status" class="status info">
-            Kết nối ví để bắt đầu
+            Connect wallet to get started
         </div>
 
         <button id="connectBtn" onclick="connectWallet()">
-            Kết nối MetaMask
+            Connect MetaMask
         </button>
 
         <div id="currentNetwork" class="current-network" style="display: none;">
-            <h3>🌐 Network hiện tại</h3>
+            <h3>🌐 Current Network</h3>
             <div class="network-info">
                 <span class="network-name" id="networkName">-</span>
                 <span class="chain-id" id="chainId">Chain ID: -</span>
@@ -215,17 +215,17 @@
         </div>
 
         <div id="networksGrid" class="networks-grid" style="display: none;">
-            <!-- Networks sẽ được render bằng JS -->
+            <!-- Networks will be rendered by JS -->
         </div>
 
         <div class="steps">
-            <h3>📚 Những gì bạn sẽ học:</h3>
+            <h3>📚 What you'll learn:</h3>
             <ol>
                 <li>Detect current network</li>
-                <li>Switch network với <code>wallet_switchEthereumChain</code></li>
-                <li>Add custom network với <code>wallet_addEthereumChain</code></li>
+                <li>Switch network with <code>wallet_switchEthereumChain</code></li>
+                <li>Add custom network with <code>wallet_addEthereumChain</code></li>
                 <li>Handle network change events</li>
-                <li>Xử lý lỗi khi network không tồn tại</li>
+                <li>Handle errors when network doesn't exist</li>
             </ol>
         </div>
     </div>
@@ -239,7 +239,7 @@
         let currentAccount = null;
         let currentChainId = null;
 
-        // Danh sách networks
+        // List of networks
         const networks = [
             {
                 chainId: '0x1',
@@ -306,24 +306,24 @@
 
         async function switchNetwork(chainId, network) {
             console.log('🔄 Switching to network:', chainId);
-            showStatus(`⏳ Đang chuyển sang ${network.name}...`, 'info');
+            showStatus(`⏳ Switching to ${network.name}...`, 'info');
 
             try {
-                // Thử switch network
+                // Try to switch network
                 await window.ethereum.request({
                     method: 'wallet_switchEthereumChain',
                     params: [{ chainId }],
                 });
 
                 console.log('✅ Switched successfully');
-                showStatus(`✅ Đã chuyển sang ${network.name}`, 'success');
+                showStatus(`✅ Switched to ${network.name}`, 'success');
 
             } catch (error) {
                 console.error('❌ Switch error:', error);
 
-                // Nếu network chưa được add vào MetaMask
+                // If network hasn't been added to MetaMask
                 if (error.code === 4902) {
-                    console.log('⚠️ Network chưa được add, đang thêm...');
+                    console.log('⚠️ Network not added, adding now...');
                     
                     try {
                         await window.ethereum.request({
@@ -338,29 +338,29 @@
                         });
 
                         console.log('✅ Network added successfully');
-                        showStatus(`✅ Đã thêm và chuyển sang ${network.name}`, 'success');
+                        showStatus(`✅ Added and switched to ${network.name}`, 'success');
 
                     } catch (addError) {
                         console.error('❌ Add network error:', addError);
-                        showStatus(`❌ Lỗi khi thêm network: ${addError.message}`, 'error');
+                        showStatus(`❌ Error adding network: ${addError.message}`, 'error');
                     }
                 } else if (error.code === 4001) {
-                    showStatus('❌ Bạn đã từ chối chuyển network', 'error');
+                    showStatus('❌ You rejected the network switch', 'error');
                 } else {
-                    showStatus(`❌ Lỗi: ${error.message}`, 'error');
+                    showStatus(`❌ Error: ${error.message}`, 'error');
                 }
             }
         }
 
         async function connectWallet() {
             if (typeof window.ethereum === 'undefined') {
-                showStatus('❌ MetaMask chưa được cài đặt!', 'error');
+                showStatus('❌ MetaMask is not installed!', 'error');
                 return;
             }
 
             try {
                 connectBtn.disabled = true;
-                connectBtn.textContent = 'Đang kết nối...';
+                connectBtn.textContent = 'Connecting...';
 
                 const accounts = await window.ethereum.request({ 
                     method: 'eth_requestAccounts' 
@@ -380,13 +380,13 @@
                 networksGridDiv.style.display = 'grid';
                 connectBtn.style.display = 'none';
                 
-                showStatus('✅ Đã kết nối! Chọn network để chuyển', 'success');
+                showStatus('✅ Connected! Select a network to switch', 'success');
 
             } catch (error) {
                 console.error('❌ Connection error:', error);
-                showStatus(`❌ Lỗi: ${error.message}`, 'error');
+                showStatus(`❌ Error: ${error.message}`, 'error');
                 connectBtn.disabled = false;
-                connectBtn.textContent = 'Kết nối MetaMask';
+                connectBtn.textContent = 'Connect MetaMask';
             }
         }
 
@@ -395,7 +395,7 @@
             window.ethereum.on('chainChanged', (chainId) => {
                 console.log('🌐 Chain changed:', chainId);
                 updateCurrentNetwork(chainId);
-                showStatus('✅ Network đã được chuyển', 'success');
+                showStatus('✅ Network has been switched', 'success');
             });
 
             window.ethereum.on('accountsChanged', (accounts) => {
@@ -422,7 +422,7 @@
                     currentNetworkDiv.style.display = 'block';
                     networksGridDiv.style.display = 'grid';
                     connectBtn.style.display = 'none';
-                    showStatus('✅ Đã kết nối! Chọn network để chuyển', 'success');
+                    showStatus('✅ Connected! Select a network to switch', 'success');
                 }
             }
         });

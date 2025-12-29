@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bài 2: Provider vs Signer</title>
+    <title>Lesson 2: Provider vs Signer</title>
     <style>
         * {
             margin: 0;
@@ -224,10 +224,10 @@
 <body>
     <div class="container">
         <h1>📚 Provider vs Signer</h1>
-        <p class="subtitle">Bài 2: Hiểu sự khác biệt giữa read-only và write operations</p>
+        <p class="subtitle">Lesson 2: Understanding the difference between read-only and write operations</p>
 
         <div id="status" class="status info">
-            Kết nối MetaMask để bắt đầu
+            Connect MetaMask to get started
         </div>
 
         <div class="grid">
@@ -238,34 +238,34 @@
                     <span class="badge read">READ-ONLY</span>
                 </h2>
                 <p class="description">
-                    Provider cho phép đọc dữ liệu từ blockchain mà không cần signature.
-                    Không tốn gas, không cần user approve.
+                    Provider allows reading data from blockchain without signature.
+                    No gas cost, no user approval needed.
                 </p>
 
                 <div class="action-group">
-                    <label>Địa chỉ để kiểm tra:</label>
+                    <label>Address to check:</label>
                     <input type="text" id="checkAddress" 
                            placeholder="0x..." 
                            value="0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb">
                 </div>
 
                 <button onclick="getBalance()">
-                    💰 Lấy số dư (getBalance)
+                    💰 Get Balance (getBalance)
                 </button>
                 <div id="balanceResult" class="result hidden"></div>
 
                 <button onclick="getBlockNumber()">
-                    📦 Lấy block number
+                    📦 Get Block Number
                 </button>
                 <div id="blockResult" class="result hidden"></div>
 
                 <button onclick="getGasPrice()">
-                    ⛽ Lấy gas price
+                    ⛽ Get Gas Price
                 </button>
                 <div id="gasResult" class="result hidden"></div>
 
                 <button onclick="getNetwork()">
-                    🌐 Lấy network info
+                    🌐 Get Network Info
                 </button>
                 <div id="networkResult" class="result hidden"></div>
             </div>
@@ -277,42 +277,42 @@
                     <span class="badge write">WRITE</span>
                 </h2>
                 <p class="description">
-                    Signer cho phép gửi transactions và ký messages.
-                    Cần user approve trên MetaMask, tốn gas cho transactions.
+                    Signer allows sending transactions and signing messages.
+                    Requires user approval on MetaMask, costs gas for transactions.
                 </p>
 
                 <div class="action-group">
-                    <label>Địa chỉ nhận:</label>
+                    <label>Recipient address:</label>
                     <input type="text" id="recipientAddress" 
                            placeholder="0x...">
                 </div>
 
                 <div class="action-group">
-                    <label>Số tiền (ETH):</label>
+                    <label>Amount (ETH):</label>
                     <input type="text" id="amount" 
                            placeholder="0.001" 
                            value="0.0001">
                 </div>
 
                 <button onclick="sendTransaction()">
-                    💸 Gửi ETH (sendTransaction)
+                    💸 Send ETH (sendTransaction)
                 </button>
                 <div id="txResult" class="result hidden"></div>
 
                 <div class="action-group">
-                    <label>Message để ký:</label>
+                    <label>Message to sign:</label>
                     <input type="text" id="message" 
                            placeholder="Hello Ethereum!" 
                            value="Hello from Kaopiz!">
                 </div>
 
                 <button onclick="signMessage()">
-                    🔏 Ký message (signMessage)
+                    🔏 Sign Message (signMessage)
                 </button>
                 <div id="signResult" class="result hidden"></div>
 
                 <button onclick="getAddress()">
-                    👤 Lấy địa chỉ signer
+                    👤 Get Signer Address
                 </button>
                 <div id="addressResult" class="result hidden"></div>
             </div>
@@ -320,40 +320,40 @@
 
         <!-- Comparison Table -->
         <div class="comparison">
-            <h2>📊 So sánh Provider vs Signer</h2>
+            <h2>📊 Provider vs Signer Comparison</h2>
             <table>
                 <thead>
                     <tr>
-                        <th>Tính năng</th>
+                        <th>Feature</th>
                         <th>Provider</th>
                         <th>Signer</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><strong>Mục đích</strong></td>
-                        <td>Đọc dữ liệu</td>
-                        <td>Ghi dữ liệu / Ký</td>
+                        <td><strong>Purpose</strong></td>
+                        <td>Read data</td>
+                        <td>Write data / Sign</td>
                     </tr>
                     <tr>
-                        <td><strong>Cần user approve?</strong></td>
-                        <td>❌ Không</td>
-                        <td>✅ Có</td>
+                        <td><strong>User approval needed?</strong></td>
+                        <td>❌ No</td>
+                        <td>✅ Yes</td>
                     </tr>
                     <tr>
-                        <td><strong>Tốn gas?</strong></td>
-                        <td>❌ Không</td>
-                        <td>✅ Có (cho transactions)</td>
+                        <td><strong>Gas cost?</strong></td>
+                        <td>❌ No</td>
+                        <td>✅ Yes (for transactions)</td>
                     </tr>
                     <tr>
-                        <td><strong>Ví dụ functions</strong></td>
+                        <td><strong>Example functions</strong></td>
                         <td><code>getBalance()</code>, <code>getBlockNumber()</code></td>
                         <td><code>sendTransaction()</code>, <code>signMessage()</code></td>
                     </tr>
                     <tr>
-                        <td><strong>Khi nào dùng?</strong></td>
-                        <td>Hiển thị dữ liệu, query blockchain</td>
-                        <td>Chuyển tiền, gọi contract functions</td>
+                        <td><strong>When to use?</strong></td>
+                        <td>Display data, query blockchain</td>
+                        <td>Transfer funds, call contract functions</td>
                     </tr>
                 </tbody>
             </table>
@@ -379,7 +379,7 @@
         // Initialize
         window.addEventListener('load', async () => {
             if (typeof window.ethereum === 'undefined') {
-                showStatus('❌ MetaMask chưa được cài đặt!', 'error');
+                showStatus('❌ MetaMask is not installed!', 'error');
                 return;
             }
 
@@ -392,12 +392,12 @@
                 signer = provider.getSigner();
 
                 const address = await signer.getAddress();
-                showStatus(`✅ Đã kết nối: ${address.substring(0, 6)}...${address.substring(38)}`, 'success');
+                showStatus(`✅ Connected: ${address.substring(0, 6)}...${address.substring(38)}`, 'success');
 
                 // Set default recipient
                 document.getElementById('recipientAddress').value = address;
             } catch (error) {
-                showStatus('❌ Lỗi kết nối: ' + error.message, 'error');
+                showStatus('❌ Connection error: ' + error.message, 'error');
             }
         });
 
@@ -413,11 +413,11 @@
                 showResult('balanceResult', 
                     `Balance: ${balanceInEth} ETH\n` +
                     `Wei: ${balance.toString()}\n\n` +
-                    `✅ Không cần user approve\n` +
-                    `✅ Không tốn gas`
+                    `✅ No user approval needed\n` +
+                    `✅ No gas cost`
                 );
             } catch (error) {
-                showResult('balanceResult', '❌ Lỗi: ' + error.message);
+                showResult('balanceResult', '❌ Error: ' + error.message);
             }
         }
 
@@ -429,10 +429,10 @@
                 showResult('blockResult', 
                     `Current Block: ${blockNumber}\n\n` +
                     `✅ Read-only operation\n` +
-                    `✅ Không cần kết nối wallet`
+                    `✅ No wallet connection needed`
                 );
             } catch (error) {
-                showResult('blockResult', '❌ Lỗi: ' + error.message);
+                showResult('blockResult', '❌ Error: ' + error.message);
             }
         }
 
@@ -445,10 +445,10 @@
                 showResult('gasResult', 
                     `Gas Price: ${gasPriceGwei} gwei\n` +
                     `Wei: ${gasPrice.toString()}\n\n` +
-                    `💡 Dùng để estimate chi phí transaction`
+                    `💡 Used to estimate transaction cost`
                 );
             } catch (error) {
-                showResult('gasResult', '❌ Lỗi: ' + error.message);
+                showResult('gasResult', '❌ Error: ' + error.message);
             }
         }
 
@@ -461,10 +461,10 @@
                     `Name: ${network.name}\n` +
                     `Chain ID: ${network.chainId}\n` +
                     `ENS Address: ${network.ensAddress || 'N/A'}\n\n` +
-                    `✅ Thông tin network hiện tại`
+                    `✅ Current network information`
                 );
             } catch (error) {
-                showResult('networkResult', '❌ Lỗi: ' + error.message);
+                showResult('networkResult', '❌ Error: ' + error.message);
             }
         }
 
@@ -475,7 +475,7 @@
                 const amount = document.getElementById('amount').value;
                 
                 console.log('✍️ Signer: sendTransaction()');
-                showResult('txResult', '⏳ Đang chờ user approve trên MetaMask...');
+                showResult('txResult', '⏳ Waiting for user approval on MetaMask...');
                 
                 const tx = await signer.sendTransaction({
                     to: to,
@@ -483,12 +483,12 @@
                 });
                 
                 showResult('txResult', 
-                    `✅ Transaction đã gửi!\n\n` +
+                    `✅ Transaction sent!\n\n` +
                     `TX Hash: ${tx.hash}\n` +
                     `From: ${tx.from}\n` +
                     `To: ${tx.to}\n` +
                     `Value: ${amount} ETH\n\n` +
-                    `⏳ Đang đợi confirmation...`
+                    `⏳ Waiting for confirmation...`
                 );
                 
                 const receipt = await tx.wait();
@@ -498,13 +498,13 @@
                     `Block: ${receipt.blockNumber}\n` +
                     `Gas Used: ${receipt.gasUsed.toString()}\n` +
                     `Status: ${receipt.status === 1 ? 'Success' : 'Failed'}\n\n` +
-                    `💰 Đã tốn gas fee`
+                    `💰 Gas fee paid`
                 );
             } catch (error) {
                 if (error.code === 4001) {
-                    showResult('txResult', '❌ User từ chối transaction');
+                    showResult('txResult', '❌ User rejected transaction');
                 } else {
-                    showResult('txResult', '❌ Lỗi: ' + error.message);
+                    showResult('txResult', '❌ Error: ' + error.message);
                 }
             }
         }
@@ -514,22 +514,22 @@
                 const message = document.getElementById('message').value;
                 
                 console.log('✍️ Signer: signMessage()');
-                showResult('signResult', '⏳ Đang chờ user ký message trên MetaMask...');
+                showResult('signResult', '⏳ Waiting for user to sign message on MetaMask...');
                 
                 const signature = await signer.signMessage(message);
                 
                 showResult('signResult', 
-                    `✅ Message đã được ký!\n\n` +
+                    `✅ Message signed!\n\n` +
                     `Message: ${message}\n\n` +
                     `Signature:\n${signature}\n\n` +
-                    `✅ Không tốn gas (chỉ ký, không gửi tx)\n` +
-                    `✅ Có thể verify signature off-chain`
+                    `✅ No gas cost (signing only, no tx)\n` +
+                    `✅ Can verify signature off-chain`
                 );
             } catch (error) {
                 if (error.code === 4001) {
-                    showResult('signResult', '❌ User từ chối ký message');
+                    showResult('signResult', '❌ User rejected signing');
                 } else {
-                    showResult('signResult', '❌ Lỗi: ' + error.message);
+                    showResult('signResult', '❌ Error: ' + error.message);
                 }
             }
         }
@@ -541,14 +541,13 @@
                 
                 showResult('addressResult', 
                     `Address: ${address}\n\n` +
-                    `✅ Địa chỉ của signer hiện tại\n` +
-                    `💡 Dùng để biết ai đang sign transactions`
+                    `✅ Current signer address\n` +
+                    `💡 Used to identify who signs transactions`
                 );
             } catch (error) {
-                showResult('addressResult', '❌ Lỗi: ' + error.message);
+                showResult('addressResult', '❌ Error: ' + error.message);
             }
         }
     </script>
 </body>
 </html>
-

@@ -5,25 +5,25 @@ import './App.css';
 /**
  * Main App Component
  * 
- * Demo kết nối MetaMask, quản lý wallet state và SIWE authentication
+ * Demo MetaMask connection, wallet state management and SIWE authentication
  */
 function App() {
   return (
     <div className="app">
       <div className="container">
         <header className="header">
-          <h1>🦊 Phần 2: Ví, Ký và Xác thực</h1>
+          <h1>🦊 Part 2: Wallet, Signing and Authentication</h1>
           <p className="subtitle">
-            Học cách kết nối MetaMask, quản lý wallet state và SIWE authentication
+            Learn how to connect MetaMask, manage wallet state and SIWE authentication
           </p>
         </header>
 
         <main className="main">
           <section className="section">
-            <h2>🔌 Kết nối Ví</h2>
+            <h2>🔌 Connect Wallet</h2>
             <p className="section-description">
-              Kết nối ví MetaMask của bạn để bắt đầu. Ứng dụng sẽ tự động
-              detect account changes và network changes.
+              Connect your MetaMask wallet to get started. The app will automatically
+              detect account changes and network changes.
             </p>
             <WalletConnect />
           </section>
@@ -31,49 +31,49 @@ function App() {
           <section className="section">
             <h2>🔐 SIWE Authentication</h2>
             <p className="section-description">
-              Sign-In With Ethereum (SIWE) cho phép bạn xác thực bằng ví
-              mà không cần password. Đây là chuẩn EIP-4361.
+              Sign-In With Ethereum (SIWE) allows you to authenticate with your wallet
+              without a password. This is the EIP-4361 standard.
             </p>
             <SIWEAuth />
           </section>
 
           <section className="section">
-            <h2>📚 Những gì bạn đã học</h2>
+            <h2>📚 What You've Learned</h2>
             <div className="features-grid">
               <div className="feature-card">
                 <div className="feature-icon">✅</div>
-                <h3>Kết nối MetaMask</h3>
-                <p>Sử dụng <code>eth_requestAccounts</code> để kết nối ví</p>
+                <h3>Connect MetaMask</h3>
+                <p>Use <code>eth_requestAccounts</code> to connect wallet</p>
               </div>
 
               <div className="feature-card">
                 <div className="feature-icon">🎣</div>
                 <h3>Custom Hook</h3>
-                <p>Tạo <code>useWallet</code> và <code>useAuth</code> hooks</p>
+                <p>Create <code>useWallet</code> and <code>useAuth</code> hooks</p>
               </div>
 
               <div className="feature-card">
                 <div className="feature-icon">📡</div>
                 <h3>Event Listeners</h3>
-                <p>Lắng nghe <code>accountsChanged</code>, <code>chainChanged</code></p>
+                <p>Listen to <code>accountsChanged</code>, <code>chainChanged</code></p>
               </div>
 
               <div className="feature-card">
                 <div className="feature-icon">🔄</div>
                 <h3>Auto-reconnect</h3>
-                <p>Tự động kết nối lại nếu đã connect trước đó</p>
+                <p>Automatically reconnect if previously connected</p>
               </div>
 
               <div className="feature-card">
                 <div className="feature-icon">📖</div>
                 <h3>Provider & Signer</h3>
-                <p>Hiểu rõ sự khác biệt và khi nào dùng</p>
+                <p>Understand the difference and when to use each</p>
               </div>
 
               <div className="feature-card">
                 <div className="feature-icon">🔐</div>
                 <h3>SIWE Auth</h3>
-                <p>Xác thực với EIP-4361 và JWT tokens</p>
+                <p>Authenticate with EIP-4361 and JWT tokens</p>
               </div>
             </div>
           </section>
@@ -127,10 +127,9 @@ function App() {
 
         <footer className="footer">
           <p>
-            💡 <strong>Tip:</strong> Mở DevTools Console để xem logs chi tiết
+            💡 <strong>Tip:</strong> Open DevTools Console to see detailed logs
           </p>
           <p className="copyright">
-            Tài liệu được biên soạn bởi Kaopiz Team - © 2025
           </p>
         </footer>
       </div>

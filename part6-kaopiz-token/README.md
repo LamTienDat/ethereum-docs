@@ -25,19 +25,13 @@ After completing this project, you will know how to:
    - Add pausable mechanism
    - Custom events and modifiers
 
-2. **Testing**
-
-   - Write unit tests with Hardhat and Chai
-   - Test edge cases
-   - Coverage testing
-
-3. **Deployment**
+2. **Deployment**
 
    - Deploy to testnet (Sepolia/BSC Testnet)
    - Verify contract on Etherscan
    - Manage deployment scripts
 
-4. **Frontend Development**
+3. **Frontend Development**
    - Connect wallet with MetaMask
    - Interact with smart contract
    - Display token information
@@ -95,8 +89,6 @@ BSCSCAN_API_KEY=your_bscscan_api_key
 part6-kaopiz-token/
 ├── contracts/
 │   └── KaopizCoin.sol          # Main smart contract
-├── test/
-│   └── KaopizCoin.test.js      # Unit tests
 ├── scripts/
 │   ├── deploy.js               # Deploy script
 │   ├── interact.js             # Interact with contract
@@ -128,38 +120,7 @@ part6-kaopiz-token/
 npx hardhat compile
 ```
 
-### 2. Run Tests
-
-```bash
-# Run all tests
-npx hardhat test
-
-# Run with coverage
-npx hardhat coverage
-
-# Run specific test
-npx hardhat test test/KaopizCoin.test.js
-```
-
-Expected output:
-
-```
-  KaopizCoin
-    Deployment
-      ✔ Should set the right owner
-      ✔ Should assign the initial supply to the owner
-      ✔ Should have correct token info
-    Minting
-      ✔ Should allow owner to mint tokens
-      ✔ Should fail if non-owner tries to mint
-      ✔ Should not exceed max supply
-      ✔ Should emit TokensMinted event
-    ...
-
-  15 passing (2s)
-```
-
-### 3. Deploy to Testnet
+### 2. Deploy to Testnet
 
 ```bash
 # Deploy to Sepolia
@@ -190,7 +151,7 @@ Output:
 
 **⚠️ NOTE:** Copy contract address to use for frontend!
 
-### 4. Verify Contract
+### 3. Verify Contract
 
 ```bash
 # Verify on Etherscan (Sepolia)
@@ -200,7 +161,7 @@ npx hardhat verify --network sepolia <CONTRACT_ADDRESS> <OWNER_ADDRESS>
 npx hardhat verify --network bscTestnet <CONTRACT_ADDRESS> <OWNER_ADDRESS>
 ```
 
-### 5. Interact with Contract
+### 4. Interact with Contract
 
 ```bash
 # Mint tokens
@@ -353,58 +314,6 @@ event Paused(address account)
 event Unpaused(address account)
 ```
 
-## 🧪 Testing Guide
-
-### Test Coverage
-
-```bash
-npx hardhat coverage
-```
-
-Expected coverage:
-
-```
-File               | % Stmts | % Branch | % Funcs | % Lines |
--------------------|---------|----------|---------|---------|
-contracts/         |     100 |      100 |     100 |     100 |
-  KaopizCoin.sol   |     100 |      100 |     100 |     100 |
--------------------|---------|----------|---------|---------|
-All files          |     100 |      100 |     100 |     100 |
-```
-
-### Test Scenarios
-
-✅ **Deployment**
-
-- Contract owner is set correctly
-- Initial supply minted to owner
-- Token info is correct (name, symbol, decimals)
-
-✅ **Minting**
-
-- Owner can mint
-- Non-owner cannot mint
-- Cannot exceed max supply
-- Events are emitted
-
-✅ **Burning**
-
-- User can burn their tokens
-- BurnFrom with approve
-- Events are emitted
-
-✅ **Transfer**
-
-- Transfer between accounts
-- Fail on insufficient balance
-- Fail when paused
-
-✅ **Pausable**
-
-- Owner can pause/unpause
-- Transfer blocked when paused
-- Mint/burn still work when paused (if owner)
-
 ## 🔒 Security Considerations
 
 ### Implemented
@@ -434,9 +343,8 @@ All files          |     100 |      100 |     100 |     100 |
 2. ✅ Implement events for all state changes
 3. ✅ Check for zero address
 4. ✅ Use modifiers for access control
-5. ✅ Test extensively
-6. ✅ Verify contract on explorer
-7. ✅ Keep private key secure
+5. ✅ Verify contract on explorer
+6. ✅ Keep private key secure
 
 ## 🐛 Troubleshooting
 
@@ -503,21 +411,20 @@ Contract source code not verified
 ### Beginner
 
 1. Deploy contract to local network
-2. Run tests and understand results
-3. Interact via Hardhat console
+2. Interact via Hardhat console
 
 ### Intermediate
 
-4. Deploy to testnet
-5. Verify contract
-6. Connect frontend with MetaMask
+3. Deploy to testnet
+4. Verify contract
+5. Connect frontend with MetaMask
 
 ### Advanced
 
-7. Customize contract (add features)
-8. Optimize gas costs
-9. Implement advanced frontend features
-10. Add backend monitoring
+6. Customize contract (add features)
+7. Optimize gas costs
+8. Implement advanced frontend features
+9. Add backend monitoring
 
 ## 🤝 Contributing
 
@@ -546,5 +453,3 @@ If you encounter issues:
 ---
 
 **Happy Coding! 🚀**
-
-Made with ❤️ for Kaopiz Team
