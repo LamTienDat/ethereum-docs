@@ -7,10 +7,10 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 
 /**
- * @title KaopizCoin
+ * @title TLCoin
  * @dev ERC20 Token with mint, burn and pause features
  */
-contract KaopizCoin is ERC20, ERC20Burnable, Ownable, Pausable {
+contract TLCoin is ERC20, ERC20Burnable, Ownable, Pausable {
     // Events
     event TokensMinted(address indexed to, uint256 amount, uint256 timestamp);
     event TokensBurned(address indexed from, uint256 amount, uint256 timestamp);
@@ -27,7 +27,7 @@ contract KaopizCoin is ERC20, ERC20Burnable, Ownable, Pausable {
      */
     constructor(
         address initialOwner
-    ) ERC20("KaopizCoin", "KPC") Ownable(initialOwner) {
+    ) ERC20("TLCoin", "KPC") Ownable(initialOwner) {
         // Mint initial supply to owner
         _mint(initialOwner, INITIAL_SUPPLY);
         emit TokensMinted(initialOwner, INITIAL_SUPPLY, block.timestamp);

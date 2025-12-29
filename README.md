@@ -5446,7 +5446,7 @@ contract SafeLottery is VRFConsumerBase {
 
 #### 📋 要件
 
-**KaopizCoin (KPC)** という名前のトークンを作成し、以下の機能を実装：
+**TLCoin (KPC)** という名前のトークンを作成し、以下の機能を実装：
 
 - ERC20 標準に準拠
 - Mint 可能（owner のみ）
@@ -5459,8 +5459,8 @@ contract SafeLottery is VRFConsumerBase {
 **Hardhat をインストール:**
 
 ```bash
-mkdir kaopiz-token
-cd kaopiz-token
+mkdir tl-token
+cd tl-token
 npm init -y
 npm install --save-dev hardhat @nomicfoundation/hardhat-toolbox
 npx hardhat init
@@ -5476,7 +5476,7 @@ npm install @openzeppelin/contracts
 
 #### 📝 ステップ 2: Smart Contract を作成
 
-`contracts/KaopizCoin.sol` ファイルを作成:
+`contracts/TLCoin.sol` ファイルを作成:
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -5488,10 +5488,10 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 
 /**
- * @title KaopizCoin
+ * @title TLCoin
  * @dev Mint、burn、pause 機能を持つ ERC20 Token
  */
-contract KaopizCoin is ERC20, ERC20Burnable, Ownable, Pausable {
+contract TLCoin is ERC20, ERC20Burnable, Ownable, Pausable {
     // Events
     event TokensMinted(address indexed to, uint256 amount, uint256 timestamp);
     event TokensBurned(address indexed from, uint256 amount, uint256 timestamp);
@@ -5508,7 +5508,7 @@ contract KaopizCoin is ERC20, ERC20Burnable, Ownable, Pausable {
      */
     constructor(
         address initialOwner
-    ) ERC20("KaopizCoin", "KPC") Ownable(initialOwner) {
+    ) ERC20("TLCoin", "KPC") Ownable(initialOwner) {
         // Owner に initial supply を mint
         _mint(initialOwner, INITIAL_SUPPLY);
         emit TokensMinted(initialOwner, INITIAL_SUPPLY, block.timestamp);
@@ -5605,7 +5605,7 @@ contract KaopizCoin is ERC20, ERC20Burnable, Ownable, Pausable {
 **1. OpenZeppelin からの継承:**
 
 ```solidity
-contract KaopizCoin is ERC20, ERC20Burnable, Ownable, Pausable
+contract TLCoin is ERC20, ERC20Burnable, Ownable, Pausable
 ```
 
 - `ERC20`: 基本的な関数を提供（transfer、approve、transferFrom）
@@ -5628,11 +5628,11 @@ uint256 public constant INITIAL_SUPPLY = 100_000_000 * 10**18;
 
 ```solidity
 constructor(address initialOwner)
-    ERC20("KaopizCoin", "KPC")
+    ERC20("TLCoin", "KPC")
     Ownable(initialOwner)
 ```
 
-- "KaopizCoin" という名前と "KPC" という symbol で token を初期化
+- "TLCoin" という名前と "KPC" という symbol で token を初期化
 - 初期 owner を設定
 - Owner に initial supply を mint
 
@@ -5666,14 +5666,14 @@ function _update(address from, address to, uint256 value)
 
 #### 🧪 ステップ 3: テストを作成
 
-`test/KaopizCoin.test.js` ファイルを作成:
+`test/TLCoin.test.js` ファイルを作成:
 
 ```javascript
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-describe("KaopizCoin", function () {
-  let kaopizCoin;
+describe("TLCoin", function () {
+  let tlCoin;
   let owner;
   let addr1;
   let addr2;
@@ -5681,58 +5681,58 @@ describe("KaopizCoin", function () {
   beforeEach(async function () {
     [owner, addr1, addr2] = await ethers.getSigners();
 
-    const KaopizCoin = await ethers.getContractFactory("KaopizCoin");
-    kaopizCoin = await KaopizCoin.deploy(owner.address);
-    await kaopizCoin.waitForDeployment();
+    const TLCoin = await ethers.getContractFactory("TLCoin");
+    tlCoin = await TLCoin.deploy(owner.address);
+    await tlCoin.waitForDeployment();
   });
 
   describe("Deployment", function () {
     it("Should set the right owner", async function () {
-      expect(await kaopizCoin.owner()).to.equal(owner.address);
+      expect(await tlCoin.owner()).to.equal(owner.address);
     });
 
     it("Should assign the initial supply to the owner", async function () {
-      const ownerBalance = await kaopizCoin.balanceOf(owner.address);
+      const ownerBalance = await tlCoin.balanceOf(owner.address);
       const initialSupply = ethers.parseEther("100000000"); // 100M
       expect(ownerBalance).to.equal(initialSupply);
     });
 
     it("Should have correct token info", async function () {
-      expect(await kaopizCoin.name()).to.equal("KaopizCoin");
-      expect(await kaopizCoin.symbol()).to.equal("KPC");
-      expect(await kaopizCoin.decimals()).to.equal(18);
+      expect(await tlCoin.name()).to.equal("TLCoin");
+      expect(await tlCoin.symbol()).to.equal("KPC");
+      expect(await tlCoin.decimals()).to.equal(18);
     });
   });
 
   describe("Minting", function () {
     it("Should allow owner to mint tokens", async function () {
       const mintAmount = ethers.parseEther("1000");
-      await kaopizCoin.mint(addr1.address, mintAmount);
+      await tlCoin.mint(addr1.address, mintAmount);
 
-      expect(await kaopizCoin.balanceOf(addr1.address)).to.equal(mintAmount);
+      expect(await tlCoin.balanceOf(addr1.address)).to.equal(mintAmount);
     });
 
     it("Should fail if non-owner tries to mint", async function () {
       const mintAmount = ethers.parseEther("1000");
       await expect(
-        kaopizCoin.connect(addr1).mint(addr2.address, mintAmount)
-      ).to.be.revertedWithCustomError(kaopizCoin, "OwnableUnauthorizedAccount");
+        tlCoin.connect(addr1).mint(addr2.address, mintAmount)
+      ).to.be.revertedWithCustomError(tlCoin, "OwnableUnauthorizedAccount");
     });
 
     it("Should not exceed max supply", async function () {
       const maxSupply = ethers.parseEther("1000000000"); // 1B
-      const currentSupply = await kaopizCoin.totalSupply();
+      const currentSupply = await tlCoin.totalSupply();
       const exceedAmount = maxSupply - currentSupply + ethers.parseEther("1");
 
-      await expect(
-        kaopizCoin.mint(addr1.address, exceedAmount)
-      ).to.be.revertedWith("Exceeds max supply");
+      await expect(tlCoin.mint(addr1.address, exceedAmount)).to.be.revertedWith(
+        "Exceeds max supply"
+      );
     });
 
     it("Should emit TokensMinted event", async function () {
       const mintAmount = ethers.parseEther("1000");
-      await expect(kaopizCoin.mint(addr1.address, mintAmount))
-        .to.emit(kaopizCoin, "TokensMinted")
+      await expect(tlCoin.mint(addr1.address, mintAmount))
+        .to.emit(tlCoin, "TokensMinted")
         .withArgs(
           addr1.address,
           mintAmount,
@@ -5744,23 +5744,23 @@ describe("KaopizCoin", function () {
   describe("Burning", function () {
     it("Should allow users to burn their tokens", async function () {
       const mintAmount = ethers.parseEther("1000");
-      await kaopizCoin.mint(addr1.address, mintAmount);
+      await tlCoin.mint(addr1.address, mintAmount);
 
       const burnAmount = ethers.parseEther("500");
-      await kaopizCoin.connect(addr1).burn(burnAmount);
+      await tlCoin.connect(addr1).burn(burnAmount);
 
-      expect(await kaopizCoin.balanceOf(addr1.address)).to.equal(
+      expect(await tlCoin.balanceOf(addr1.address)).to.equal(
         mintAmount - burnAmount
       );
     });
 
     it("Should emit TokensBurned event", async function () {
       const mintAmount = ethers.parseEther("1000");
-      await kaopizCoin.mint(addr1.address, mintAmount);
+      await tlCoin.mint(addr1.address, mintAmount);
 
       const burnAmount = ethers.parseEther("500");
-      await expect(kaopizCoin.connect(addr1).burn(burnAmount)).to.emit(
-        kaopizCoin,
+      await expect(tlCoin.connect(addr1).burn(burnAmount)).to.emit(
+        tlCoin,
         "TokensBurned"
       );
     });
@@ -5769,49 +5769,45 @@ describe("KaopizCoin", function () {
   describe("Transfer", function () {
     it("Should transfer tokens between accounts", async function () {
       const transferAmount = ethers.parseEther("1000");
-      await kaopizCoin.transfer(addr1.address, transferAmount);
+      await tlCoin.transfer(addr1.address, transferAmount);
 
-      expect(await kaopizCoin.balanceOf(addr1.address)).to.equal(
-        transferAmount
-      );
+      expect(await tlCoin.balanceOf(addr1.address)).to.equal(transferAmount);
     });
 
     it("Should fail if sender doesn't have enough tokens", async function () {
-      const initialBalance = await kaopizCoin.balanceOf(addr1.address);
+      const initialBalance = await tlCoin.balanceOf(addr1.address);
       await expect(
-        kaopizCoin
-          .connect(addr1)
-          .transfer(owner.address, ethers.parseEther("1"))
-      ).to.be.revertedWithCustomError(kaopizCoin, "ERC20InsufficientBalance");
+        tlCoin.connect(addr1).transfer(owner.address, ethers.parseEther("1"))
+      ).to.be.revertedWithCustomError(tlCoin, "ERC20InsufficientBalance");
     });
   });
 
   describe("Pausable", function () {
     it("Should allow owner to pause", async function () {
-      await kaopizCoin.pause();
-      expect(await kaopizCoin.paused()).to.equal(true);
+      await tlCoin.pause();
+      expect(await tlCoin.paused()).to.equal(true);
     });
 
     it("Should block transfers when paused", async function () {
-      await kaopizCoin.pause();
+      await tlCoin.pause();
 
       await expect(
-        kaopizCoin.transfer(addr1.address, ethers.parseEther("100"))
-      ).to.be.revertedWithCustomError(kaopizCoin, "EnforcedPause");
+        tlCoin.transfer(addr1.address, ethers.parseEther("100"))
+      ).to.be.revertedWithCustomError(tlCoin, "EnforcedPause");
     });
 
     it("Should allow owner to unpause", async function () {
-      await kaopizCoin.pause();
-      await kaopizCoin.unpause();
-      expect(await kaopizCoin.paused()).to.equal(false);
+      await tlCoin.pause();
+      await tlCoin.unpause();
+      expect(await tlCoin.paused()).to.equal(false);
     });
 
     it("Should allow transfers after unpause", async function () {
-      await kaopizCoin.pause();
-      await kaopizCoin.unpause();
+      await tlCoin.pause();
+      await tlCoin.unpause();
 
       const transferAmount = ethers.parseEther("100");
-      await expect(kaopizCoin.transfer(addr1.address, transferAmount)).to.not.be
+      await expect(tlCoin.transfer(addr1.address, transferAmount)).to.not.be
         .reverted;
     });
   });
@@ -5827,7 +5823,7 @@ npx hardhat test
 期待される結果:
 
 ```
-  KaopizCoin
+  TLCoin
     Deployment
       ✔ Should set the right owner
       ✔ Should assign the initial supply to the owner
@@ -5968,7 +5964,7 @@ echo ".env" >> .gitignore
 const hre = require("hardhat");
 
 async function main() {
-  console.log("🚀 Deploying KaopizCoin...");
+  console.log("🚀 Deploying TLCoin...");
 
   // Deployer account を取得
   const [deployer] = await ethers.getSigners();
@@ -5979,16 +5975,16 @@ async function main() {
   console.log("💰 Account balance:", ethers.formatEther(balance), "ETH");
 
   // Contract をデプロイ
-  const KaopizCoin = await ethers.getContractFactory("KaopizCoin");
-  const kaopizCoin = await KaopizCoin.deploy(deployer.address);
+  const TLCoin = await ethers.getContractFactory("TLCoin");
+  const tlCoin = await TLCoin.deploy(deployer.address);
 
-  await kaopizCoin.waitForDeployment();
+  await tlCoin.waitForDeployment();
 
-  const contractAddress = await kaopizCoin.getAddress();
-  console.log("✅ KaopizCoin deployed to:", contractAddress);
+  const contractAddress = await tlCoin.getAddress();
+  console.log("✅ TLCoin deployed to:", contractAddress);
 
   // Token info を取得
-  const tokenInfo = await kaopizCoin.getTokenInfo();
+  const tokenInfo = await tlCoin.getTokenInfo();
   console.log("\n📊 Token Information:");
   console.log("   Name:", tokenInfo.tokenName);
   console.log("   Symbol:", tokenInfo.tokenSymbol);
@@ -6007,7 +6003,7 @@ async function main() {
 
   // Block confirmations を待つ
   console.log("\n⏳ Waiting for block confirmations...");
-  await kaopizCoin.deploymentTransaction().wait(5);
+  await tlCoin.deploymentTransaction().wait(5);
 
   // Etherscan で contract を検証
   console.log("\n🔍 Verifying contract on Etherscan...");
@@ -6061,20 +6057,20 @@ npx hardhat run scripts/deploy.js --network bscTestnet
 
 ### 6.2. Frontend の構築
 
-次に、KaopizCoin と対話するための Web インターフェースを作成します。
+次に、TLCoin と対話するための Web インターフェースを作成します。
 
 #### 🎨 ステップ 1: React App のセットアップ
 
 ```bash
-npx create-react-app kaopiz-dapp
-cd kaopiz-dapp
+npx create-react-app tl-dapp
+cd tl-dapp
 npm install ethers
 ```
 
 #### 📁 ステップ 2: ディレクトリ構造
 
 ```
-kaopiz-dapp/
+tl-dapp/
 ├── src/
 │   ├── components/
 │   │   ├── WalletConnect.jsx
@@ -6082,7 +6078,7 @@ kaopiz-dapp/
 │   │   ├── TransferForm.jsx
 │   │   └── TransactionHistory.jsx
 │   ├── contracts/
-│   │   └── KaopizCoin.json  (artifacts からコピー)
+│   │   └── TLCoin.json  (artifacts からコピー)
 │   ├── App.js
 │   └── App.css
 ```
@@ -6091,7 +6087,7 @@ kaopiz-dapp/
 
 ```bash
 # Hardhat project から ABI をコピー
-cp ../kaopiz-token/artifacts/contracts/KaopizCoin.sol/KaopizCoin.json src/contracts/
+cp ../tl-token/artifacts/contracts/TLCoin.sol/TLCoin.json src/contracts/
 ```
 
 #### 💻 ステップ 4: Components を作成
@@ -6212,7 +6208,7 @@ export default WalletConnect;
 ```javascript
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import KaopizCoinABI from "../contracts/KaopizCoin.json";
+import TLCoinABI from "../contracts/TLCoin.json";
 
 function TokenInfo({ wallet, contractAddress }) {
   const [tokenInfo, setTokenInfo] = useState(null);
@@ -6232,7 +6228,7 @@ function TokenInfo({ wallet, contractAddress }) {
       // Contract instance を作成
       const contract = new ethers.Contract(
         contractAddress,
-        KaopizCoinABI.abi,
+        TLCoinABI.abi,
         wallet.provider
       );
 
@@ -6319,7 +6315,7 @@ export default TokenInfo;
 ```javascript
 import { useState } from "react";
 import { ethers } from "ethers";
-import KaopizCoinABI from "../contracts/KaopizCoin.json";
+import TLCoinABI from "../contracts/TLCoin.json";
 
 function TransferForm({ wallet, contractAddress, onTransferComplete }) {
   const [recipient, setRecipient] = useState("");
@@ -6350,7 +6346,7 @@ function TransferForm({ wallet, contractAddress, onTransferComplete }) {
       // Contract instance を signer 付きで作成
       const contract = new ethers.Contract(
         contractAddress,
-        KaopizCoinABI.abi,
+        TLCoinABI.abi,
         wallet.signer
       );
 
@@ -6461,7 +6457,7 @@ export default TransferForm;
 ```javascript
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import KaopizCoinABI from "../contracts/KaopizCoin.json";
+import TLCoinABI from "../contracts/TLCoin.json";
 
 function TransactionHistory({ wallet, contractAddress }) {
   const [transactions, setTransactions] = useState([]);
@@ -6479,7 +6475,7 @@ function TransactionHistory({ wallet, contractAddress }) {
 
       const contract = new ethers.Contract(
         contractAddress,
-        KaopizCoinABI.abi,
+        TLCoinABI.abi,
         wallet.provider
       );
 
@@ -6623,7 +6619,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>🪙 KaopizCoin DApp</h1>
+        <h1>🪙 TLCoin DApp</h1>
         <p>Decentralized Token Transfer Application</p>
       </header>
 
@@ -6694,7 +6690,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>🪙 KaopizCoin DApp</h1>
+        <h1>🪙 TLCoin DApp</h1>
         <WalletConnect onConnect={handleConnect} />
       </header>
 
@@ -7436,9 +7432,9 @@ const identity = {
 };
 
 // Certificate には以下の情報が含まれる:
-// - Organization: Kaopiz Corp
-// - Common Name: admin@kaopiz.com
-// - Issued by: CA.kaopiz.com
+// - Organization: TL Corp
+// - Common Name: admin@tl.com
+// - Issued by: CA.tl.com
 // - Valid from: 2025-01-01 to 2026-01-01
 ```
 

@@ -5422,7 +5422,7 @@ Trong phần này, chúng ta sẽ xây dựng một ứng dụng hoàn chỉnh t
 
 #### 📋 Yêu cầu
 
-Tạo một token có tên **KaopizCoin (KPC)** với các tính năng:
+Tạo một token có tên **TLCoin (KPC)** với các tính năng:
 
 - Tuân thủ chuẩn ERC20
 - Có thể mint (chỉ owner)
@@ -5435,8 +5435,8 @@ Tạo một token có tên **KaopizCoin (KPC)** với các tính năng:
 **Cài đặt Hardhat:**
 
 ```bash
-mkdir kaopiz-token
-cd kaopiz-token
+mkdir tl-token
+cd tl-token
 npm init -y
 npm install --save-dev hardhat @nomicfoundation/hardhat-toolbox
 npx hardhat init
@@ -5452,7 +5452,7 @@ npm install @openzeppelin/contracts
 
 #### 📝 Bước 2: Viết Smart Contract
 
-Tạo file `contracts/KaopizCoin.sol`:
+Tạo file `contracts/TLCoin.sol`:
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -5464,10 +5464,10 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 
 /**
- * @title KaopizCoin
+ * @title TLCoin
  * @dev ERC20 Token với tính năng mint, burn và pause
  */
-contract KaopizCoin is ERC20, ERC20Burnable, Ownable, Pausable {
+contract TLCoin is ERC20, ERC20Burnable, Ownable, Pausable {
     // Events
     event TokensMinted(address indexed to, uint256 amount, uint256 timestamp);
     event TokensBurned(address indexed from, uint256 amount, uint256 timestamp);
@@ -5484,7 +5484,7 @@ contract KaopizCoin is ERC20, ERC20Burnable, Ownable, Pausable {
      */
     constructor(
         address initialOwner
-    ) ERC20("KaopizCoin", "KPC") Ownable(initialOwner) {
+    ) ERC20("TLCoin", "KPC") Ownable(initialOwner) {
         // Mint initial supply cho owner
         _mint(initialOwner, INITIAL_SUPPLY);
         emit TokensMinted(initialOwner, INITIAL_SUPPLY, block.timestamp);
@@ -5581,7 +5581,7 @@ contract KaopizCoin is ERC20, ERC20Burnable, Ownable, Pausable {
 **1. Kế thừa từ OpenZeppelin:**
 
 ```solidity
-contract KaopizCoin is ERC20, ERC20Burnable, Ownable, Pausable
+contract TLCoin is ERC20, ERC20Burnable, Ownable, Pausable
 ```
 
 - `ERC20`: Cung cấp các hàm cơ bản (transfer, approve, transferFrom)
@@ -5604,11 +5604,11 @@ uint256 public constant INITIAL_SUPPLY = 100_000_000 * 10**18;
 
 ```solidity
 constructor(address initialOwner)
-    ERC20("KaopizCoin", "KPC")
+    ERC20("TLCoin", "KPC")
     Ownable(initialOwner)
 ```
 
-- Khởi tạo token với tên "KaopizCoin" và symbol "KPC"
+- Khởi tạo token với tên "TLCoin" và symbol "KPC"
 - Set owner ban đầu
 - Mint initial supply cho owner
 
@@ -5642,14 +5642,14 @@ function _update(address from, address to, uint256 value)
 
 #### 🧪 Bước 3: Viết Test
 
-Tạo file `test/KaopizCoin.test.js`:
+Tạo file `test/TLCoin.test.js`:
 
 ```javascript
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-describe("KaopizCoin", function () {
-  let kaopizCoin;
+describe("TLCoin", function () {
+  let tlCoin;
   let owner;
   let addr1;
   let addr2;
@@ -5657,58 +5657,58 @@ describe("KaopizCoin", function () {
   beforeEach(async function () {
     [owner, addr1, addr2] = await ethers.getSigners();
 
-    const KaopizCoin = await ethers.getContractFactory("KaopizCoin");
-    kaopizCoin = await KaopizCoin.deploy(owner.address);
-    await kaopizCoin.waitForDeployment();
+    const TLCoin = await ethers.getContractFactory("TLCoin");
+    tlCoin = await TLCoin.deploy(owner.address);
+    await tlCoin.waitForDeployment();
   });
 
   describe("Deployment", function () {
     it("Should set the right owner", async function () {
-      expect(await kaopizCoin.owner()).to.equal(owner.address);
+      expect(await tlCoin.owner()).to.equal(owner.address);
     });
 
     it("Should assign the initial supply to the owner", async function () {
-      const ownerBalance = await kaopizCoin.balanceOf(owner.address);
+      const ownerBalance = await tlCoin.balanceOf(owner.address);
       const initialSupply = ethers.parseEther("100000000"); // 100M
       expect(ownerBalance).to.equal(initialSupply);
     });
 
     it("Should have correct token info", async function () {
-      expect(await kaopizCoin.name()).to.equal("KaopizCoin");
-      expect(await kaopizCoin.symbol()).to.equal("KPC");
-      expect(await kaopizCoin.decimals()).to.equal(18);
+      expect(await tlCoin.name()).to.equal("TLCoin");
+      expect(await tlCoin.symbol()).to.equal("KPC");
+      expect(await tlCoin.decimals()).to.equal(18);
     });
   });
 
   describe("Minting", function () {
     it("Should allow owner to mint tokens", async function () {
       const mintAmount = ethers.parseEther("1000");
-      await kaopizCoin.mint(addr1.address, mintAmount);
+      await tlCoin.mint(addr1.address, mintAmount);
 
-      expect(await kaopizCoin.balanceOf(addr1.address)).to.equal(mintAmount);
+      expect(await tlCoin.balanceOf(addr1.address)).to.equal(mintAmount);
     });
 
     it("Should fail if non-owner tries to mint", async function () {
       const mintAmount = ethers.parseEther("1000");
       await expect(
-        kaopizCoin.connect(addr1).mint(addr2.address, mintAmount)
-      ).to.be.revertedWithCustomError(kaopizCoin, "OwnableUnauthorizedAccount");
+        tlCoin.connect(addr1).mint(addr2.address, mintAmount)
+      ).to.be.revertedWithCustomError(tlCoin, "OwnableUnauthorizedAccount");
     });
 
     it("Should not exceed max supply", async function () {
       const maxSupply = ethers.parseEther("1000000000"); // 1B
-      const currentSupply = await kaopizCoin.totalSupply();
+      const currentSupply = await tlCoin.totalSupply();
       const exceedAmount = maxSupply - currentSupply + ethers.parseEther("1");
 
-      await expect(
-        kaopizCoin.mint(addr1.address, exceedAmount)
-      ).to.be.revertedWith("Exceeds max supply");
+      await expect(tlCoin.mint(addr1.address, exceedAmount)).to.be.revertedWith(
+        "Exceeds max supply"
+      );
     });
 
     it("Should emit TokensMinted event", async function () {
       const mintAmount = ethers.parseEther("1000");
-      await expect(kaopizCoin.mint(addr1.address, mintAmount))
-        .to.emit(kaopizCoin, "TokensMinted")
+      await expect(tlCoin.mint(addr1.address, mintAmount))
+        .to.emit(tlCoin, "TokensMinted")
         .withArgs(
           addr1.address,
           mintAmount,
@@ -5720,23 +5720,23 @@ describe("KaopizCoin", function () {
   describe("Burning", function () {
     it("Should allow users to burn their tokens", async function () {
       const mintAmount = ethers.parseEther("1000");
-      await kaopizCoin.mint(addr1.address, mintAmount);
+      await tlCoin.mint(addr1.address, mintAmount);
 
       const burnAmount = ethers.parseEther("500");
-      await kaopizCoin.connect(addr1).burn(burnAmount);
+      await tlCoin.connect(addr1).burn(burnAmount);
 
-      expect(await kaopizCoin.balanceOf(addr1.address)).to.equal(
+      expect(await tlCoin.balanceOf(addr1.address)).to.equal(
         mintAmount - burnAmount
       );
     });
 
     it("Should emit TokensBurned event", async function () {
       const mintAmount = ethers.parseEther("1000");
-      await kaopizCoin.mint(addr1.address, mintAmount);
+      await tlCoin.mint(addr1.address, mintAmount);
 
       const burnAmount = ethers.parseEther("500");
-      await expect(kaopizCoin.connect(addr1).burn(burnAmount)).to.emit(
-        kaopizCoin,
+      await expect(tlCoin.connect(addr1).burn(burnAmount)).to.emit(
+        tlCoin,
         "TokensBurned"
       );
     });
@@ -5745,49 +5745,45 @@ describe("KaopizCoin", function () {
   describe("Transfer", function () {
     it("Should transfer tokens between accounts", async function () {
       const transferAmount = ethers.parseEther("1000");
-      await kaopizCoin.transfer(addr1.address, transferAmount);
+      await tlCoin.transfer(addr1.address, transferAmount);
 
-      expect(await kaopizCoin.balanceOf(addr1.address)).to.equal(
-        transferAmount
-      );
+      expect(await tlCoin.balanceOf(addr1.address)).to.equal(transferAmount);
     });
 
     it("Should fail if sender doesn't have enough tokens", async function () {
-      const initialBalance = await kaopizCoin.balanceOf(addr1.address);
+      const initialBalance = await tlCoin.balanceOf(addr1.address);
       await expect(
-        kaopizCoin
-          .connect(addr1)
-          .transfer(owner.address, ethers.parseEther("1"))
-      ).to.be.revertedWithCustomError(kaopizCoin, "ERC20InsufficientBalance");
+        tlCoin.connect(addr1).transfer(owner.address, ethers.parseEther("1"))
+      ).to.be.revertedWithCustomError(tlCoin, "ERC20InsufficientBalance");
     });
   });
 
   describe("Pausable", function () {
     it("Should allow owner to pause", async function () {
-      await kaopizCoin.pause();
-      expect(await kaopizCoin.paused()).to.equal(true);
+      await tlCoin.pause();
+      expect(await tlCoin.paused()).to.equal(true);
     });
 
     it("Should block transfers when paused", async function () {
-      await kaopizCoin.pause();
+      await tlCoin.pause();
 
       await expect(
-        kaopizCoin.transfer(addr1.address, ethers.parseEther("100"))
-      ).to.be.revertedWithCustomError(kaopizCoin, "EnforcedPause");
+        tlCoin.transfer(addr1.address, ethers.parseEther("100"))
+      ).to.be.revertedWithCustomError(tlCoin, "EnforcedPause");
     });
 
     it("Should allow owner to unpause", async function () {
-      await kaopizCoin.pause();
-      await kaopizCoin.unpause();
-      expect(await kaopizCoin.paused()).to.equal(false);
+      await tlCoin.pause();
+      await tlCoin.unpause();
+      expect(await tlCoin.paused()).to.equal(false);
     });
 
     it("Should allow transfers after unpause", async function () {
-      await kaopizCoin.pause();
-      await kaopizCoin.unpause();
+      await tlCoin.pause();
+      await tlCoin.unpause();
 
       const transferAmount = ethers.parseEther("100");
-      await expect(kaopizCoin.transfer(addr1.address, transferAmount)).to.not.be
+      await expect(tlCoin.transfer(addr1.address, transferAmount)).to.not.be
         .reverted;
     });
   });
@@ -5803,7 +5799,7 @@ npx hardhat test
 Kết quả mong đợi:
 
 ```
-  KaopizCoin
+  TLCoin
     Deployment
       ✔ Should set the right owner
       ✔ Should assign the initial supply to the owner
@@ -5944,7 +5940,7 @@ Tạo file `scripts/deploy.js`:
 const hre = require("hardhat");
 
 async function main() {
-  console.log("🚀 Deploying KaopizCoin...");
+  console.log("🚀 Deploying TLCoin...");
 
   // Get deployer account
   const [deployer] = await ethers.getSigners();
@@ -5955,16 +5951,16 @@ async function main() {
   console.log("💰 Account balance:", ethers.formatEther(balance), "ETH");
 
   // Deploy contract
-  const KaopizCoin = await ethers.getContractFactory("KaopizCoin");
-  const kaopizCoin = await KaopizCoin.deploy(deployer.address);
+  const TLCoin = await ethers.getContractFactory("TLCoin");
+  const tlCoin = await TLCoin.deploy(deployer.address);
 
-  await kaopizCoin.waitForDeployment();
+  await tlCoin.waitForDeployment();
 
-  const contractAddress = await kaopizCoin.getAddress();
-  console.log("✅ KaopizCoin deployed to:", contractAddress);
+  const contractAddress = await tlCoin.getAddress();
+  console.log("✅ TLCoin deployed to:", contractAddress);
 
   // Get token info
-  const tokenInfo = await kaopizCoin.getTokenInfo();
+  const tokenInfo = await tlCoin.getTokenInfo();
   console.log("\n📊 Token Information:");
   console.log("   Name:", tokenInfo.tokenName);
   console.log("   Symbol:", tokenInfo.tokenSymbol);
@@ -5983,7 +5979,7 @@ async function main() {
 
   // Wait for block confirmations
   console.log("\n⏳ Waiting for block confirmations...");
-  await kaopizCoin.deploymentTransaction().wait(5);
+  await tlCoin.deploymentTransaction().wait(5);
 
   // Verify contract on Etherscan
   console.log("\n🔍 Verifying contract on Etherscan...");
@@ -6037,20 +6033,20 @@ npx hardhat run scripts/deploy.js --network bscTestnet
 
 ### 6.2. Xây dựng Frontend
 
-Giờ chúng ta sẽ tạo một giao diện web để tương tác với KaopizCoin.
+Giờ chúng ta sẽ tạo một giao diện web để tương tác với TLCoin.
 
 #### 🎨 Bước 1: Setup React App
 
 ```bash
-npx create-react-app kaopiz-dapp
-cd kaopiz-dapp
+npx create-react-app tl-dapp
+cd tl-dapp
 npm install ethers
 ```
 
 #### 📁 Bước 2: Cấu trúc thư mục
 
 ```
-kaopiz-dapp/
+tl-dapp/
 ├── src/
 │   ├── components/
 │   │   ├── WalletConnect.jsx
@@ -6058,7 +6054,7 @@ kaopiz-dapp/
 │   │   ├── TransferForm.jsx
 │   │   └── TransactionHistory.jsx
 │   ├── contracts/
-│   │   └── KaopizCoin.json  (Copy from artifacts)
+│   │   └── TLCoin.json  (Copy from artifacts)
 │   ├── App.js
 │   └── App.css
 ```
@@ -6067,7 +6063,7 @@ kaopiz-dapp/
 
 ```bash
 # Copy ABI từ Hardhat project
-cp ../kaopiz-token/artifacts/contracts/KaopizCoin.sol/KaopizCoin.json src/contracts/
+cp ../tl-token/artifacts/contracts/TLCoin.sol/TLCoin.json src/contracts/
 ```
 
 #### 💻 Bước 4: Viết Components
@@ -6781,7 +6777,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>🪙 KaopizCoin DApp</h1>
+        <h1>🪙 TLCoin DApp</h1>
         <p>Decentralized Token Transfer Application</p>
       </header>
 
@@ -7816,9 +7812,9 @@ const identity = {
 };
 
 // Certificate chứa thông tin:
-// - Organization: Kaopiz Corp
-// - Common Name: admin@kaopiz.com
-// - Issued by: CA.kaopiz.com
+// - Organization: TL Corp
+// - Common Name: admin@tl.com
+// - Issued by: CA.tl.com
 // - Valid from: 2025-01-01 to 2026-01-01
 ```
 

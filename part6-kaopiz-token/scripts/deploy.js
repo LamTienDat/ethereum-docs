@@ -1,7 +1,7 @@
 const hre = require("hardhat");
 
 async function main() {
-  console.log("🚀 Deploying KaopizCoin...");
+  console.log("🚀 Deploying TLCoin...");
 
   // Get deployer account
   const [deployer] = await ethers.getSigners();
@@ -12,16 +12,16 @@ async function main() {
   console.log("💰 Account balance:", ethers.formatEther(balance), "ETH");
 
   // Deploy contract
-  const KaopizCoin = await ethers.getContractFactory("KaopizCoin");
-  const kaopizCoin = await KaopizCoin.deploy(deployer.address);
+  const TLCoin = await ethers.getContractFactory("TLCoin");
+  const tlCoin = await TLCoin.deploy(deployer.address);
 
-  await kaopizCoin.waitForDeployment();
+  await tlCoin.waitForDeployment();
 
-  const contractAddress = await kaopizCoin.getAddress();
-  console.log("✅ KaopizCoin deployed to:", contractAddress);
+  const contractAddress = await tlCoin.getAddress();
+  console.log("✅ TLCoin deployed to:", contractAddress);
 
   // Get token info
-  const tokenInfo = await kaopizCoin.getTokenInfo();
+  const tokenInfo = await tlCoin.getTokenInfo();
   console.log("\n📊 Token Information:");
   console.log("   Name:", tokenInfo.tokenName);
   console.log("   Symbol:", tokenInfo.tokenSymbol);
@@ -40,7 +40,7 @@ async function main() {
 
   // Wait for block confirmations
   console.log("\n⏳ Waiting for block confirmations...");
-  await kaopizCoin.deploymentTransaction().wait(5);
+  await tlCoin.deploymentTransaction().wait(5);
 
   // Verify contract on Etherscan
   console.log("\n🔍 Verifying contract on Etherscan...");

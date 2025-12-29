@@ -31,7 +31,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>🪙 KaopizCoin DApp</h1>
+        <h1>🪙 TLCoin DApp</h1>
         <p>Decentralized Token Transfer Application</p>
       </header>
 

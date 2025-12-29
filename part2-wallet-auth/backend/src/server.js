@@ -118,7 +118,7 @@ app.post('/api/auth/verify', async (req, res) => {
       JWT_SECRET,
       { 
         expiresIn: '24h',
-        issuer: 'kaopiz-auth-server'
+        issuer: 'tl-auth-server'
       }
     );
 

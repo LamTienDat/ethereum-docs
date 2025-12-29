@@ -1,6 +1,6 @@
-# 🎨 KaopizCoin Frontend
+# 🎨 TLCoin Frontend
 
-React frontend application to interact with KaopizCoin smart contract.
+React frontend application to interact with TLCoin smart contract.
 
 ## 🚀 Quick Start
 

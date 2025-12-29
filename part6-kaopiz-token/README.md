@@ -1,10 +1,10 @@
-# 🪙 KaopizCoin (KPC) - Complete DApp Project
+# 🪙 TLCoin (KPC) - Complete DApp Project
 
 Complete project from Smart Contract to Frontend for custom ERC20 token.
 
 ## 📋 Overview
 
-**KaopizCoin (KPC)** is an ERC20 token with features:
+**TLCoin (KPC)** is an ERC20 token with features:
 
 - ✅ ERC20 standard compliant
 - ✅ Mint tokens (owner only)
@@ -51,7 +51,7 @@ After completing this project, you will know how to:
 
 ```bash
 # 1. Clone or copy project
-cd part6-kaopiz-token
+cd part6-tl-token
 
 # 2. Install backend dependencies
 npm install
@@ -86,9 +86,9 @@ BSCSCAN_API_KEY=your_bscscan_api_key
 ## 📦 Project Structure
 
 ```
-part6-kaopiz-token/
+part6-tl-token/
 ├── contracts/
-│   └── KaopizCoin.sol          # Main smart contract
+│   └── TLCoin.sol          # Main smart contract
 ├── scripts/
 │   ├── deploy.js               # Deploy script
 │   ├── interact.js             # Interact with contract
@@ -137,12 +137,12 @@ npx hardhat run scripts/deploy.js --network localhost  # Terminal 2
 Output:
 
 ```
-🚀 Deploying KaopizCoin...
+🚀 Deploying TLCoin...
 📝 Deploying with account: 0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb
 💰 Account balance: 0.5 ETH
-✅ KaopizCoin deployed to: 0x1234567890abcdef...
+✅ TLCoin deployed to: 0x1234567890abcdef...
 📊 Token Info:
-   Name: KaopizCoin
+   Name: TLCoin
    Symbol: KPC
    Decimals: 18
    Initial Supply: 100000000.0 KPC
@@ -174,8 +174,8 @@ npx hardhat console --network sepolia
 Example console commands:
 
 ```javascript
-const KaopizCoin = await ethers.getContractFactory("KaopizCoin");
-const kpc = await KaopizCoin.attach("0x...contract_address...");
+const TLCoin = await ethers.getContractFactory("TLCoin");
+const kpc = await TLCoin.attach("0x...contract_address...");
 
 // Check balance
 const balance = await kpc.balanceOf("0x...address...");

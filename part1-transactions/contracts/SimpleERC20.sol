@@ -45,7 +45,7 @@ contract SimpleERC20 {
     
     /**
      * @dev Initialize token with basic information
-     * @param _name Token name (e.g., "Kaopiz Coin")
+     * @param _name Token name (e.g., "TL Coin")
      * @param _symbol Symbol (e.g., "KPC")
      * @param _decimals Number of decimals (usually 18)
      * @param _initialSupply Initial token supply (will be minted to deployer)
