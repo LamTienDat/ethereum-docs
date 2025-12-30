@@ -23,7 +23,7 @@ import {
  * - user: User information
  * - error: Error if any
  * - signIn: Function to sign in with SIWE
- * - signOut: Function để sign out
+ * - signOut: Function to sign out
  */
 export function useAuth() {
   const { account, chainId, signer, isConnected } = useWallet();
@@ -34,7 +34,7 @@ export function useAuth() {
   const [error, setError] = useState(null);
 
   /**
-   * Sign in với SIWE
+   * Sign in with SIWE
    */
   const signIn = useCallback(async () => {
     if (!isConnected || !account || !signer || !chainId) {
@@ -48,7 +48,7 @@ export function useAuth() {
 
       console.log('🔐 Starting SIWE authentication...');
 
-      // Step 1: Request nonce từ backend
+      // Step 1: Request nonce from backend
       console.log('📝 Step 1: Requesting nonce...');
       const nonce = await requestNonce();
       console.log('✅ Nonce received:', nonce);
@@ -63,7 +63,7 @@ export function useAuth() {
       const signature = await signer.signMessage(message);
       console.log('✅ Message signed');
 
-      // Step 4: Verify với backend
+      // Step 4: Verify with backend
       console.log('📝 Step 4: Verifying with backend...');
       const result = await verifySiweMessage(message, signature);
       console.log('✅ Verification successful');
@@ -102,7 +102,7 @@ export function useAuth() {
       const token = getToken();
       
       if (token) {
-        // Gọi logout API
+        // Call logout API
         await logoutUser(token);
       }
       
@@ -116,7 +116,7 @@ export function useAuth() {
       
     } catch (err) {
       console.error('❌ Sign-Out error:', err);
-      // Vẫn clear local state ngay cả khi API call fail
+      // Still clear local state even if API call fails
       removeToken();
       setUser(null);
       setIsAuthenticated(false);
@@ -142,7 +142,7 @@ export function useAuth() {
         
       } catch (err) {
         console.error('❌ Auth check failed:', err);
-        // Token invalid hoặc expired
+        // Token invalid or expired
         removeToken();
         setIsAuthenticated(false);
         setUser(null);
@@ -153,7 +153,7 @@ export function useAuth() {
   }, []);
 
   /**
-   * Auto sign out khi account hoặc chain thay đổi
+   * Auto sign out when account or chain changes
    */
   useEffect(() => {
     if (isAuthenticated && user) {

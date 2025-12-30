@@ -1,7 +1,7 @@
 {
   "name": "part2-wallet-auth-frontend",
   "version": "1.0.0",
-  "description": "Phần 2: Ví, Ký và Xác thực - Frontend",
+  "description": "Part 2: Wallet, Signing and Authentication - Frontend",
   "type": "module",
   "scripts": {
     "dev": "vite",

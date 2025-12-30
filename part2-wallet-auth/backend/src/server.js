@@ -19,10 +19,10 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// In-memory storage cho nonces (Production nên dùng Redis)
+// In-memory storage for nonces (Production should use Redis)
 const nonces = new Map();
 
-// Cleanup old nonces mỗi 5 phút
+// Cleanup old nonces every 5 minutes
 setInterval(() => {
   const now = Date.now();
   for (const [nonce, timestamp] of nonces.entries()) {
@@ -34,14 +34,14 @@ setInterval(() => {
 
 /**
  * GET /api/auth/nonce
- * Generate nonce cho SIWE
+ * Generate nonce for SIWE
  */
 app.get('/api/auth/nonce', (req, res) => {
   try {
     // Generate random nonce
     const nonce = ethers.hexlify(ethers.randomBytes(16));
     
-    // Lưu nonce với timestamp
+    // Save nonce with timestamp
     nonces.set(nonce, Date.now());
     
     console.log('✅ Generated nonce:', nonce);
@@ -61,11 +61,11 @@ app.get('/api/auth/nonce', (req, res) => {
 
 /**
  * POST /api/auth/verify
- * Verify SIWE message và issue JWT token
+ * Verify SIWE message and issue JWT token
  * 
  * Body: {
  *   message: string,  // SIWE message
- *   signature: string // Signature từ wallet
+ *   signature: string // Signature from wallet
  * }
  */
 app.post('/api/auth/verify', async (req, res) => {
@@ -91,7 +91,7 @@ app.post('/api/auth/verify', async (req, res) => {
       nonce: siweMessage.nonce
     });
 
-    // Verify nonce exists và chưa expired
+    // Verify nonce exists and is not expired
     if (!nonces.has(siweMessage.nonce)) {
       console.log('❌ Invalid or expired nonce:', siweMessage.nonce);
       return res.status(400).json({ 
@@ -105,7 +105,7 @@ app.post('/api/auth/verify', async (req, res) => {
     console.log('✅ Signature verified!');
     console.log('Verified address:', fields.data.address);
 
-    // Xóa nonce đã sử dụng
+    // Delete used nonce
     nonces.delete(siweMessage.nonce);
 
     // Generate JWT token
@@ -210,11 +210,11 @@ app.post('/api/auth/logout', verifyToken, (req, res) => {
  * Example protected route
  */
 app.get('/api/profile', verifyToken, (req, res) => {
-  // Trong thực tế, query database để lấy profile
+  // In production, query database to get profile
   res.json({
     address: req.user.address,
     chainId: req.user.chainId,
-    // Mock data
+    // Mock data for demonstration purposes 
     username: `User ${req.user.address.substring(0, 6)}`,
     joinedAt: new Date(req.user.iat * 1000).toISOString(),
     level: 5,

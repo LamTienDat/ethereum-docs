@@ -1,7 +1,7 @@
 /**
  * SIWE (Sign-In With Ethereum) Utilities
  * 
- * Các hàm helper để làm việc với SIWE authentication
+ * Helper functions for working with SIWE authentication
  */
 
 import { getAddress } from 'ethers';
@@ -9,11 +9,11 @@ import { getAddress } from 'ethers';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 /**
- * Tạo SIWE message theo format EIP-4361
+ * Create SIWE message in EIP-4361 format
  * 
  * @param {string} address - Ethereum address
  * @param {number} chainId - Chain ID
- * @param {string} nonce - Random nonce từ backend
+ * @param {string} nonce - Random nonce from backend
  * @returns {string} SIWE message
  */
 export function createSiweMessage(address, chainId, nonce) {
@@ -21,7 +21,7 @@ export function createSiweMessage(address, chainId, nonce) {
   const origin = window.location.origin;
   const issuedAt = new Date().toISOString();
 
-  // Đảm bảo address có checksum đúng theo EIP-55
+  // Ensure address has correct checksum according to EIP-55
   const checksumAddress = getAddress(address);
 
   const message = `${domain} wants you to sign in with your Ethereum account:
@@ -39,7 +39,7 @@ Issued At: ${issuedAt}`;
 }
 
 /**
- * Request nonce từ backend
+ * Request nonce from backend
  * 
  * @returns {Promise<string>} Nonce
  */
@@ -65,11 +65,11 @@ export async function requestNonce() {
 }
 
 /**
- * Verify SIWE message và signature với backend
+ * Verify SIWE message and signature with backend
  * 
  * @param {string} message - SIWE message
- * @param {string} signature - Signature từ wallet
- * @returns {Promise<{token: string, address: string}>} JWT token và address
+ * @param {string} signature - Signature from wallet
+ * @returns {Promise<{token: string, address: string}>} JWT token and address
  */
 export async function verifySiweMessage(message, signature) {
   try {
@@ -95,7 +95,7 @@ export async function verifySiweMessage(message, signature) {
 }
 
 /**
- * Get current user info từ backend (protected route)
+ * Get current user info from backend (protected route)
  * 
  * @param {string} token - JWT token
  * @returns {Promise<Object>} User info

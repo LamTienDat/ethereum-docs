@@ -226,18 +226,18 @@
         const connectBtn = document.getElementById('connectBtn');
         const walletInfo = document.getElementById('walletInfo');
 
-        // Hàm hiển thị status
+        // Function to display status
         function showStatus(message, type = 'info') {
             statusDiv.textContent = message;
             statusDiv.className = `status ${type}`;
         }
 
-        // Hàm format địa chỉ
+        // Function to format address
         function formatAddress(address) {
             return `${address.substring(0, 6)}...${address.substring(38)}`;
         }
 
-        // Hàm lấy tên network
+        // Function to get network name
         function getNetworkName(chainId) {
             const networks = {
                 1: 'Ethereum Mainnet',

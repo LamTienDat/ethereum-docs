@@ -179,7 +179,7 @@ export function useWallet() {
       .catch(err => {
         console.error('❌ Auto-connect error:', err);
       });
-  }, [isMetaMaskInstalled]); // Chỉ chạy 1 lần khi mount
+  }, [isMetaMaskInstalled]); // Only run once on mount
 
   return {
     account,

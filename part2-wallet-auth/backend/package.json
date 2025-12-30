@@ -1,7 +1,7 @@
 {
   "name": "part2-wallet-auth-backend",
   "version": "1.0.0",
-  "description": "Phần 2: Ví, Ký và Xác thực - Backend API",
+  "description": "Part 2: Wallet, Sign and Authentication - Backend API",
   "main": "src/server.js",
   "type": "module",
   "scripts": {

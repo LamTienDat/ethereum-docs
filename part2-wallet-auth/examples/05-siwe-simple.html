@@ -262,7 +262,7 @@
         <div id="sessionInfo" class="session-info">
             <h3>✅ Successfully signed in!</h3>
             <div class="info-row">
-                <span class="info-label">📍 Địa chỉ:</span>
+                <span class="info-label">📍 Address:</span>
                 <span class="info-value" id="sessionAddress">-</span>
             </div>
             <div class="info-row">
@@ -287,11 +287,11 @@
             </div>
             <div class="flow-step">
                 <div class="flow-number">2</div>
-                <div class="flow-text">Create SIWE message theo format EIP-4361</div>
+                <div class="flow-text">Create SIWE message in EIP-4361 format</div>
             </div>
             <div class="flow-step">
                 <div class="flow-number">3</div>
-                <div class="flow-text">User ký message bằng private key</div>
+                <div class="flow-text">User signs message with private key</div>
             </div>
             <div class="flow-step">
                 <div class="flow-number">4</div>
@@ -299,19 +299,19 @@
             </div>
             <div class="flow-step">
                 <div class="flow-number">5</div>
-                <div class="flow-text">Create session (trong production: issue JWT)</div>
+                <div class="flow-text">Create session (in production: issue JWT)</div>
             </div>
         </div>
 
         <div class="steps">
             <h3>📚 What you'll learn:</h3>
             <ol>
-                <li>SIWE message format theo <code>EIP-4361</code></li>
-                <li>Generate nonce để prevent replay attacks</li>
-                <li>Sign message với MetaMask</li>
-                <li>Verify signature và recover address</li>
+                <li>SIWE message format according to <code>EIP-4361</code></li>
+                <li>Generate nonce to prevent replay attacks</li>
+                <li>Sign message with MetaMask</li>
+                <li>Verify signature and recover address</li>
                 <li>Create session after successful verification</li>
-                <li>Use cases: Authentication không cần password</li>
+                <li>Use cases: Authentication without password</li>
             </ol>
         </div>
     </div>
@@ -337,7 +337,7 @@
             return Math.floor(Math.random() * 1000000000).toString();
         }
 
-        // Create SIWE message theo EIP-4361
+        // Create SIWE message in EIP-4361 format
         function createSiweMessage(address, chainId, nonce) {
             const domain = window.location.host;
             const origin = window.location.origin;
@@ -359,7 +359,7 @@ Issued At: ${issuedAt}`;
 
         async function connectAndSignIn() {
             if (typeof window.ethereum === 'undefined') {
-                showStatus('❌ MetaMask chưa được cài đặt!', 'error');
+                showStatus('❌ MetaMask is not installed!', 'error');
                 return;
             }
 
@@ -431,7 +431,7 @@ Issued At: ${issuedAt}`;
                     signature
                 };
 
-                // Save to localStorage (trong production sẽ là JWT token)
+                // Save to localStorage (in production this will be JWT token)
                 localStorage.setItem('siwe_session', JSON.stringify(currentSession));
 
                 // Display session info
@@ -451,9 +451,9 @@ Issued At: ${issuedAt}`;
                 console.error('❌ Error:', error);
 
                 if (error.code === 4001) {
-                    showStatus('❌ Bạn đã từ chối ký message', 'error');
+                    showStatus('❌ You rejected signing the message', 'error');
                 } else {
-                    showStatus(`❌ Lỗi: ${error.message}`, 'error');
+                    showStatus(`❌ Error: ${error.message}`, 'error');
                 }
 
                 connectBtn.disabled = false;
