@@ -22,15 +22,17 @@
 
 ## 📚 目次
 
-1. [パート 1: 送金とトランザクション業務](#パート1-送金とトランザクション業務)
-2. [パート 2: ウォレット、署名と認証 (Client-side)](#パート2-ウォレット署名と認証-client-side)
-3. [パート 3: イベント処理](#パート3-イベント処理)
-4. [パート 4: Off-chain 統合 (Backend Node.js)](#パート4-off-chain統合-backend-nodejs)
-5. [パート 5: セキュリティと監査入門](#パート5-セキュリティと監査入門)
-6. [パート 6: 総合演習](#パート6-総合演習)
-7. [パート 7: Ethereum vs Hyperledger Fabric の比較](#パート7-ethereum-vs-hyperledger-fabric-の比較)
+1. [パート 1: 送金とトランザクション業務](#パート-1-送金とトランザクション業務)
+2. [パート 2: ウォレット、署名と認証 (Client-side)](#パート-2-ウォレット署名と認証-client-side)
+3. [パート 3: イベント処理](#パート-3-イベント処理)
+4. [パート 4: Off-chain 統合 (Backend Node.js)](#パート-4-off-chain-統合-backend-nodejs)
+5. [パート 5: セキュリティと監査入門](#パート-5-セキュリティと監査入門)
+6. [パート 6: 総合演習](#パート-6-総合演習)
+7. [パート 7: Ethereum vs Hyperledger Fabric の比較](#パート-7-ethereum-vs-hyperledger-fabric-の比較)
 
 ---
+
+<a id="パート-1-送金とトランザクション業務"></a>
 
 ## パート 1: 送金とトランザクション業務
 
@@ -1100,6 +1102,8 @@ app.post("/api/deposit/notify", async (req, res) => {
    - ベストプラクティス: 開発環境では自動、本番環境で優先が必要な場合は手動指定
 
 ---
+
+<a id="パート-2-ウォレット署名と認証-client-side"></a>
 
 ## パート 2: ウォレット、署名と認証 (Client-side)
 
@@ -2305,6 +2309,8 @@ app.get("/api/profile", (req, res) => {
 
 ---
 
+<a id="パート-3-イベント処理"></a>
+
 ## パート 3: イベント処理
 
 Events（イベント）は Smart contract の重要なメカニズムで、contract が重要な活動を**記録**し、外部アプリケーションに**通知**することを可能にします。
@@ -3187,6 +3193,8 @@ marketplace.on(
 
 ---
 
+<a id="パート-4-off-chain-統合-backend-nodejs"></a>
+
 ## パート 4: Off-chain 統合 (Backend Node.js)
 
 Backend は blockchain システムで重要な役割を果たし、frontend では実行できないタスクを処理します：
@@ -3718,6 +3726,8 @@ console.log("Transaction sent:", tx.hash);
    - RPC calls の rate limiting
 
 ---
+
+<a id="パート-5-セキュリティと監査入門"></a>
 
 ## パート 5: セキュリティと監査入門
 
@@ -5430,6 +5440,8 @@ contract SafeLottery is VRFConsumerBase {
    - ✅ Weak randomness の回避
 
 ---
+
+<a id="パート-6-総合演習"></a>
 
 ## パート 6: 総合演習
 
@@ -7246,6 +7258,8 @@ http://localhost:3000
    - Emergency mechanisms（pause）
 
 ---
+
+<a id="パート-7-ethereum-vs-hyperledger-fabric-の比較"></a>
 
 ## パート 7: Ethereum vs Hyperledger Fabric の比較
 
