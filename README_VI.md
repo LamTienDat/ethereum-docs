@@ -1357,8 +1357,11 @@ MetaMask có thể thay đổi trong quá trình sử dụng:
 **Code lắng nghe sự kiện:**
 
 ```javascript
-// Lắng nghe khi user đổi tài khoản
-window.ethereum.on("accountsChanged", (accounts) => {
+// ⚠️ QUAN TRỌNG: Lưu reference đến handler functions để có thể remove sau này
+// Nếu không lưu reference, sẽ không thể remove listener cụ thể
+
+// Handler cho accountsChanged
+const handleAccountsChanged = (accounts) => {
   if (accounts.length === 0) {
     // User disconnected
     console.log("❌ User disconnected");
@@ -1374,29 +1377,37 @@ window.ethereum.on("accountsChanged", (accounts) => {
     // Reload lại dữ liệu
     loadUserData(newAddress);
   }
-});
+};
 
-// Lắng nghe khi user đổi mạng
-window.ethereum.on("chainChanged", (chainIdHex) => {
+// Handler cho chainChanged
+const handleChainChanged = (chainIdHex) => {
   const chainId = parseInt(chainIdHex, 16);
   console.log("🔄 Chain changed:", chainId);
 
   // Best practice: Reload trang khi đổi mạng
   window.location.reload();
-});
+};
 
-// Lắng nghe khi MetaMask bị disconnect
-window.ethereum.on("disconnect", (error) => {
+// Handler cho disconnect
+const handleDisconnect = (error) => {
   console.log("❌ MetaMask disconnected:", error);
   wallet.disconnect();
   alert("MetaMask disconnected. Please reconnect.");
-});
+};
+
+// Đăng ký listeners
+window.ethereum.on("accountsChanged", handleAccountsChanged);
+window.ethereum.on("chainChanged", handleChainChanged);
+window.ethereum.on("disconnect", handleDisconnect);
 
 // Cleanup khi component unmount (React/Vue)
+// removeListener() chỉ xóa listener cụ thể của component này
 function cleanup() {
-  window.ethereum.removeAllListeners("accountsChanged");
-  window.ethereum.removeAllListeners("chainChanged");
-  window.ethereum.removeAllListeners("disconnect");
+  if (window.ethereum) {
+    window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
+    window.ethereum.removeListener("chainChanged", handleChainChanged);
+    window.ethereum.removeListener("disconnect", handleDisconnect);
+  }
 }
 ```
 

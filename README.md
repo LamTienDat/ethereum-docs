@@ -1361,8 +1361,11 @@ MetaMask は使用中に変更される可能性があります：
 **イベントリスニングのコード:**
 
 ```javascript
-// ユーザーがアカウントを変更したときにリッスン
-window.ethereum.on("accountsChanged", (accounts) => {
+// ⚠️ 重要: 後で削除できるようにハンドラー関数への参照を保存する
+// 参照を保存しないと、特定のリスナーを削除できない
+
+// accountsChanged のハンドラー
+const handleAccountsChanged = (accounts) => {
   if (accounts.length === 0) {
     // ユーザーが切断
     console.log("❌ User disconnected");
@@ -1378,29 +1381,37 @@ window.ethereum.on("accountsChanged", (accounts) => {
     // データを再読み込み
     loadUserData(newAddress);
   }
-});
+};
 
-// ユーザーがネットワークを変更したときにリッスン
-window.ethereum.on("chainChanged", (chainIdHex) => {
+// chainChanged のハンドラー
+const handleChainChanged = (chainIdHex) => {
   const chainId = parseInt(chainIdHex, 16);
   console.log("🔄 Chain changed:", chainId);
 
   // ベストプラクティス: ネットワーク変更時にページをリロード
   window.location.reload();
-});
+};
 
-// MetaMask が切断されたときにリッスン
-window.ethereum.on("disconnect", (error) => {
+// disconnect のハンドラー
+const handleDisconnect = (error) => {
   console.log("❌ MetaMask disconnected:", error);
   wallet.disconnect();
   alert("MetaMask disconnected. Please reconnect.");
-});
+};
+
+// リスナーを登録
+window.ethereum.on("accountsChanged", handleAccountsChanged);
+window.ethereum.on("chainChanged", handleChainChanged);
+window.ethereum.on("disconnect", handleDisconnect);
 
 // コンポーネントのアンマウント時にクリーンアップ（React/Vue）
+// removeListener() はこのコンポーネントの特定のリスナーのみを削除する
 function cleanup() {
-  window.ethereum.removeAllListeners("accountsChanged");
-  window.ethereum.removeAllListeners("chainChanged");
-  window.ethereum.removeAllListeners("disconnect");
+  if (window.ethereum) {
+    window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
+    window.ethereum.removeListener("chainChanged", handleChainChanged);
+    window.ethereum.removeListener("disconnect", handleDisconnect);
+  }
 }
 ```
 
